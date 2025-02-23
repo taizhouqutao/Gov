@@ -1,36 +1,266 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="SiteName" content="广州市人民政府门户网站">
+    <meta name="description" content="广州市人民政府门户网站（网址：www.gz.gov.cn）是由广州市人民政府办公厅主办，广州市政务服务和数据管理局承办，利用政府的设备、网络和信息等资源整合建设而成。它以政府部门网站为依托，以需求为导向，以服务为宗旨，遵循“以人为本”的设计理念，围绕信息公开、在线服务和公众参与三大政府网站功能定位，设置了“政务公开”、“政务服务”、“互动交流”、“营商环境”、“魅力广州”五大频道，以丰富的内容、人性化的服务和强大的功能为用户提供服务。">
+    <meta name="SiteDomain" content="www.gz.gov.cn">
+    <meta name="SiteIDCode" content="4401000004">
+    <meta name="ColumnName" content="广州市政府门户网站首页">
+    <meta name="ColumnDescription" content="广州市政府门户网站">
+    <meta name="ColumnKeywords" content="广州 政府 网站">
+    <meta name="ColumnType" content="信息公开-工作动态">
+    <title>@ViewData["Title"]</title>
+
+    <meta name="Keywords" content="广州市人民政府门户网站">
+    <meta name="description" content="广州市人民政府门户网站（网址：www.gz.gov.cn）是由广州市人民政府办公厅主办，广州市政务服务和数据管理局承办，利用政府的设备、网络和信息等资源整合建设而成。它以政府部门网站为依托，以需求为导向，以服务为宗旨，遵循“以人为本”的设计理念，围绕信息公开、在线服务和公众参与三大政府网站功能定位，设置了“政务公开”、“政务服务”、“互动交流”、“营商环境”、“魅力广州”五大频道，以丰富的内容、人性化的服务和强大的功能为用户提供服务。">
+    <link id="commoncss" rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="~/css/index.css">
+    <link type="text/css" rel="stylesheet" href="/global/idangerous.swiper.css">
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Web</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Web.styles.css" asp-append-version="true" />
+    <style type="text/css">
+    body{background:#fff;}
+    .header{background: url(/global/2021_gzgov_indexbg_new.jpg) no-repeat center top #c20505; height:465px}
+	.head .menu{color:#333; float:left; margin-top:0px;}
+	.head .menu li{margin-top:2px; padding:0 7px}
+	.head .menu li a{color:#333; font-size:12px;}
+	.head .menu li.dl{margin-top:5px;}
+	.head .menu li.dl a{background:none; color:#333; padding:0; margin-right:0; line-height:22px; font-size:12px;}
+	.head .menu li.dl a:hover{background:none; color:#333}
+     .head .menu li.wza{}
+     .head .menu li.slh{font-size:12px;}
+     .head .menu li h4{padding-right:0;}
+	.head .menu li h4 i {position: absolute;right: 0;top: 50%;margin-top: -2px;width: 7px;height: 5px;background: url(/global/head_iconjrb.png) no-repeat;}
+     .head .menu li h4 a{padding-right:0}
+     .head .menu li.ftb{margin-right:0}
+     .ipv6{float:right;}
+	.ipv6 img{vertical-align:top; margin-top:8px;}
+	.head .logo{ height:39px; float:left; width:45px; margin-top:5px; margin-right:5px;}
+     .home_search{height:200px;}
+     .home_banner{display:none;}
+     .home_search .ss .ss_txt{padding-bottom:9px}
+	.home_search .ss .ss_btn{background:#d73816}
+	.home_search p{text-align:center;}
+	.mainnav li a:after{background-color:#fd293a;}
+	.mainnav li a:hover, .mainnav li.on a{color: #fff; *border-bottom:#7c0000 3px solid;}
+	.mainnav li:hover, .mainnav li.on{background:#9e0000}
+	.mainnav.isStuck{background:#dd0012;}
+	.footer{background:#c20505;}
+	.head .drop{background:#d76b54;}
+	.head .drop li a{color:#fff;}
+	.head .drop li a:hover{background:#ee4632;}
+	.gzyw .bold a{color:#f00 !important; font-weight:bold !important;}
+	.container2020 {width: 1200px; max-width:1200px; margin: 0 auto; clear: both; position: relative;}
+	.head{display: block;}
+     .space215{height:215px;}
+     .logo2021{margin:0px auto 16px; width:330px; padding-top:40px; position:relative; z-index:9;}
+     .logo2021 img{display:block;}
+
+     .home_tpxw{width:47.5%}
+     .home_jrgz{width:51%;}
+     .home_zcjd, .home_myzj{width:49%;}
+     .zysthjbh{background:#3969b5; line-height:82px; text-align:center; color:#fff}
+     .zysthjbh a{color:#fff; font-size:25px;}
+
+     .home_scroll_iconlink .bd li{width:12.5%; *width:12.4%;}
+     .home_scroll_iconlink .bd li.li8 i{background:url(/global/index_icon08.png) center no-repeat;}
+     .home_scroll_iconlink .bd li a{white-space: nowrap;}
+      .home_scroll_iconlink .bd li.li7 a{border:none;}
+      
+.home_tpxw2 {width:570px; height: 306px; overflow: hidden; position: relative; float:left;}
+.tt-itm {width:570px; height: 306px; overflow: hidden; position: absolute;}
+.tt-itm img {width: 100%; height: 100%;}
+.tt-itm .tt-til {position:absolute; left:0px; bottom:-80px; width:100%; height:80px; line-height:60px; text-align:center;  background: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0,0,0,0)), to(rgba(0,0,0,0.8)));
+ background: -moz-linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.8)); color:#ffffff; font-size:18px; transition:0.4s; *background:none; white-space: nowrap; text-overflow:ellipsis; -o-text-overflow:ellipsis; overflow:hidden;
+}
+.tt-itm .tt-til a {display: block; color: #fff; padding:0 10px font-size: 18px; text-align:center; line-height: 60px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-weight:bold;}
+.tt-itm:hover .tt-til{display:block; bottom:0; -webkit-transition:0.4s;  -moz-transition:0.4s; transition:0.4s;}
+.home_tpxw2 .pagination {position: absolute; overflow: hidden; bottom:14px; right:42%; text-align: center;}
+.home_tpxw2 .swiper-pagination-switch {width: 8px; height: 8px; background-color: #fff; margin-left: 5px; border-radius: 8px; cursor:pointer; vertical-align:middle; display:inline-block;}
+.home_tpxw2 .swiper-active-switch {background-color: #ff0000; width: 12px; height: 12px;}
+
+.home_ztzl{padding-right:338px;}
+.home_ztzl .btn .next{right:347px;}
+.home_ztzl .shzyhxjzg{width:277px; position:absolute; right:59px; top:9px;}
+.home_ztzl .shzyhxjzg img{width:100%; height:auto;}
+
+.admove{width: 260px;}
+.admove .tit{background: url(/global/pcbg2024.jpg) center left repeat-x; position: relative; padding: 10px;}
+.admove .tit h1{font-size: 20px; color: #fff; font-weight: bold;}
+.admove .tit span{position: absolute; right: 10px; bottom: 15px; color: #fff; font-size: 12px; cursor: pointer;}
+.admove .tit span a{color: #fff; font-size: 12px;}
+.admove .adcon{border: 4px #fff solid; border-top:none; border-bottom:none; background:#fff}
+.admove .adcon img{border: 2px #fff solid; display: block; width: 100%; height: auto; border-left:none; border-right:none;}
+.close_btn{display: none;} 
+          
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
+    <div class="index">
+        <div class="head">
+               <div class="container2020">
+                    <div class="logo"><img src="/global/2021_gzgov_logo_small.png" title="广州市人民政府门户网站标识" alt="广州市人民政府门户网站标识"></div>
+                    <ul class="menu" aria-label="您已进入工具栏服务区" altdes="服务区">
+                         <li class="dl">
+                              <a target="_blank" href="https://my.gz.gov.cn/">市民网页</a>
+                         </li>
+                         <li class="lang">
+                              <h4><a href="#">语言</a></h4>
+                              <div class="drop drop_lang">
+                                   <ul>
+                                     <!--<li><a class="zh_click" href="javascript:void(0)" name="StranLink" id="StranLink" onClick="jft()">繁体版</a></li>-->
+                                      <li><a class="zh_click" id="zh_click_s" onclick="zh_tran('s')" style="color: rgb(198, 228, 255);">简体</a></li>
+							   <li><a class="zh_click" id="zh_click_t" onclick="zh_tran('t')" style="">繁體</a></li>
+
+                                                                                     <li><a href="https://www.gz.gov.cn/guangzhouinternational/index.html" target="_blank">English</a></li>
+                                        
+                                 </ul>
+                            </div>
+                         </li>
+                         <li class="mobile">
+                              <h4><a href="#">手机端</a></h4>
+                              <div class="drop ewm">
+                                   <ul>
+                                      <li><img src="/global/ewm_mobile.jpg"><span>关注 · 手机版</span></li>
+                                   </ul>
+                              </div>
+                         </li>
+                          <li class="wza" id="wza" style="cursor: pointer;">
+                            <a>无障碍</a>
+                            
+                         </li>
+                         <li class="slh" id="slh" style="cursor: pointer;"><a>长者助手</a></li>
+                         <li class="wx">
+                              <h4><a href="#">微信</a></h4>
+                              <div class="drop ewm">
+                                   <ul>
+                                      <li><img src="/global/ewm_wx.jpg"><span>关注 · 广州政府网</span></li>
+                                 </ul>
+                              </div>
+                         </li>
+                         <li class="wb">
+                              <h4><a href="#">微博</a></h4>
+                              <div class="drop ewm ewm_w2">
+                                   <ul>
+                                      <li style="margin-right:0"><a href="//weibo.com/2605594314" target="_blank"><img src="/global/zggzfb.jpg"><span>中国广州发布</span></a>
+                                      </li>
+                                      <li style="margin-right:0"><a href="//weibo.com/2532700305" target="_blank"><img src="/global/gzzfxwb.jpg"><span>广州市政府<br>新闻办</span></a></li>
+                                 </ul>
+                              </div>
+                         </li>
+                         <li class="ftb"><a href="https://mail.gz.gov.cn/" target="_parent">政务邮箱</a></li>
+                         <li class="dl" id="loginfo" style="display: none">
+                              <a target="_blank" href="https://my.gz.gov.cn/"></a>
+                         </li>
+                         <li class="dlout" id="logout" style="display: none">
+                               <a target="_self" href="javascript:void(0)">退出</a>
+                              <!-- <a target="_self" href="https://tyrz.gd.gov.cn/_tif_sso_logout_/?redirect_uri=http%3A%2F%2Fwww.gz.gov.cn">登出</a> -->
+                         </li>
+                         <li class="dl" id="login" style="">
+                              <a target="_blank" href="https://www.gz.gov.cn/tyrzLogin/loginPage">用户登录</a>
+                         </li>
+                        
                     </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
+                    <div class="ipv6"><img src="/global/ipv6new.png"></div>
+               </div>
+          </div>
+    </div>
+<div class="header container">
+               <div class="logo2021">
+                   <img src="/global/logo2021.png" title="广州市人民政府门户网站标识" alt="广州市人民政府门户网站标识">
+               </div>
+               <div class="home_search">
+                         <div class="ss" wzades="输入关键词可对网站内容进行搜索" aria-label="您已进入全站搜索交互区，本区域包含1个文本输入框和1个提交按钮。请输入关键词，按回车键进行网站内容搜索。" altdes="交互区">
+                             <div class="inss">
+                                   <input class="ss_txt" name="keywords" value="" placeholder="请输入关键字" type="keywords" id="txt_search">
+                                   <input class="ss_btn" value="搜索" type="submit" onclick="sousuo()" target="_blank">
+                                    <i><input class="ss_btn2" value="" type="submit" onclick="open_win()"></i>	
+                              </div>
+                         </div>
+                         
+                         <p wzades="网站搜索热词"><span>热搜：</span> 
+                                                            <a href="http://search.gd.gov.cn/search/all/200001?keywords=%E7%A4%BE%E4%BF%9D&amp;filterType=localSite&amp;filterId=200001" target="_blank" title="社保">社保</a>
+                                                            <a href="http://search.gd.gov.cn/search/all/200001?keywords=%E5%8C%BB%E4%BF%9D&amp;filterType=localSite&amp;filterId=200001" target="_blank" title="医保">医保</a>
+                                                            <a href="http://search.gd.gov.cn/search/all/200001?keywords=%E9%AB%98%E8%B4%A8%E9%87%8F%E5%8F%91%E5%B1%95&amp;filterType=localSite&amp;filterId=200001" target="_blank" title="高质量发展">高质量发展</a>
+                                                            <a href="http://search.gd.gov.cn/search/all/200001?keywords=%E5%B1%85%E4%BD%8F%E8%AF%81&amp;filterType=localSite&amp;filterId=200001" target="_blank" title="居住证">居住证</a>
+                                                            <a href="http://search.gd.gov.cn/search/all/200001?keywords=%E7%BB%BF%E7%BE%8E%E5%B9%BF%E5%B7%9E&amp;filterType=localSite&amp;filterId=200001" target="_blank" title="绿美广州">绿美广州</a>
+                                                            <a href="http://search.gd.gov.cn/search/all/200001?keywords=%E8%90%A5%E5%95%86%E7%8E%AF%E5%A2%83&amp;filterType=localSite&amp;filterId=200001" target="_blank" title="营商环境">营商环境</a>
+                                                            <a href="http://search.gd.gov.cn/search/all/200001?keywords=%E5%8A%A9%E4%BC%81%E7%BA%BE%E5%9B%B0&amp;filterType=localSite&amp;filterId=200001" target="_blank" title="助企纾困">助企纾困</a>
+                                                  </p>
+                    </div>
+                    <!-- </form> -->
+                    <script type="text/javascript">
+                         function open_win() 
+                         {
+                              window.open("/ghwd/znwd/index.html")
+                         }
+
+                         function sousuo() {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;window.location = "https://search.gd.gov.cn/search/local_msg/200001?position=all&sort=time&filterType=allCity&filterId=0&keywords=" + $("#txt_search").val();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+
+                    </script>
+               <!--<div class="searchbox">
+                    <div class="header_ss_open"><span>搜索</span><i class="icon iconfont icon-search-outline"></i></div>
+                    <div class="header_ss">
+                         <div class="close"><i class="icon iconfont icon-close-outline"></i></div>
+                         <form class="form-wrapper cf" action="//search.gd.gov.cn/search/local_msg/200001/">
+                              <div class="ss">
+                                   <input type="keywords" class="stxt" placeholder="请输入关键字" name="keywords">
+                                   <i><input class="ss_btn2" value="" type="submit"> </i>
+                              </div>
+                         </form>
+                    </div>
+               </div>-->
+               <div class="menuopen"><i class="icon iconfont icon-menu-outline"></i></div>
+             <div wzades="首页导航栏区域，包含首页、政务公开、政务服务、互动交流、营商环境、魅力广州栏目入口" aria-label="您已进入首页及一级栏目导航区。" altdes="导航区">
+               <ul class="mainnav clearfix" id="mainnav">
+                  
+                    <li class="nav0"><a href="/" target="_blank">首页</a></li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/zwgk/index.html" target="_blank">政务公开</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/zwfw/index.html" target="_blank">政务服务</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/hdjl/index.html" target="_blank">互动交流</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/ysgz/index.html" target="_blank">营商环境</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/zlgz/index.html" target="_blank">魅力广州</a>                    </li>
+               </ul>
+                <ul class="mainnav clearfix isStuck" id="mainnav" style="top: -50px; visibility: hidden; position: fixed; width: 100%; margin-top: 0px;">
+                  
+                    <li class="nav0"><a href="/" target="_blank">首页</a></li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/zwgk/index.html" target="_blank">政务公开</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/zwfw/index.html" target="_blank">政务服务</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/hdjl/index.html" target="_blank">互动交流</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/ysgz/index.html" target="_blank">营商环境</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/zlgz/index.html" target="_blank">魅力广州</a>                    </li>
+               </ul></div>
+               <ul class="mainnav isStuck" id="mainnav" style="top: -50px; visibility: hidden; position: fixed; width: 100%; margin-top: 0px;">
+                    <li class="nav0"><a href="/" target="_blank">首页</a></li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/zwgk/index.html" target="_blank">政务公开</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/zwfw/index.html" target="_blank">政务服务</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/hdjl/index.html" target="_blank">互动交流</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/ysgz/index.html" target="_blank">营商环境</a>                    </li>
+                    <li>
+                         <a href="https://www.gz.gov.cn/zlgz/index.html" target="_blank">魅力广州</a>                    </li>
+
+               </ul>
+          </div>
+    <div class="container index-wrap">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
@@ -43,7 +273,6 @@
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

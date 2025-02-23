@@ -15,7 +15,7 @@ namespace DAL.Contexts
         {
             configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
         }
-        public DbSet<User> Users { get; set; }
+        public DbSet<User>? Users { get; set; }
 
         public IConfiguration configuration;
 
