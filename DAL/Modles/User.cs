@@ -7,12 +7,18 @@ using System.Threading.Tasks;
 
 namespace DAL.Modles
 {
-    public class User
+    public class User : Basic
     {
         [Column("Id")]
         public int Id { get; set; }
 
         [Column("UserName")]
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
+
+        [Column("PassWord")]
+        public required string PassWord { get; set; }
+
+        [Column("RealName")]
+        public required string RealName { get; set; }
     }
 }
