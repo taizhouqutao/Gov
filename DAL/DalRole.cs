@@ -7,22 +7,25 @@ namespace DAL
 {
     public class DalRole
     {
-        public async Task<PageList<Role>> GetRolesByPageAsync(PageReq<RoleDto.Req> req) {
+        public async Task<PageList<Role>> GetRolesByPageAsync(PageReq<RoleReqDto> req) {
             var res=new List<Role>();
-            var total=0;
+            int total=0,allcount=0;
             using (var context = new webapplicationContext())
             {
                 var Query= context.Roles.AsQueryable();
-                Query.Where(i=>
+                var QureyRes = Query.Where(i=>
                     (i.IfDel==0) &&
-                    (string.IsNullOrEmpty(req.Query.RoleName)?true:i.RoleName.Contains(req.Query.RoleName))
+                    ((req.search==null||string.IsNullOrEmpty(req.search.value))?true:i.RoleName.Contains(req.search.value))
                 );
-                res = await Query.Skip(req.PageSize*(req.PageIndex-1)).Take(req.PageSize).ToListAsync();
-                total= await Query.CountAsync();
+                res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
+                total= await QureyRes.CountAsync();
+                allcount=await context.Roles.CountAsync();
             }
             return new PageList<Role>(){
-                Datas=res,
-                TotalCount=total
+                data=res,
+                recordsFiltered=total,
+                draw=req.draw,
+                recordsTotal=allcount
             };
         }
     }

@@ -1,10 +1,6 @@
 namespace Common
 {
-   public class RoleDto
+   public class RoleReqDto
    {
-      public class Req
-      {
-        public string? RoleName{get;set;}
-      }
    } 
 }
