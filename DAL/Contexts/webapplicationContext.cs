@@ -15,14 +15,14 @@ namespace DAL.Contexts
         {
             configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
         }
-        public required DbSet<User> Users { get; set; }
+        public DbSet<User>? Users { get; set; }
 
-        public required DbSet<Right> Rights { get; set; }
+        public DbSet<Right>? Rights { get; set; }
 
-        public required DbSet<RightRole> RightRoles { get; set; }
+        public DbSet<RightRole>? RightRoles { get; set; }
 
-        public required DbSet<Role> Roles { get; set; }
-        public required DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<Role>? Roles { get; set; }
+        public DbSet<UserRole>? UserRoles { get; set; }
 
         public IConfiguration configuration;
 
