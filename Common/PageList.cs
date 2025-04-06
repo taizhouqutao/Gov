@@ -22,7 +22,7 @@
 
         public List<PageOrderReq>? order{get;set;}
 
-        public required T Query{get;set;}
+        public T? Query{get;set;}
     }
 
     public class PageOrderReq
