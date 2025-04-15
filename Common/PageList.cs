@@ -1,5 +1,6 @@
 ﻿namespace Common
 {
+    [Serializable]
     public class PageList<T>
     {
         public required List<T> data{get;set;}
@@ -9,7 +10,7 @@
 
         public int draw{get;set;}
     }
-
+    [Serializable]
     public class PageReq<T>
     {
         public int draw{get;set;}
@@ -24,13 +25,13 @@
 
         public T? Query{get;set;}
     }
-
+    [Serializable]
     public class PageOrderReq
     {
         public string? dir{get;set;}
         public int? column{get;set;}
     }
-
+    [Serializable]
     public class PageSearchReq
     {
         public string? value{get;set;}

@@ -87,7 +87,7 @@
                 processing: true, // 开启处理状态提示（例如加载中）
                 serverSide: true, // 启用服务器端处理
                 ajax: {
-                    url: "http://localhost:5067/Admin/GetUsersByPage", // 你的服务器端接口地址
+                    url: "/User/GetUsersByPage", // 你的服务器端接口地址
                     contentType: "application/json",
                     type: "POST", // 请求类型，通常是 GET 或 POST
                     data: function(d) {

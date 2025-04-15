@@ -1,6 +1,7 @@
 namespace Common
 {
-   public class UserReqDto
+    [Serializable]
+    public class UserReqDto
    {
 
    } 
