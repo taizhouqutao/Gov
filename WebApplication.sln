@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebManage", "WebManage\WebM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebBackend", "WebBackend\WebBackend.csproj", "{2CA3B989-8762-42E1-AD6D-FC5B7BEC3733}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web\Web.csproj", "{E9E4FFC6-CF25-48CD-8328-9E4AF1E1F710}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{2CA3B989-8762-42E1-AD6D-FC5B7BEC3733}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CA3B989-8762-42E1-AD6D-FC5B7BEC3733}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CA3B989-8762-42E1-AD6D-FC5B7BEC3733}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9E4FFC6-CF25-48CD-8328-9E4AF1E1F710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9E4FFC6-CF25-48CD-8328-9E4AF1E1F710}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9E4FFC6-CF25-48CD-8328-9E4AF1E1F710}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9E4FFC6-CF25-48CD-8328-9E4AF1E1F710}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
