@@ -1,6 +1,7 @@
 namespace Common
 {
-   public class RoleReqDto
+    [Serializable]
+    public class RoleReqDto
    {
    } 
 }
