@@ -17,6 +17,10 @@ namespace DAL
                     (i.IfDel==0) &&
                     ((req.search==null||string.IsNullOrEmpty(req.search.value))?true:i.UserName.Contains(req.search.value))
                 );
+                if (req.order == null || req.order.Count == 0)
+                {
+                    QureyRes = QureyRes.OrderByDescending(i => i.Id);
+                }
                 res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
                 total= await QureyRes.CountAsync();
                 allcount=await context.Users.CountAsync();

@@ -63,5 +63,65 @@ namespace WebBackend.Controllers
                 };
             }
         }
+
+        [HttpPost]
+        public async Task<Response<Role>> GetRolesById([FromBody] RoleReqDto req)
+        {
+            try
+            {
+                var res = await bllrole.GetRoleByIdAsync(Convert.ToInt32(req.id));
+                if (res == null) throw new Exception("编码对应角色不存在");
+                return new Response<Role>
+                {
+                    IfSuccess = 1,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<Role>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        public async Task<Response<Role>> SaveRole([FromBody] RoleReqDto req)
+        {
+            try
+            {
+                Role res = null;
+                if (req.id != null)
+                {
+                    res = await bllrole.GetRoleByIdAsync(Convert.ToInt32(req.id));
+                    if (res == null) throw new Exception("编码对应角色不存在");
+                    res.RoleName = req.roleName ?? "";
+                    await bllrole.UpdateRoleAsync(res);
+                }
+                else
+                {
+                    res = new Role()
+                    {
+                        RoleName = req.roleName ?? "",
+                        IfDel = 0,
+                        CreateTime = DateTime.Now,
+                        CreateUserId = 1
+                    };
+                    await bllrole.AddRoleAsync(res);
+                }
+                return new Response<Role>
+                {
+                    IfSuccess = 1,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<Role>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
     }
 }

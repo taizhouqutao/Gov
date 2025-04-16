@@ -30,6 +30,8 @@
     {
         public string? dir{get;set;}
         public int? column{get;set;}
+
+        public string? columnName { get; set; }
     }
     [Serializable]
     public class PageSearchReq
