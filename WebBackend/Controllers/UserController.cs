@@ -87,6 +87,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [HttpPost]
         public async Task<Response<Role>> SaveRole([FromBody] RoleReqDto req)
         {
             try
@@ -125,6 +126,7 @@ namespace WebBackend.Controllers
             }
         }
     
+        [HttpPost]
         public async Task<Response> DelRole([FromBody] RoleReqDto req)
         {
             try

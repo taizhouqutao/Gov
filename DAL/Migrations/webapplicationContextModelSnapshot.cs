@@ -19,6 +19,60 @@ namespace DAL.Migrations
                 .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("DAL.Modles.New", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("CreateTime");
+
+                    b.Property<int>("CreateUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("CreateUserId");
+
+                    b.Property<int>("IfDel")
+                        .HasColumnType("int")
+                        .HasColumnName("IfDel");
+
+                    b.Property<int>("IsPublic")
+                        .HasColumnType("int")
+                        .HasColumnName("IsPublic");
+
+                    b.Property<string>("NewContent")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("NewContent");
+
+                    b.Property<string>("NewTitle")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("NewTitle");
+
+                    b.Property<DateTime?>("PublicTime")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("PublicTime");
+
+                    b.Property<int?>("PublicUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("PublicUserId");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("UpdateTime");
+
+                    b.Property<int?>("UpdateUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UpdateUserId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("News");
+                });
+
             modelBuilder.Entity("DAL.Modles.Right", b =>
                 {
                     b.Property<int>("Id")

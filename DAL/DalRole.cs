@@ -72,7 +72,10 @@ namespace DAL
             using (var context = new webapplicationContext())
             {
                 var Roles =await context.Roles.Where(i=>Ids.Contains(i.Id)).ToListAsync();
-                context.Roles.RemoveRange(Roles);
+                Roles.ForEach(i=>{
+                    i.IfDel=1;
+                });
+                context.Roles.UpdateRange(Roles);
                 await context.SaveChangesAsync();
             }
         }

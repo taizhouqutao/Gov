@@ -24,6 +24,8 @@ namespace DAL.Contexts
         public DbSet<Role>? Roles { get; set; }
         public DbSet<UserRole>? UserRoles { get; set; }
 
+        public DbSet<New>? News { get; set; }
+
         public IConfiguration configuration;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
