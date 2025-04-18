@@ -1,4 +1,5 @@
-﻿using BLL;
+﻿using System.Text.Json;
+using BLL;
 using Common;
 using DAL.Modles;
 using Microsoft.AspNetCore.Mvc;
@@ -118,6 +119,28 @@ namespace WebBackend.Controllers
             catch (Exception ex)
             {
                 return new Response<Role>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+    
+        public async Task<Response> DelRole([FromBody] RoleReqDto req)
+        {
+            try
+            {
+                if (req.ids != null && req.ids.Count>0)
+                {
+                    await bllrole.DelRoleAsync(req.ids);
+                }
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
                 {
                     Msg = ex.Message
                 };

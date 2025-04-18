@@ -24,5 +24,10 @@ namespace BLL
         {
             return await dal.UpdateRoleAsync(role);
         }
+
+        public async Task DelRoleAsync(List<int> Ids)
+        {
+            return await dal.DelRoleAsync(Ids);
+        }
     }
 }

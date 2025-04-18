@@ -88,8 +88,9 @@
     <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
     <!-- Page-Level Scripts -->
     <script>
+        var dtRoles=null;
         $(document).ready(function () {
-            $('.dataTables-example').dataTable({
+            dtRoles=$('.dataTables-example').DataTable({
                 processing: true, // 开启处理状态提示（例如加载中）
                 serverSide: true, // 启用服务器端处理
                 ajax: {
@@ -137,19 +138,29 @@
                          },
                          bSortable: false
                     },
-                    { data: "id",title: "ID",name:"Id"},
-                    { data: "roleName",title: "角色名称",name:"RoleName"},
+                    { data: "id",title: "ID",name:"Id",bSortable: false},
+                    { data: "roleName",title: "角色名称",name:"RoleName",bSortable: false},
                     {
                         data: "createTime",
                         title: "创建时间",
                         name:"CreateTime",
+                        bSortable: false,
                         render: function(data) {
                             return new Date(data).toLocaleString();
                         }
                     }
                 ]
             });
+                        // 添加行双击事件
+            $('.dataTables-example').on('dblclick', 'tbody tr', function() {
+                var rowData = dtRoles.row(this).data();
+                getRoleDetail(rowData.id);
+            });
         });
+        function searchRole()
+        {
+            dtRoles.ajax.reload(); // 保持当前分页和排序状态
+        }
         function addRole()
         {
             $('#roleName').val('');
@@ -168,52 +179,17 @@
             }
             else
             {
-                $.ajax({
-                    url:"/User/GetRolesById",
-                    contentType: "application/json",
-                    type: "POST", // 请求类型，通常是 GET 或 POST
-                    data:JSON.stringify({
-                        id:selectedIds[0]
-                    }),
-                    success:function(result){
-                        if(result.ifSuccess)
-                        {
-                            $("#roleName").val(result.data.roleName);
-                            $("#roleId").val(result.data.id);
-                            $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
-                        }
-                        else
-                        {
-                            swal({
-                                title: "出错了",
-                                text: result.msg
-                            });
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error:', error);
-                        console.log('Status:', status);
-                        console.log('Details:', xhr.responseText);
-                    }
-                });
+                getRoleDetail(selectedIds[0]);
             }
         }
-        function getSelectedIds() {
-            var selectedIds = [];
-            $('.checkchild:checked').each(function() {
-                selectedIds.push($(this).val()); // 获取 data-id 属性值并添加到数组中
-            });
-            return selectedIds;
-        }
-        function saveRole()
+        function getRoleDetail(roleId)
         {
             $.ajax({
-                url:"/User/SaveRole",
+                url:"/User/GetRolesById",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
                 data:JSON.stringify({
-                    id: $("#roleId").val()?$("#roleId").val():null,
-                    roleName:$("#roleName").val()
+                    id:roleId
                 }),
                 success:function(result){
                     if(result.ifSuccess)
@@ -237,9 +213,100 @@
                 }
             });
         }
+        function getSelectedIds() {
+            var selectedIds = [];
+            $('.checkchild:checked').each(function() {
+                selectedIds.push($(this).val()); // 获取 data-id 属性值并添加到数组中
+            });
+            return selectedIds;
+        }
+        function saveRole()
+        {
+            event.stopPropagation(); // 阻止事件冒泡
+            event.preventDefault();
+            $.ajax({
+                url:"/User/SaveRole",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    id: $("#roleId").val()?$("#roleId").val():null,
+                    roleName:$("#roleName").val()
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        $('#modal-form').modal('hide'); // 显示模态框，并触发 show 事件，从而设置内容。
+                        searchRole();
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                }
+            });
+        }
         function delRole()
         {
-
+            var selectedIds = getSelectedIds();
+            if(selectedIds.length!=1)
+            {
+                swal({
+                    title: "提示",
+                    text: "请勾选1条记录进行删除"
+                });
+            }
+            else
+            {
+                var delIds=selectedIds;
+                swal({
+                    title: "您确定要删除这"+delIds.length+"条记录吗",
+                    text: "删除后将无法恢复，请谨慎操作！",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "删除",
+                    cancelButtonText: "取消",
+                    closeOnConfirm: false
+                }, function () {
+                    event.stopPropagation(); // 阻止事件冒泡
+                    event.preventDefault();
+                    $.ajax({
+                        url:"/User/DelRole",
+                        contentType: "application/json",
+                        type: "POST", // 请求类型，通常是 GET 或 POST
+                        data:JSON.stringify({
+                            ids: selectedIds,
+                        }),
+                        success:function(result){
+                            if(result.ifSuccess)
+                            {
+                                searchRole();
+                                swal("删除成功！", "您已经永久删除了这条信息。", "success");
+                            }
+                            else
+                            {
+                                swal({
+                                    title: "出错了",
+                                    text: result.msg
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                            console.log('Status:', status);
+                            console.log('Details:', xhr.responseText);
+                        }
+                    });
+                });
+            }
         }
     </script>
 </body>

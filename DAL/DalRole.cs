@@ -18,20 +18,7 @@ namespace DAL
                     (i.IfDel==0) &&
                     ((req.search==null||string.IsNullOrEmpty(req.search.value))?true:i.RoleName.Contains(req.search.value))
                 );
-                if (req.order == null || req.order.Count == 0)
-                {
-                    for (int i = 0; i < req.order.Count; i++)
-                    {
-                        if (i == 0 && req.order[i].dir.ToUpper()=="DESC")
-                        {
-                            QureyRes = QureyRes.OrderByDescending(j =>j.GetType().GetProperty(req.order[i]). i.Id);
-                        }
-                        else if (i == 0 && req.order[i].dir.ToUpper() == "ASC")
-                        {
-                            QureyRes = QureyRes.OrderBy(i => i.Id);
-                        }
-                    }
-                }
+                QureyRes = QureyRes.OrderByDescending(j =>j.Id);
                 res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
                 total= await QureyRes.CountAsync();
                 allcount=await context.Roles.CountAsync();
@@ -79,6 +66,15 @@ namespace DAL
                 await context.SaveChangesAsync();
             }
             return res;
+        }
+        public async Task DelRoleAsync(List<int> Ids)
+        {
+            using (var context = new webapplicationContext())
+            {
+                var Roles =await context.Roles.Where(i=>Ids.Contains(i.Id)).ToListAsync();
+                context.Roles.RemoveRange(Roles);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }
