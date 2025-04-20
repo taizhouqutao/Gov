@@ -26,6 +26,8 @@ namespace DAL.Contexts
 
         public DbSet<New>? News { get; set; }
 
+        public DbSet<NewType>? NewTypes { get; set; }
+
         public IConfiguration configuration;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

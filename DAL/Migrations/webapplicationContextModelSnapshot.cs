@@ -52,6 +52,10 @@ namespace DAL.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("NewTitle");
 
+                    b.Property<int?>("NewTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("NewTypeId");
+
                     b.Property<DateTime?>("PublicTime")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("PublicTime");
@@ -71,6 +75,43 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("News");
+                });
+
+            modelBuilder.Entity("DAL.Modles.NewType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("CreateTime");
+
+                    b.Property<int>("CreateUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("CreateUserId");
+
+                    b.Property<int>("IfDel")
+                        .HasColumnType("int")
+                        .HasColumnName("IfDel");
+
+                    b.Property<string>("NewTypeName")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("NewTypeName");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("UpdateTime");
+
+                    b.Property<int?>("UpdateUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UpdateUserId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NewTypes");
                 });
 
             modelBuilder.Entity("DAL.Modles.Right", b =>
