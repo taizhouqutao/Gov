@@ -32,5 +32,19 @@ namespace DAL
                 recordsTotal=allcount
             };
         }
+
+        public async Task<User?> LoginAsync(LoginReqDto req) {
+            User? res = null;
+            using (var context = new webapplicationContext())
+            {
+                var Query= context.Users.AsQueryable();
+                res = await Query.FirstOrDefaultAsync(i=>
+                    (i.IfDel==0) &&
+                    (req.UserName.Trim() == i.UserName.Trim()) &&
+                    (req.PassWord.Trim() == i.PassWord.Trim())
+                );
+            }
+            return res;
+        }
     }
 }

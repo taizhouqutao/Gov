@@ -1,11 +1,14 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using WebBackend.Models;
+using Common;
 
 namespace WebBackend.Controllers;
 
 public class HomeController : Controller
 {
+    private BLL.BllUser blluser = new BLL.BllUser();
+
     private readonly ILogger<HomeController> _logger;
 
     public HomeController(ILogger<HomeController> logger)
@@ -22,6 +25,11 @@ public class HomeController : Controller
     {
         return View();
     }
+    
+    public IActionResult login()
+    {
+        return View();
+    }
 
     public IActionResult Privacy()
     {
@@ -32,5 +40,30 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    [HttpPost]
+    public async Task<Response<LoginResDto>> Login([FromBody] LoginReqDto req)
+    {
+        try
+        {
+            var res = await blluser.LoginAsync(req);
+            if (res == null) throw new Exception("用户名和密码错误");
+            return new Response<LoginResDto>
+            {
+                IfSuccess = 1,
+                Data =new LoginResDto(){
+                    RealName=res.RealName,
+                    UserName=res.UserName
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Response<LoginResDto>()
+            {
+                Msg = ex.Message
+            };
+        }
     }
 }
