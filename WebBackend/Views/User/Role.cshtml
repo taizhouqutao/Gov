@@ -210,6 +210,9 @@
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
                 }
             });
         }
@@ -250,6 +253,9 @@
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
                 }
             });
         }
@@ -303,6 +309,9 @@
                             console.error('Error:', error);
                             console.log('Status:', status);
                             console.log('Details:', xhr.responseText);
+                            if(xhr.status == 401) {
+                                window.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                            }
                         }
                     });
                 });

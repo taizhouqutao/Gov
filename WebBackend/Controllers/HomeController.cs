@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using WebBackend.Models;
 using Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebBackend.Controllers;
 
@@ -25,7 +26,8 @@ public class HomeController : Controller
     {
         return View();
     }
-    
+
+    [AllowAnonymous]
     public IActionResult login()
     {
         return View();
@@ -43,6 +45,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<Response<LoginResDto>> Login([FromBody] LoginReqDto req)
     {
         try
