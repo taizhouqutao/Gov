@@ -99,6 +99,14 @@
                             recordsFiltered: json.data.recordsFiltered,
                             data: json.data.data
                         });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.log('Status:', status);
+                        console.log('Details:', xhr.responseText);
+                        if(xhr.status == 401) {
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
                     }
                 },
                 columns: [ // 定义列的数据和列名

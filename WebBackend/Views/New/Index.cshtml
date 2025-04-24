@@ -143,6 +143,14 @@
                             recordsFiltered: json.data.recordsFiltered,
                             data: json.data.data
                         });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.log('Status:', status);
+                        console.log('Details:', xhr.responseText);
+                        if(xhr.status == 401) {
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
                     }
                 },
                 columns: [{
@@ -250,7 +258,7 @@
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
                     if(xhr.status == 401) {
-                        window.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }
                 }
             });
@@ -295,7 +303,7 @@
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
                     if(xhr.status == 401) {
-                        window.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }
                 }
             });
@@ -351,7 +359,7 @@
                             console.log('Status:', status);
                             console.log('Details:', xhr.responseText);
                             if(xhr.status == 401) {
-                                window.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                                window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                             }
                         }
                     });
@@ -397,7 +405,7 @@
                         console.log('Status:', status);
                         console.log('Details:', xhr.responseText);
                         if(xhr.status == 401) {
-                            window.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                         }
                     }
                 });
@@ -442,7 +450,7 @@
                         console.log('Status:', status);
                         console.log('Details:', xhr.responseText);
                         if(xhr.status == 401) {
-                            window.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                         }
                     }
                 });

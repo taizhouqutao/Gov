@@ -52,10 +52,11 @@ public class HomeController : Controller
         {
             var res = await blluser.LoginAsync(req);
             if (res == null) throw new Exception("用户名和密码错误");
+            HttpContext.Session.SetInt32("UserId", res.Id);
             return new Response<LoginResDto>
             {
                 IfSuccess = 1,
-                Data =new LoginResDto(){
+                Data = new LoginResDto(){
                     RealName=res.RealName,
                     UserName=res.UserName
                 }
