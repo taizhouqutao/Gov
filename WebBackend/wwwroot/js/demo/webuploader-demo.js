@@ -82,8 +82,8 @@ jQuery(function() {
 
         chunked: true,
         // server: 'http://webuploader.duapp.com/server/fileupload.php',
-        server: 'http://2betop.net/fileupload.php',
-        fileNumLimit: 300,
+        server: '/User/FileUpload',
+        fileNumLimit: 1,
         fileSizeLimit: 5 * 1024 * 1024,    // 200 M
         fileSingleSizeLimit: 1 * 1024 * 1024    // 50 M
     });
@@ -94,6 +94,10 @@ jQuery(function() {
         label: '继续添加'
     });
 
+    function resetFile()
+    {
+        uploader.reset();
+    }
     // 当有文件添加进来时执行，负责view的创建
     function addFile( file ) {
         var $li = $( '<li id="' + file.id + '">' +
@@ -435,4 +439,61 @@ jQuery(function() {
 
     $upload.addClass( 'state-' + state );
     updateTotalProgress();
+
+    $('.dataTables-example').dataTable({
+        processing: true, // 开启处理状态提示（例如加载中）
+        serverSide: true, // 启用服务器端处理
+        ajax: {
+            url: "/User/GetUsersByPage", // 你的服务器端接口地址
+            contentType: "application/json",
+            type: "POST", // 请求类型，通常是 GET 或 POST
+            data: function(d) {
+                // 构建请求对象，包含DataTables参数和自定义参数
+                var request = {
+                    draw: d.draw,
+                    start: d.start,
+                    length: d.length,
+                    search: d.search,
+                    order: d.order
+                };
+                return JSON.stringify(request);  // 手动转换为JSON字符串
+            },
+            dataFilter: function(response) {
+                var json = JSON.parse(response);
+
+                if (json.ifSuccess !== 1) {
+                    console.log(json.msg);
+                    return JSON.stringify({draw: 0,recordsTotal: 0,recordsFiltered: 0,data: []});
+                }
+
+                // 转换为DataTables标准格式
+                return JSON.stringify({
+                    draw: json.data.draw,
+                    recordsTotal: json.data.recordsTotal,
+                    recordsFiltered: json.data.recordsFiltered,
+                    data: json.data.data
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                console.log('Status:', status);
+                console.log('Details:', xhr.responseText);
+                if(xhr.status == 401) {
+                    window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                }
+            }
+        },
+        columns: [ // 定义列的数据和列名
+            { data: "id",title: "ID"},
+            { data: "userName",title: "用户名"},
+            { data: "realName",title: "姓名"},
+            {
+                data: "createTime",
+                title: "创建时间",
+                render: function(data) {
+                    return new Date(data).toLocaleString();
+                }
+            }
+        ]
+    });
 });

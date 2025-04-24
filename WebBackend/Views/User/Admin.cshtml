@@ -17,6 +17,11 @@
     <link href="/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
     <link href="/css/animate.css" rel="stylesheet">
     <link href="/css/style.css?v=4.1.0" rel="stylesheet">
+
+    <link href="/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
+    <link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
+    <link rel="stylesheet" type="text/css" href="/css/backend_admin.css">
 </head>
 
 <body class="gray-bg">
@@ -33,20 +38,19 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="table_data_tables.html#">
                                 <i class="fa fa-wrench"></i>
                             </a>
-                            <ul class="dropdown-menu dropdown-user">
-                                <li>
-                                    <a href="table_data_tables.html#">选项1</a>
-                                </li>
-                                <li>
-                                    <a href="table_data_tables.html#">选项2</a>
-                                </li>
-                            </ul>
                             <a class="close-link">
                                 <i class="fa fa-times"></i>
                             </a>
                         </div>
                     </div>
                     <div class="ibox-content">
+                        <div class="text-left">
+                            <a id="btn_adduser" data-toggle="modal" class="btn btn-primary">新增</a>
+                            <a id="btn_edituser"  data-toggle="modal" class="btn btn-success">编辑</a>
+                            <a data-toggle="modal" class="btn btn-danger" onclick="del()">删除</a>
+                            <a data-toggle="modal" class="btn btn-primary" onclick="enable()">启用</a>
+                            <a data-toggle="modal" class="btn btn-success" onclick="disable()">禁用</a>
+                        </div>
                         <table class="table table-striped table-bordered table-hover dataTables-example">
                         </table>
                     </div>
@@ -54,6 +58,86 @@
             </div>
         </div>
     </div>
+
+    <div id="modal-form" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h3 class="m-t-none m-b">新增用户</h3>
+                    <form role="form">
+                        <div class="ibox-content">
+                            <input type="hidden" id="userId" name="userId" />
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label>用户名：</label>
+                                    <input type="text" required placeholder="请输入用户名" id="userName" name="userName" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>姓名：</label>
+                                    <input type="text" required placeholder="请输入姓名" id="realName" name="realName" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label>邮箱：</label>
+                                    <input type="email" required placeholder="请输入邮箱" id="userEmail" name="userEmail" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>职位：</label>
+                                    <input type="text" placeholder="请输入职位" id="userPost" name="userPost" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label>密码：</label>
+                                    <input type="password" required placeholder="请输入密码" id="passWord" name="passWord" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>确认密码：</label>
+                                    <input type="password" required placeholder="请确认密码" id="repassWord" name="repassWord" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <p>头像图片</p>
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <div class="showuserImg">
+                                        <img id="showUserHead" src="/img/unperson.jpg" width="110" height="110"/>
+                                    </div>
+                                    <div id="uploader" class="wu-example">
+                                        <div class="queueList">
+                                            <div id="dndArea" class="placeholder">
+                                                <div id="filePicker"></div>
+                                                <p>或将照片拖到这里</p>
+                                            </div>
+                                        </div>
+                                        <div class="statusBar" style="display:none;">
+                                            <div class="progress">
+                                                <span class="text">0%</span>
+                                                <span class="percentage"></span>
+                                            </div>
+                                            <div class="info"></div>
+                                            <div class="btns">
+                                                <div id="filePicker2"></div>
+                                                <div class="uploadBtn">开始上传</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -35px;" onclick="save()">
+                                <strong>保存</strong>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 全局js -->
     <script src="/js/jquery.min.js?v=2.1.4"></script>
     <script src="/js/bootstrap.min.js?v=3.3.7"></script>
@@ -63,66 +147,14 @@
     <script src="/js/plugins/dataTables/dataTables.bootstrap.js"></script>
     <!-- 自定义js -->
     <script src="/js/content.js?v=1.0.0"></script>
-    <!-- Page-Level Scripts -->
-    <script>
-        $(document).ready(function () {
-            $('.dataTables-example').dataTable({
-                processing: true, // 开启处理状态提示（例如加载中）
-                serverSide: true, // 启用服务器端处理
-                ajax: {
-                    url: "/User/GetUsersByPage", // 你的服务器端接口地址
-                    contentType: "application/json",
-                    type: "POST", // 请求类型，通常是 GET 或 POST
-                    data: function(d) {
-                        // 构建请求对象，包含DataTables参数和自定义参数
-                        var request = {
-                            draw: d.draw,
-                            start: d.start,
-                            length: d.length,
-                            search: d.search,
-                            order: d.order
-                        };
-                        return JSON.stringify(request);  // 手动转换为JSON字符串
-                    },
-                    dataFilter: function(response) {
-                        var json = JSON.parse(response);
 
-                        if (json.ifSuccess !== 1) {
-                            console.log(json.msg);
-                            return JSON.stringify({draw: 0,recordsTotal: 0,recordsFiltered: 0,data: []});
-                        }
-
-                        // 转换为DataTables标准格式
-                        return JSON.stringify({
-                            draw: json.data.draw,
-                            recordsTotal: json.data.recordsTotal,
-                            recordsFiltered: json.data.recordsFiltered,
-                            data: json.data.data
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error:', error);
-                        console.log('Status:', status);
-                        console.log('Details:', xhr.responseText);
-                        if(xhr.status == 401) {
-                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
-                        }
-                    }
-                },
-                columns: [ // 定义列的数据和列名
-                    { data: "id",title: "ID"},
-                    { data: "userName",title: "用户名"},
-                    { data: "realName",title: "姓名"},
-                    {
-                        data: "createTime",
-                        title: "创建时间",
-                        render: function(data) {
-                            return new Date(data).toLocaleString();
-                        }
-                    }
-                ]
-            });
-        });
+    <!-- Web Uploader -->
+    <script type="text/javascript">
+        // 添加全局站点信息
+        var BASE_URL = '/js/plugins/webuploader';
     </script>
+    <script src="/js/plugins/webuploader/webuploader.min.js"></script>
+
+    <script src="/js/backend_admin.js"></script>
 </body>
 </html>
