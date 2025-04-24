@@ -10,6 +10,7 @@ namespace WebBackend.Controllers
     {
         private BLL.BllRole bllrole = new BLL.BllRole();
         private BLL.BllUser blluser = new BLL.BllUser();
+        private BLL.BllBizLog bllbizlog = new BLL.BllBizLog();
         public IActionResult Index()
         {
             return View();
@@ -21,6 +22,53 @@ namespace WebBackend.Controllers
         public IActionResult Role()
         {
             return View();
+        }
+        public IActionResult BizLog()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<Response<PageList<BizLog>>> GetBizLogsByPage([FromBody] PageReq<BizLogReqDto> req)
+        {
+            try
+            {
+                var res = await bllbizlog.GetBizLogsByPageAsync(req);
+                return new Response<PageList<BizLog>>
+                {
+                    IfSuccess = 1,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<PageList<BizLog>>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
+        public async Task<Response<BizLog>> GetBizLogById([FromBody] BizLogReqDto req)
+        {
+            try
+            {
+                var res = await bllbizlog.GetBizLogByIdAsync(Convert.ToInt32(req.id));
+                if (res == null) throw new Exception("编码对应角色不存在");
+                return new Response<BizLog>
+                {
+                    IfSuccess = 1,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<BizLog>()
+                {
+                    Msg = ex.Message
+                };
+            }
         }
 
         [HttpPost]

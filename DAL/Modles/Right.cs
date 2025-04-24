@@ -18,6 +18,9 @@ namespace DAL.Modles
     [Column("RightCode")]
     public required string RightCode { get; set; }
 
+    /// <summary>
+    /// 权限类型 0页面 1地址 3按钮
+    /// </summary>
     [Column("RightType")]
     public required string RightType { get; set; }
 

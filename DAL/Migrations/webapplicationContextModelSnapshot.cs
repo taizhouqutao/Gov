@@ -19,6 +19,65 @@ namespace DAL.Migrations
                 .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("DAL.Modles.BizLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("ActionDesc")
+                        .HasColumnType("longtext")
+                        .HasColumnName("ActionDesc");
+
+                    b.Property<string>("ActionJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("ActionJson");
+
+                    b.Property<string>("ActionRemark")
+                        .HasColumnType("longtext")
+                        .HasColumnName("ActionRemark");
+
+                    b.Property<string>("ActionType")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("ActionType");
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("CreateTime");
+
+                    b.Property<int>("CreateUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("CreateUserId");
+
+                    b.Property<int>("IfDel")
+                        .HasColumnType("int")
+                        .HasColumnName("IfDel");
+
+                    b.Property<string>("ModelTitle")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("ModelTitle");
+
+                    b.Property<string>("OptUserName")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("OptUserName");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("UpdateTime");
+
+                    b.Property<int?>("UpdateUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UpdateUserId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BizLogs");
+                });
+
             modelBuilder.Entity("DAL.Modles.New", b =>
                 {
                     b.Property<int>("Id")

@@ -28,6 +28,8 @@ namespace DAL.Contexts
 
         public DbSet<NewType>? NewTypes { get; set; }
 
+        public DbSet<BizLog>? BizLogs { get; set; }
+
         public IConfiguration configuration;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
