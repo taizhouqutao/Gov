@@ -15,6 +15,7 @@
     <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
     <!-- Data Tables -->
     <link href="/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <link href="/css/animate.css" rel="stylesheet">
     <link href="/css/style.css?v=4.1.0" rel="stylesheet">
 
@@ -45,8 +46,8 @@
                     </div>
                     <div class="ibox-content">
                         <div class="text-left">
-                            <a id="btn_adduser" data-toggle="modal" class="btn btn-primary">新增</a>
-                            <a id="btn_edituser"  data-toggle="modal" class="btn btn-success">编辑</a>
+                            <a data-toggle="modal" class="btn btn-primary" onclick="add()">新增</a>
+                            <a data-toggle="modal" class="btn btn-success" onclick="edit()">编辑</a>
                             <a data-toggle="modal" class="btn btn-danger" onclick="del()">删除</a>
                             <a data-toggle="modal" class="btn btn-primary" onclick="enable()">启用</a>
                             <a data-toggle="modal" class="btn btn-success" onclick="disable()">禁用</a>
@@ -69,17 +70,17 @@
                             <input type="hidden" id="userId" name="userId" />
                             <div class="form-inline">
                                 <div class="form-group">
-                                    <label>用户名：</label>
+                                    <label>用户名：</label><label style="color: red;">*</label>
                                     <input type="text" required placeholder="请输入用户名" id="userName" name="userName" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label>姓名：</label>
+                                    <label>姓名：</label><label style="color: red;">*</label>
                                     <input type="text" required placeholder="请输入姓名" id="realName" name="realName" class="form-control">
                                 </div>
                             </div>
                             <div class="form-inline">
                                 <div class="form-group">
-                                    <label>邮箱：</label>
+                                    <label>邮箱：</label><label style="color: red;">*</label>
                                     <input type="email" required placeholder="请输入邮箱" id="userEmail" name="userEmail" class="form-control">
                                 </div>
                                 <div class="form-group">
@@ -89,13 +90,14 @@
                             </div>
                             <div class="form-inline">
                                 <div class="form-group">
-                                    <label>密码：</label>
+                                    <label>密码：</label><label style="color: red;">*</label>
                                     <input type="password" required placeholder="请输入密码" id="passWord" name="passWord" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label>确认密码：</label>
+                                    <label>确认密码：</label><label style="color: red;">*</label>
                                     <input type="password" required placeholder="请确认密码" id="repassWord" name="repassWord" class="form-control">
                                 </div>
+                                <label id="password-error" style="color: red;"></label>
                             </div>
                         </div>
                         <div class="ibox-content">
@@ -147,7 +149,7 @@
     <script src="/js/plugins/dataTables/dataTables.bootstrap.js"></script>
     <!-- 自定义js -->
     <script src="/js/content.js?v=1.0.0"></script>
-
+    <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
     <!-- Web Uploader -->
     <script type="text/javascript">
         // 添加全局站点信息
@@ -156,5 +158,220 @@
     <script src="/js/plugins/webuploader/webuploader.min.js"></script>
 
     <script src="/js/backend_admin.js"></script>
+    <script>
+        var datatable=null;
+        const password1 = document.getElementById("passWord");
+        const password2 = document.getElementById("repassWord");
+        const errorElement = document.getElementById("password-error");
+
+        function checkPasswordMatch() {
+            if (password1.value !== password2.value) {
+                errorElement.textContent = "密码不一致！";
+            } else {
+                errorElement.textContent = "";
+            }
+        }
+
+        // 监听输入事件（实时检查）
+        password1.addEventListener("input", checkPasswordMatch);
+        password2.addEventListener("input", checkPasswordMatch);
+
+        $(document).ready(function () {
+            datatable = $('.dataTables-example').DataTable({
+                processing: true, // 开启处理状态提示（例如加载中）
+                serverSide: true, // 启用服务器端处理
+                ajax: {
+                    url: "/User/GetUsersByPage", // 你的服务器端接口地址
+                    contentType: "application/json",
+                    type: "POST", // 请求类型，通常是 GET 或 POST
+                    data: function(d) {
+                        // 构建请求对象，包含DataTables参数和自定义参数
+                        var request = {
+                            draw: d.draw,
+                            start: d.start,
+                            length: d.length,
+                            search: d.search,
+                            order: d.order
+                        };
+                        return JSON.stringify(request);  // 手动转换为JSON字符串
+                    },
+                    dataFilter: function(response) {
+                        var json = JSON.parse(response);
+
+                        if (json.ifSuccess !== 1) {
+                            console.log(json.msg);
+                            return JSON.stringify({draw: 0,recordsTotal: 0,recordsFiltered: 0,data: []});
+                        }
+
+                        // 转换为DataTables标准格式
+                        return JSON.stringify({
+                            draw: json.data.draw,
+                            recordsTotal: json.data.recordsTotal,
+                            recordsFiltered: json.data.recordsFiltered,
+                            data: json.data.data
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.log('Status:', status);
+                        console.log('Details:', xhr.responseText);
+                        if(xhr.status == 401) {
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                    }
+                },
+                columns: [{
+                      sClass: "text-center",
+                      data: "id",
+                      render: function (data, type, full, meta) {//这里就是要显示的checkbox多选框了
+                          return '<input type="checkbox" class="checkchild" value="' + data + '" />';
+                      },
+                      bSortable: false
+                    },
+                    { data: "id",title: "ID",name:"Id",bSortable: false},
+                    { data: "userName",title: "用户名",name:"UserName",bSortable: false},
+                    { data: "realName",title: "姓名",name:"RealName",bSortable: false},
+                    {
+                        data: "createTime",
+                        name:"CreateTime",
+                        title: "创建时间",
+                        bSortable: false,
+                        render: function(data) {
+                            return new Date(data).toLocaleString();
+                        }
+                    }
+                ]
+            });
+        });
+
+        function add()
+        {
+            $('#userName').val('');
+            $('#realName').val('');
+            $('#userEmail').val('');
+            $('#userPost').val('');
+            $('#passWord').val('');
+            $('#repassWord').val('');
+            $("#userId").val('');
+            $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
+        }
+        function edit()
+        {
+            var selectedIds = getSelectedIds();
+            if(selectedIds.length!=1)
+            {
+                swal({
+                    title: "提示",
+                    text: "请勾选1条记录进行编辑"
+                });
+            }
+            else
+            {
+                getDetail(selectedIds[0]);
+            }
+        }
+        function getSelectedIds() {
+            var selectedIds = [];
+            $('.checkchild:checked').each(function() {
+                selectedIds.push($(this).val()); // 获取 data-id 属性值并添加到数组中
+            });
+            return selectedIds;
+        }
+        function getDetail(roleId)
+        {
+            $.ajax({
+                url:"/User/GetUserById",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    id:roleId
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        $('#userName').val(result.data.userName);
+                        $('#realName').val(result.data.realName);
+                        $('#userEmail').val(result.data.userEmail);
+                        $('#userPost').val(result.data.userPost);
+                        $("#userId").val(result.data.id);
+                        $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
+        }
+        function search()
+        {
+            datatable.ajax.reload(); // 保持当前分页和排序状态
+        }
+        function save()
+        {
+            event.stopPropagation(); // 阻止事件冒泡
+            event.preventDefault();
+            var password = $('#passWord').val();
+            var repassWord = $('#repassWord').val();
+            if(password && repassWord && password!=repassWord)
+            { 
+                swal({
+                    title: "密码不一致！",
+                    text: result.msg
+                });
+                return;
+            }
+            if(!$("#userName").val()){$("#userName").focus(); return;}
+            if(!$("#realName").val()){$("#realName").focus(); return;}
+            if(!$("#userEmail").val()){$("#userEmail").focus(); return;}
+            if(!$("#passWord").val()){$("#passWord").focus(); return;}
+            $.ajax({
+                url:"/User/SaveUser",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    id: $("#userId").val()?$("#userId").val():null,
+                    userName:$("#userName").val(),
+                    realName:$('#realName').val(),
+                    userEmail:$('#userEmail').val(),
+                    userPost:$('#userPost').val(),
+                    passWord:$('#passWord').val(),
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        $('#modal-form').modal('hide'); // 显示模态框，并触发 show 事件，从而设置内容。
+                        search();
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>

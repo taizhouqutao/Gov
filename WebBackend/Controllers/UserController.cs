@@ -29,6 +29,57 @@ namespace WebBackend.Controllers
         }
 
         [HttpPost]
+        public async Task<Response> SaveUser([FromBody] UserReqDto req)
+        {
+            try
+            {
+                User? res = null;
+                if(string.IsNullOrEmpty(req.userName)) throw new Exception("用户名不能为空");
+                if (req.id != null)
+                {
+                    var User = (await blluser.GetUsersAsync(new UserReqDto(){ userName=req.userName, idNot=req.id})).FirstOrDefault();
+                    if(User!=null) throw new Exception("用户名已存在");
+                    res = await blluser.GetUserByIdAsync(Convert.ToInt32(req.id));
+                    if (res == null) throw new Exception("编码对应实体不存在");
+                    res.UserName=req.userName??"";
+                    res.RealName=req.realName??"";
+                    res.PassWord=req.passWord??"";
+                    res.UserEmail=req.userEmail??"";
+                    res.UserPost=req.userPost??"";
+                    await blluser.UpdateUserAsync(res);
+                }
+                else
+                {
+                    var User = (await blluser.GetUsersAsync(new UserReqDto(){ userName=req.userName})).FirstOrDefault();
+                    if(User!=null) throw new Exception("用户名已存在");
+                    res = new User()
+                    {
+                        CreateTime=DateTime.Now,
+                        CreateUserId=1,
+                        IfDel=0,
+                        RealName=req.realName??"",
+                        PassWord=req.passWord??"",
+                        UserName=req.userName??"",
+                        UserEmail=req.userEmail??"",
+                        UserPost=req.userPost
+                    };
+                    await blluser.AddUserAsync(res);
+                }
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
         public async Task<Response<PageList<BizLog>>> GetBizLogsByPage([FromBody] PageReq<BizLogReqDto> req)
         {
             try
@@ -55,7 +106,7 @@ namespace WebBackend.Controllers
             try
             {
                 var res = await bllbizlog.GetBizLogByIdAsync(Convert.ToInt32(req.id));
-                if (res == null) throw new Exception("编码对应角色不存在");
+                if (res == null) throw new Exception("编码对应日志不存在");
                 return new Response<BizLog>
                 {
                     IfSuccess = 1,
@@ -70,7 +121,34 @@ namespace WebBackend.Controllers
                 };
             }
         }
-
+        [HttpPost]
+        public async Task<Response<UserResDto>> GetUserById([FromBody] UserReqDto req)
+        {
+            try
+            {
+                var res = await blluser.GetUserByIdAsync(Convert.ToInt32(req.id));
+                if (res == null) throw new Exception("编码对应实体不存在");
+                return new Response<UserResDto>
+                {
+                    IfSuccess = 1,
+                    Data = new UserResDto(){
+                        Id=res.Id, 
+                        RealName=res.RealName,
+                        UserName=res.UserName,
+                        UserEmail=res.UserEmail,
+                        UserHead=res.UserHead, 
+                        UserPost=res.UserPost
+                    },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<UserResDto>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
         [HttpPost]
         public async Task<Response<PageList<User>>> GetUsersByPage([FromBody] PageReq<UserReqDto> req)
         {

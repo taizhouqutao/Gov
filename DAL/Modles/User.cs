@@ -20,5 +20,14 @@ namespace DAL.Modles
 
         [Column("RealName")]
         public required string RealName { get; set; }
+
+        [Column("UserEmail")]
+        public required string UserEmail{ get; set; }
+
+        [Column("UserPost")]
+        public string? UserPost{ get; set; }
+
+        [Column("UserHead")]
+        public string? UserHead{ get; set; }
     }
 }

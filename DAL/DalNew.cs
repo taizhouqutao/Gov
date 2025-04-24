@@ -35,7 +35,6 @@ namespace DAL
         public async Task<New> GetNewByIdAsync(int Id)
         {
             New res = null;
-            int total = 0, allcount = 0;
             using (var context = new webapplicationContext())
             {
                 var Query = context.News.AsQueryable();

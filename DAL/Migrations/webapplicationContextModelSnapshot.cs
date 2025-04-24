@@ -338,10 +338,23 @@ namespace DAL.Migrations
                         .HasColumnType("int")
                         .HasColumnName("UpdateUserId");
 
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("UserEmail");
+
+                    b.Property<string>("UserHead")
+                        .HasColumnType("longtext")
+                        .HasColumnName("UserHead");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("UserName");
+
+                    b.Property<string>("UserPost")
+                        .HasColumnType("longtext")
+                        .HasColumnName("UserPost");
 
                     b.HasKey("Id");
 
