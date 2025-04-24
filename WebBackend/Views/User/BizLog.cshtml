@@ -1,0 +1,196 @@
+@{
+    ViewData["Title"] = "日志管理";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日志管理</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <!-- Data Tables -->
+    <link href="/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/css/animate.css" rel="stylesheet">
+    <link href="/css/style.css?v=4.1.0" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>日志管理 <small>列表，查找</small></h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="table_data_tables.html#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <table class="table table-striped table-bordered table-hover dataTables-example">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* <div id="modal-form" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <h3 class="m-t-none m-b">日志详情</h3>
+                        <form role="form">
+                            <input type="hidden" id="roleId" name="roleId" />
+                            <div class="form-group">
+                                <label>角色名：</label>
+                                <input type="text" placeholder="请输入角色名" id="roleName" name="roleName" class="form-control">
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" onclick="saveRole()">
+                                    <strong>保存</strong>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> *@
+    
+    <!-- 全局js -->
+    <script src="/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.7"></script>
+    <script src="/js/plugins/jeditable/jquery.jeditable.js"></script>
+    <!-- Data Tables -->
+    <script src="/js/plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+    <!-- 自定义js -->
+    <script src="/js/content.js?v=1.0.0"></script>
+    <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <!-- Page-Level Scripts -->
+    <script>
+        var dtRoles=null;
+        $(document).ready(function () {
+            dtRoles=$('.dataTables-example').DataTable({
+                processing: true, // 开启处理状态提示（例如加载中）
+                serverSide: true, // 启用服务器端处理
+                ajax: {
+                    url: "/User/GetBizLogsByPage", // 你的服务器端接口地址
+                    contentType: "application/json",
+                    type: "POST", // 请求类型，通常是 GET 或 POST
+                    data: function(d) {
+                        // 构建请求对象，包含DataTables参数和自定义参数
+                        if (d.order && d.order.length > 0) {
+                            d.order.forEach(function(orderItem) {
+                                const columnIndex = orderItem.column;  // 原始列索引
+                                const columnName = d.columns[columnIndex].name; // 通过索引获取列名
+                                orderItem.columnName = columnName;  // 添加列名参数
+                            });
+                        }
+                        var request = {
+                            draw: d.draw,
+                            start: d.start,
+                            length: d.length,
+                            search: d.search,
+                            order: d.order
+                        };
+                        return JSON.stringify(request);  // 手动转换为JSON字符串
+                    },
+                    dataFilter: function(response) {
+                        var json = JSON.parse(response);
+                        if (json.ifSuccess !== 1) {
+                            console.log(json.msg);
+                            return JSON.stringify({draw: 0,recordsTotal: 0,recordsFiltered: 0,data: []});
+                        }
+                        // 转换为DataTables标准格式
+                        return JSON.stringify({
+                            draw: json.data.draw,
+                            recordsTotal: json.data.recordsTotal,
+                            recordsFiltered: json.data.recordsFiltered,
+                            data: json.data.data
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.log('Status:', status);
+                        console.log('Details:', xhr.responseText);
+                        if(xhr.status == 401) {
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                    }
+                },
+                columns: [
+                    { data: "id",title: "ID",name:"Id",bSortable: false},
+                    { data: "modelTitle",title: "模块名称",name:"ModelTitle",bSortable: false},
+                    { data: "actionType",title: "菜单名称",name:"ActionType",bSortable: false},
+                    { data: "actionDesc",title: "动作",name:"ActionDesc",bSortable: false},
+                    { data: "actionRemark",title: "操作内容",name:"ActionRemark",bSortable: false},
+                    {
+                        data: "createTime",
+                        title: "操作时间",
+                        name:"CreateTime",
+                        bSortable: false,
+                        render: function(data) {
+                            return new Date(data).toLocaleString();
+                        }
+                    },
+                    { data: "optUserName",title: "操作人",name:"OptUserName",bSortable: false},
+                ]
+            });
+                        // 添加行双击事件
+            @* $('.dataTables-example').on('dblclick', 'tbody tr', function() {
+                var rowData = dtRoles.row(this).data();
+                getLogDetail(rowData.id);
+            }); *@
+        });
+        function getLogDetail(logId)
+        {
+            $.ajax({
+                url:"/User/GetBizLogById",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    id:logId
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        $("#roleName").val(result.data.roleName);
+                        $("#roleId").val(result.data.id);
+                        $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
