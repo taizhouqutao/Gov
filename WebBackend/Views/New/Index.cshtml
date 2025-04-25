@@ -67,14 +67,14 @@
                             <input type="hidden" id="newId" name="newId" />
                             <div class="form-group">
                                 <label>标题：</label>
-                                <input type="text" placeholder="请输入标题" id="newTitle" name="newTitle" class="form-control">
+                                <input type="text" required placeholder="请输入标题" id="newTitle" name="newTitle" class="form-control">
                             </div>
                             <div class="ibox-content no-padding" id="eg">
                                 <div class="click2edit wrapper" id="newContent">
                                 </div>
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" onclick="save()">
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit">
                                     <strong>保存</strong>
                                 </button>
                             </div>
@@ -200,6 +200,10 @@
                 height: 400,
                 lang: 'zh-CN',
                 focus: true
+            });
+
+            $('#modal-form').on('submit', function(event) {
+                save();
             });
         });
         function search()
