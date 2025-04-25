@@ -58,14 +58,14 @@
                 <div class="modal-body">
                     <div class="row">
                         <h3 class="m-t-none m-b">新增角色</h3>
-                        <form role="form">
+                        <form role="form" action="/User/SaveRole" method="post">
                             <input type="hidden" id="roleId" name="roleId" />
                             <div class="form-group">
                                 <label>角色名：</label>
-                                <input type="text" placeholder="请输入角色名" id="roleName" name="roleName" class="form-control">
+                                <input type="text" required placeholder="请输入角色名" id="roleName" name="roleName" class="form-control">
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -35px;" onclick="saveRole()">
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -35px;" type="submit">
                                     <strong>保存</strong>
                                 </button>
                             </div>
@@ -164,6 +164,10 @@
                 var rowData = dtRoles.row(this).data();
                 getRoleDetail(rowData.id);
             });
+
+            $('#modal-form').on('submit', function(event) {
+                saveRole();
+            });
         });
         function searchRole()
         {
@@ -233,7 +237,6 @@
         }
         function saveRole()
         {
-            event.stopPropagation(); // 阻止事件冒泡
             event.preventDefault();
             $.ajax({
                 url:"/User/SaveRole",
