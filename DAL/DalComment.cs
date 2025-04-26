@@ -20,7 +20,14 @@ namespace DAL
                 from QueryNew_Join in p_QueryNew.DefaultIfEmpty()
                 where 
                     (QuerComment.IfDel==0) &&
-                    ((req==null||req.Query==null||req.Query.newTypeId==null)?true:QueryNew_Join.NewTypeId==req.Query.newTypeId)
+                    ((req==null||req.Query==null||req.Query.newTypeId==null)?true:QueryNew_Join.NewTypeId==req.Query.newTypeId) &&
+                    ((req.search==null||string.IsNullOrEmpty(req.search.value))?true:(
+                        QuerComment.Content.Contains(req.search.value)||
+                        (!string.IsNullOrEmpty(QuerComment.PersonCellphone) && QuerComment.PersonCellphone.Contains(req.search.value))||
+                        (!string.IsNullOrEmpty(QuerComment.PersonName) && QuerComment.PersonName.Contains(req.search.value)) ||
+                        (!string.IsNullOrEmpty(QueryNew_Join.NewTitle) && QueryNew_Join.NewTitle.Contains(req.search.value)) ||
+                        (!string.IsNullOrEmpty(QuerComment.Content) && QuerComment.Content.Contains(req.search.value)) 
+                    ))
                 select new CommentResDto {
                     Id=QuerComment.Id,
                     Content=QuerComment.Content,
