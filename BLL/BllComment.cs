@@ -14,5 +14,9 @@ namespace BLL
         {
             return await dal.AddCommentAsync(entity);
         }
+
+        public async Task<PageList<CommentResDto>> GetCommentsByPageAsync(PageReq<CommentReqDto> req) {
+            return await dal.GetCommentsByPageAsync(req);
+        }
     }
 }

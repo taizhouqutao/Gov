@@ -130,7 +130,7 @@
                             </div>
                         </div>
                         <div>
-                            <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -35px;" onclick="save()">
+                            <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -35px;" type="submit">
                                 <strong>保存</strong>
                             </button>
                         </div>
@@ -242,6 +242,15 @@
                     }
                 ]
             });
+        
+            $('.dataTables-example').on('dblclick', 'tbody tr', function() {
+                var rowData = datatable.row(this).data();
+                getDetail(rowData.id);
+            });
+
+            $('#modal-form').on('submit', function(event) {
+                save();
+            });
         });
 
         function add()
@@ -332,10 +341,6 @@
                 });
                 return;
             }
-            if(!$("#userName").val()){$("#userName").focus(); return;}
-            if(!$("#realName").val()){$("#realName").focus(); return;}
-            if(!$("#userEmail").val()){$("#userEmail").focus(); return;}
-            if(!$("#passWord").val()){$("#passWord").focus(); return;}
             $.ajax({
                 url:"/User/SaveUser",
                 contentType: "application/json",

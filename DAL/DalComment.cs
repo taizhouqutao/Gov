@@ -3,10 +3,52 @@ using DAL;
 using DAL.Contexts;
 using DAL.Modles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System.Reflection;
 namespace DAL
 {
     public class DalComment{
+        public async Task<PageList<CommentResDto>> GetCommentsByPageAsync(PageReq<CommentReqDto> req) {
+            var res=new List<CommentResDto>();
+            int total=0,allcount=0;
+            using (var context = new webapplicationContext())
+            {
+                var QuerComments= context.Comments.AsQueryable();
+                var QueryNews= context.News.AsQueryable();
+                var QureyRes = (from QuerComment in QuerComments
+                join QueryNew in QueryNews on QuerComment.NewId equals QueryNew.Id into p_QueryNew
+                from QueryNew_Join in p_QueryNew.DefaultIfEmpty()
+                where 
+                    (QuerComment.IfDel==0) &&
+                    ((req==null||req.Query==null||req.Query.newTypeId==null)?true:QueryNew_Join.NewTypeId==req.Query.newTypeId)
+                select new CommentResDto {
+                    Id=QuerComment.Id,
+                    Content=QuerComment.Content,
+                    CreateTime=QuerComment.CreateTime,
+                    CreateUserId=QuerComment.CreateUserId,
+                    FatherCommentId=QuerComment.FatherCommentId,
+                    IfDeal=QuerComment.IfDeal,
+                    IsShow=QuerComment.IsShow,
+                    NewId=QuerComment.NewId,
+                    NewTitle=QueryNew_Join.NewTitle,
+                    PersonCellphone=QuerComment.PersonCellphone,
+                    PersonName=QuerComment.PersonName,
+                    RoleType=QuerComment.RoleType,
+                    UpdateTime=QuerComment.UpdateTime,
+                    UpdateUserId=QuerComment.UpdateUserId,
+                    UserId=QuerComment.UserId
+                }).OrderByDescending(j=>j.Id);
+                res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
+                total= await QureyRes.CountAsync();
+                allcount=await context.Comments.CountAsync(i=>i.IfDel==0);
+            }
+            return new PageList<CommentResDto>(){
+                data=res,
+                recordsFiltered=total,
+                draw=req.draw,
+                recordsTotal=allcount
+            };
+        }
         public async Task<List<Comment>> GetCommentsByAsync(CommentReqDto req)
         {
             var res=new List<Comment>();

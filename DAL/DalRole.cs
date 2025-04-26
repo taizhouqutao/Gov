@@ -21,7 +21,7 @@ namespace DAL
                 QureyRes = QureyRes.OrderByDescending(j =>j.Id);
                 res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
                 total= await QureyRes.CountAsync();
-                allcount=await context.Roles.CountAsync();
+                allcount=await context.Roles.CountAsync(i=>i.IfDel==0);
             }
             return new PageList<Role>(){
                 data=res,

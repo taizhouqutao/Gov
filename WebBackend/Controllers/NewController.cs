@@ -10,6 +10,7 @@ namespace WebBackend.Controllers
     public class NewController: Controller
     {
         private BLL.BllNew bll = new BLL.BllNew();
+        private BLL.BllComment bllcomment = new BLL.BllComment();
         private BLL.BllNewType bllNewType = new BLL.BllNewType();
 
         public async Task<IActionResult> Index(int NewTypeId)
@@ -20,6 +21,37 @@ namespace WebBackend.Controllers
                 Title=NewType.NewTypeName
             };
             return View(NewPage);
+        }
+
+        public async Task<IActionResult> Comment(int NewTypeId)
+        {
+            var NewType = await bllNewType.GetNewTypeByIdAsync(NewTypeId);
+            var NewPage=new NewPage(){
+                NewTypeId=NewType.Id,
+                Title=NewType.NewTypeName
+            };
+            return View(NewPage);
+        }
+
+        [HttpPost]
+        public async Task<Response<PageList<CommentResDto>>> GetCommentsByPage([FromBody] PageReq<CommentReqDto> req)
+        {
+            try
+            {
+                var res = await bllcomment.GetCommentsByPageAsync(req);
+                return new Response<PageList<CommentResDto>>
+                {
+                    IfSuccess = 1,
+                    Data = res
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<PageList<CommentResDto>>()
+                {
+                    Msg = ex.Message
+                };
+            }
         }
 
         [HttpPost]

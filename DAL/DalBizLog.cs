@@ -22,7 +22,7 @@ namespace DAL
                 QureyRes = QureyRes.OrderByDescending(j =>j.Id);
                 res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
                 total= await QureyRes.CountAsync();
-                allcount=await context.BizLogs.CountAsync();
+                allcount=await context.BizLogs.CountAsync(i=>i.IfDel==0);
             }
             return new PageList<BizLog>(){
                 data=res,
