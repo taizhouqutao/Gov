@@ -82,5 +82,31 @@ namespace DAL
             }
             return res;
         }
+
+        public async Task DelCommentAsync(List<int> Ids)
+        {
+            using (var context = new webapplicationContext())
+            {
+                var res =await context.Comments.Where(i=>Ids.Contains(i.Id)).ToListAsync();
+                res.ForEach(i=>{
+                  i.IfDel=1;
+                });
+                context.Comments.UpdateRange(res);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task SetCommentShowAsync(CommentReqDto req)
+        {
+            using (var context = new webapplicationContext())
+            {
+                var res =await context.Comments.Where(i=>req.ids.Contains(i.Id)).ToListAsync();
+                res.ForEach(i=>{
+                  i.IsShow=Convert.ToInt32(req.isShow);
+                });
+                context.Comments.UpdateRange(res);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }

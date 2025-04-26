@@ -179,7 +179,7 @@ namespace WebBackend.Controllers
         }
 
         [HttpPost]
-        public async  Task<Response> SetNewPublic([FromBody] NewReqDto req)
+        public async Task<Response> SetNewPublic([FromBody] NewReqDto req)
         {
             try
             {
@@ -191,6 +191,52 @@ namespace WebBackend.Controllers
                       i.PublicTime=((int) req.isPublic)==1?DateTime.Now:null;
                     });
                     await bll.UpdateNewsAsync(News);
+                }
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+    
+        [HttpPost]
+        public async Task<Response> DelComments([FromBody] CommentReqDto req)
+        {
+            try
+            {
+                if (req.ids != null && req.ids.Count>0)
+                {
+                    await bllcomment.DelCommentAsync(req.ids);
+                }
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
+        public async Task<Response> SetCommentShow([FromBody] CommentReqDto req)
+        {
+            try
+            {
+                if (req.ids != null && req.ids.Count>0)
+                {
+                    await bllcomment.SetCommentShowAsync(req);
                 }
                 return new Response
                 {

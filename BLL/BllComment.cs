@@ -18,5 +18,15 @@ namespace BLL
         public async Task<PageList<CommentResDto>> GetCommentsByPageAsync(PageReq<CommentReqDto> req) {
             return await dal.GetCommentsByPageAsync(req);
         }
+
+        public async Task DelCommentAsync(List<int> Ids)
+        {
+            await dal.DelCommentAsync(Ids);
+        }
+
+        public async Task SetCommentShowAsync(CommentReqDto req)
+        {
+            await dal.SetCommentShowAsync(req);
+        }
     }
 }

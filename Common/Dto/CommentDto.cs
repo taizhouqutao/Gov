@@ -5,7 +5,11 @@ namespace Common
     {
         public int? newId { get; set; }
 
+        public List<int>? ids{ get; set; }
+
         public int? newTypeId { get; set; }
+
+        public int? isShow { get; set; }
     } 
 
     [Serializable]
