@@ -14,6 +14,7 @@
     <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
     <!-- Data Tables -->
     <link href="/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
     <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <link href="/css/animate.css" rel="stylesheet">
     <link href="/css/style.css?v=4.1.0" rel="stylesheet">
@@ -48,6 +49,101 @@
                         </div>
                         <table class="table table-striped table-bordered table-hover dataTables-example">
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="modal-form" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog" style="min-width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <h3 class="m-t-none m-b">@(Model.Title+"反馈处理")
+                        </h3>
+                        <form role="form">
+                            <input type="hidden" id="newId" name="newId" />
+                            <div class="form-group">
+                                <label>@(Model.Title+"标题")：</label>
+                                <input type="text" required readonly placeholder="请输入标题" id="newTitle" name="newTitle" class="form-control">
+                            </div>
+                            <div class="form-inline">
+                                <label>是否显示</label>
+                                <div class="radio i-checks">
+                                    <label><input type="radio" value="1" name="isShow"> <i></i>显示</label>
+                                </div>
+                                <div class="radio i-checks">
+                                    <label><input type="radio" checked value="0" name="isShow"> <i></i>不显示</label>
+                                </div>
+                            </div>   
+                            
+                            <div class="social-feed-box">
+                                <div class="pull-right social-action dropdown">
+                                    <button data-toggle="dropdown" class="dropdown-toggle btn-white">
+                                        <i class="fa fa-angle-down"></i>
+                                    </button>
+                                </div>
+                                <div class="social-avatar">
+                                    <a href="" class="pull-left">
+                                        <img alt="image" src="/img/unperson.jpg">
+                                    </a>
+                                    <div class="media-body">
+                                        <a href="#">尤小右</a>
+                                        <small class="text-muted">8月18日 16:05 来自 微博 weibo.com</small>
+                                    </div>
+                                </div>
+                                <div class="social-body">
+                                    <p>
+                                        看到说是 React 的也是醉了，他说的是 falcor... Khan Academy 是最早在生产环境里使用 React 的公司之一
+                                    </p>
+                                    <div class="well">
+                                        抽奖，人民币2000元，从转发这个微博的粉丝中抽取一人。11月16日平台开奖。随手一转，万一中了呢？
+                                    </div>
+                                </div>
+                                <div class="social-footer">
+                                    <div class="social-comment">
+                                        <a href="" class="pull-left">
+                                            <img alt="image" src="/img/unperson.jpg">
+                                        </a>
+                                        <div class="media-body">
+                                            <a href="#">尤小右</a> jQuery的作者在Twitter上发了一条这样的推，也是有点平衡了
+                                            <br/>
+                                            <small class="text-muted">8月18日</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="social-comment">
+                                        <a href="" class="pull-left">
+                                            <img alt="image" src="/img/unperson.jpg">
+                                        </a>
+                                        <div class="media-body">
+                                            <a href="#">尤小右</a> John大概是在学习React和Flux。。。
+                                            <br/>
+                                            <small class="text-muted">8月18日</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="social-comment">
+                                        <a href="" class="pull-left">
+                                            <img alt="image" src="/img/unperson.jpg">
+                                        </a>
+                                        <div class="media-body">
+                                            <textarea class="form-control" required placeholder="填写反馈..."></textarea>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                     
+                            <div>
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -5px;" type="submit">
+                                    <strong>保存</strong>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -203,7 +299,7 @@
                 success:function(result){
                     if(result.ifSuccess)
                     {
-
+                        $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
                     else
                     {

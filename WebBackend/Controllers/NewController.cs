@@ -251,5 +251,28 @@ namespace WebBackend.Controllers
                 };
             }
         }
+    
+       [HttpPost]
+        public async Task<Response<CommentResDetailDto?>> GetCommentsById([FromBody] CommentReqDto req)
+        {
+            try
+            {
+                var res = await bllcomment.GetCommentByIdAsync(Convert.ToInt32(req.id));
+                if (res == null) throw new Exception("编码对应实体不存在");
+                return new Response<CommentResDetailDto?>
+                {
+                    IfSuccess = 1,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<CommentResDetailDto?>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
     }
 }

@@ -28,5 +28,10 @@ namespace BLL
         {
             await dal.SetCommentShowAsync(req);
         }
+
+        public async Task<CommentResDetailDto?> GetCommentByIdAsync(int Id)
+        {
+            return await dal.GetCommentByIdAsync(Id);
+        }
     }
 }

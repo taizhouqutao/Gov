@@ -5,6 +5,7 @@ using DAL.Modles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.Reflection;
+using System.Text.Json.Serialization;
 namespace DAL
 {
     public class DalComment{
@@ -107,6 +108,39 @@ namespace DAL
                 context.Comments.UpdateRange(res);
                 await context.SaveChangesAsync();
             }
+        }
+
+        public async Task<CommentResDetailDto?> GetCommentByIdAsync(int Id)
+        {
+            CommentResDetailDto? res = null;
+            using (var context = new webapplicationContext())
+            {
+                var QuerComments= context.Comments.AsQueryable();
+                var QueryNews= context.News.AsQueryable();
+                res = await (from QuerComment in QuerComments
+                join QueryNew in QueryNews on QuerComment.NewId equals QueryNew.Id into p_QueryNew
+                from QueryNew_Join in p_QueryNew.DefaultIfEmpty()
+                where 
+                    (QuerComment.Id==Id)
+                select new CommentResDetailDto {
+                    Id=QuerComment.Id,
+                    Content=QuerComment.Content,
+                    CreateTime=QuerComment.CreateTime,
+                    CreateUserId=QuerComment.CreateUserId,
+                    FatherCommentId=QuerComment.FatherCommentId,
+                    IfDeal=QuerComment.IfDeal,
+                    IsShow=QuerComment.IsShow,
+                    NewId=QuerComment.NewId,
+                    NewTitle=QueryNew_Join.NewTitle,
+                    PersonCellphone=QuerComment.PersonCellphone,
+                    PersonName=QuerComment.PersonName,
+                    RoleType=QuerComment.RoleType,
+                    UpdateTime=QuerComment.UpdateTime,
+                    UpdateUserId=QuerComment.UpdateUserId,
+                    UserId=QuerComment.UserId
+                }).FirstOrDefaultAsync();
+            }
+            return res;
         }
     }
 }

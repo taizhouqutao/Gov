@@ -7,6 +7,8 @@ namespace Common
 
         public List<int>? ids{ get; set; }
 
+        public int? id {get;set;}
+
         public int? newTypeId { get; set; }
 
         public int? isShow { get; set; }
@@ -45,4 +47,10 @@ namespace Common
 
         public int? UpdateUserId { get; set; }
     } 
+
+    [Serializable]
+    public class CommentResDetailDto:CommentResDto
+    {
+        
+    }
 }
