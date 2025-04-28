@@ -11,14 +11,13 @@
     <div class="title-container">
         <div class="left">“红色代办”一站式服务</div>
         <div class="right">
-            <div class="weather-card">
-                <div class="weather-title">
-                    <a href="/Weather">今日天气</a></div>
-                <div class="weather-condition">多云</div>
-                <div class="weather-wind">东风</div>
+            <div class="weather-card" onclick="GoToWeather()">
+                <div class="weather-title">今日天气</div>
+                <div class="weather-condition"></div>
+                <div class="weather-wind"></div>
                 <div class="temperature">
-                    <div class="current-temp">11℃</div>
-                    <div class="low-temp">3℃</div>
+                    <div class="current-temp"></div>
+                    <div class="low-temp"></div>
                 </div>
             </div>
             <div style="clear:both;"></div>
@@ -63,6 +62,7 @@
             © 2025 红色代办一站式服务
         </div>
     </div>
+    <script src="/js/jquery.min.js?v=2.1.4"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const track = document.querySelector('.button-track');
@@ -127,6 +127,34 @@
             // 如果需要动态克隆，取消下面这行的注释
             //cloneButtons();
         });
+        $(document).ready(function () {        // 添加行双击事件
+            $.ajax({
+                url:"/Weather/GetTodayWeather",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        $('.weather-condition').html(result.data.textDay);
+                        $('.weather-wind').html(result.data.wdDay);
+                        $('.current-temp').html(result.data.high+'℃');
+                        $('.low-temp').html(result.data.low+'℃');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
+        });
+        function GoToWeather()
+        {
+            window.top.location.href = '/Weather';
+        }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
