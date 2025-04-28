@@ -30,6 +30,20 @@ namespace DAL
             };
         }
 
+        public async Task<List<User>> GetUsersByIdAsync(List<int> Ids)
+        {
+            List<User> res=new List<User>();
+            using (var context = new webapplicationContext())
+            {
+                var Query = context.Users.AsQueryable();
+                res = await Query.Where(i =>
+                    (i.IfDel == 0) &&
+                    (Ids.Contains(i.Id))
+                ).ToListAsync();
+            }
+            return res;
+        }
+
         public async Task<List<User>> GetUsersAsync(UserReqDto req) {
             var res=new List<User>();
             using (var context = new webapplicationContext())
@@ -94,6 +108,28 @@ namespace DAL
                 await context.SaveChangesAsync();
             }
             return res;
+        }
+
+        public async Task UpdateUsersAsync(List<User> entitys)
+        {
+            using (var context = new webapplicationContext())
+            {
+                context.Users.UpdateRange(entitys);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DelUserAsync(List<int> Ids)
+        {
+            using (var context = new webapplicationContext())
+            {
+                var Users =await context.Users.Where(i=>Ids.Contains(i.Id)).ToListAsync();
+                Users.ForEach(i=>{
+                    i.IfDel=1;
+                });
+                context.Users.UpdateRange(Users);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

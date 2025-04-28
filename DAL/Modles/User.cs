@@ -29,5 +29,8 @@ namespace DAL.Modles
 
         [Column("UserHead")]
         public string? UserHead{ get; set; }
+
+        [Column("Enable")]
+        public required int Enable{get;set;}=1;
     }
 }

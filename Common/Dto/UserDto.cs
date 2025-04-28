@@ -5,6 +5,10 @@ namespace Common
     {
         public int? id{get;set;}
 
+        public List<int>? ids{get;set;}
+
+        public int? enable{get;set;}
+
         public int? idNot{get;set;}
 
         public string? realName{get;set;}
@@ -19,7 +23,7 @@ namespace Common
     } 
 
     [Serializable]
-    public class UserResDto
+    public class UserResDto:BasicDto
     {
         public int Id { get; set; }
 
@@ -32,5 +36,7 @@ namespace Common
         public string? UserPost{ get; set; }
 
         public string? UserHead{ get; set; }
+
+        public required int Enable{ get; set; }
     }
 }

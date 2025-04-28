@@ -329,7 +329,7 @@
         function del()
         {
             var selectedIds = getSelectedIds();
-            if(selectedIds.length!=1)
+            if(!selectedIds.length)
             {
                 swal({
                     title: "提示",
@@ -387,7 +387,7 @@
         function online()
         {
             var selectedIds = getSelectedIds();
-            if(selectedIds.length!=1)
+            if(!selectedIds.length)
             {
                 swal({
                     title: "提示",
@@ -432,7 +432,7 @@
         function offline()
         {
             var selectedIds = getSelectedIds();
-            if(selectedIds.length!=1)
+            if(!selectedIds.length)
             {
                 swal({
                     title: "提示",

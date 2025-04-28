@@ -231,6 +231,16 @@
                     { data: "id",title: "ID",name:"Id",bSortable: false},
                     { data: "userName",title: "用户名",name:"UserName",bSortable: false},
                     { data: "realName",title: "姓名",name:"RealName",bSortable: false},
+                    { data: "userEmail",title: "邮箱",name:"UserEmail",bSortable: false},
+                    {
+                        data: "enable",
+                        title: "状态",
+                        name:"Enable",
+                        bSortable: false,
+                        render: function(data) {
+                            return data?"启用":"禁用";
+                        }
+                    },
                     {
                         data: "createTime",
                         name:"CreateTime",
@@ -282,6 +292,154 @@
             else
             {
                 getDetail(selectedIds[0]);
+            }
+        }
+        function del()
+        {
+            var selectedIds = getSelectedIds();
+            if(!selectedIds.length)
+            {
+                swal({
+                    title: "提示",
+                    text: "请勾选1条记录进行删除"
+                });
+            }
+            else
+            {
+                var delIds=selectedIds;
+                swal({
+                    title: "您确定要删除这"+delIds.length+"条记录吗",
+                    text: "删除后将无法恢复，请谨慎操作！",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "删除",
+                    cancelButtonText: "取消",
+                    closeOnConfirm: false
+                }, function () {
+                    event.stopPropagation(); // 阻止事件冒泡
+                    event.preventDefault();
+                    $.ajax({
+                        url:"/User/DelUser",
+                        contentType: "application/json",
+                        type: "POST", // 请求类型，通常是 GET 或 POST
+                        data:JSON.stringify({
+                            ids: selectedIds,
+                        }),
+                        success:function(result){
+                            if(result.ifSuccess)
+                            {
+                                searchRole();
+                                swal("删除成功！", "您已经永久删除了这条记录。", "success");
+                            }
+                            else
+                            {
+                                swal({
+                                    title: "出错了",
+                                    text: result.msg
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                            console.log('Status:', status);
+                            console.log('Details:', xhr.responseText);
+                            if(xhr.status == 401) {
+                                window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+        function enable()
+        {
+            var selectedIds = getSelectedIds();
+            if(!selectedIds.length)
+            {
+                swal({
+                    title: "提示",
+                    text: "请勾选1条记录进行启用"
+                });
+            }
+            else
+            {
+                $.ajax({
+                    url:"/User/SetEnableUser",
+                    contentType: "application/json",
+                    type: "POST", // 请求类型，通常是 GET 或 POST
+                    data:JSON.stringify({
+                        ids: selectedIds,
+                        enable:1
+                    }),
+                    success:function(result){
+                        if(result.ifSuccess)
+                        {
+                            search();
+                            swal("启用成功！", "您已经启用了这条记录。", "success");
+                        }
+                        else
+                        {
+                            swal({
+                                title: "出错了",
+                                text: result.msg
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.log('Status:', status);
+                        console.log('Details:', xhr.responseText);
+                        if(xhr.status == 401) {
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                    }
+                });
+            }
+        }
+        function disable()
+        {
+            var selectedIds = getSelectedIds();
+            if(!selectedIds.length)
+            {
+                swal({
+                    title: "提示",
+                    text: "请勾选1条记录进行禁用"
+                });
+            }
+            else
+            {
+                $.ajax({
+                    url:"/User/SetEnableUser",
+                    contentType: "application/json",
+                    type: "POST", // 请求类型，通常是 GET 或 POST
+                    data:JSON.stringify({
+                        ids: selectedIds,
+                        enable:0
+                    }),
+                    success:function(result){
+                        if(result.ifSuccess)
+                        {
+                            search();
+                            swal("禁用成功！", "您已经禁用了这条记录。", "success");
+                        }
+                        else
+                        {
+                            swal({
+                                title: "出错了",
+                                text: result.msg
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.log('Status:', status);
+                        console.log('Details:', xhr.responseText);
+                        if(xhr.status == 401) {
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                    }
+                });
             }
         }
         function getSelectedIds() {

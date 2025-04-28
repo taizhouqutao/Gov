@@ -66,7 +66,8 @@ namespace WebBackend.Controllers
                         PassWord=req.passWord??"",
                         UserName=req.userName??"",
                         UserEmail=req.userEmail??"",
-                        UserPost=req.userPost
+                        UserPost=req.userPost,
+                        Enable=1
                     };
                     await blluser.AddUserAsync(res);
                 }
@@ -142,7 +143,12 @@ namespace WebBackend.Controllers
                         UserName=res.UserName,
                         UserEmail=res.UserEmail,
                         UserHead=res.UserHead, 
-                        UserPost=res.UserPost
+                        UserPost=res.UserPost,
+                        Enable=res.Enable,
+                        CreateTime=res.CreateTime,
+                        CreateUserId=res.CreateUserId,
+                        UpdateTime=res.UpdateTime, 
+                        UpdateUserId=res.UpdateUserId
                     },
                 };
             }
@@ -155,20 +161,37 @@ namespace WebBackend.Controllers
             }
         }
         [HttpPost]
-        public async Task<Response<PageList<User>>> GetUsersByPage([FromBody] PageReq<UserReqDto> req)
+        public async Task<Response<PageList<UserResDto>>> GetUsersByPage([FromBody] PageReq<UserReqDto> req)
         {
             try
             {
                 var res = await blluser.GetUsersByPageAsync(req);
-                return new Response<PageList<User>>
+                return new Response<PageList<UserResDto>>
                 {
                     IfSuccess = 1,
-                    Data = res,
+                    Data = new PageList<UserResDto>(){
+                        recordsFiltered=res.recordsFiltered,
+                        recordsTotal=res.recordsTotal,
+                        draw=res.draw,
+                        data=res.data.ConvertAll(i=>new UserResDto(){
+                            Id=i.Id, 
+                            RealName=i.RealName,
+                            UserName=i.UserName,
+                            UserEmail=i.UserEmail,
+                            UserHead=i.UserHead, 
+                            UserPost=i.UserPost,
+                            Enable=i.Enable,
+                            CreateTime=i.CreateTime,
+                            CreateUserId=i.CreateUserId,
+                            UpdateTime=i.UpdateTime, 
+                            UpdateUserId=i.UpdateUserId
+                        })
+                    },
                 };
             }
             catch (Exception ex)
             {
-                return new Response<PageList<User>>()
+                return new Response<PageList<UserResDto>>()
                 {
                     Msg = ex.Message
                 };
@@ -280,6 +303,56 @@ namespace WebBackend.Controllers
             }
         }
     
+        [HttpPost]
+        public async Task<Response> DelUser([FromBody] RoleReqDto req)
+        {
+            try
+            {
+                if (req.ids != null && req.ids.Count>0)
+                {
+                    await blluser.DelUserAsync(req.ids);
+                }
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
+        public async Task<Response> SetEnableUser([FromBody] UserReqDto req)
+        {
+            try
+            {
+                if (req.ids != null && req.ids.Count>0)
+                {
+                    var Users = await blluser.GetUsersByIdAsync(req.ids);
+                    Users.ForEach(i=>{
+                      i.Enable=(int) req.enable;
+                    });
+                    await blluser.UpdateUsersAsync(Users);
+                }
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+        
         [HttpPost]
         public ActionResult FileUpload()
         {

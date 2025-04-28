@@ -14,6 +14,11 @@ namespace BLL
             return await dal.GetUsersAsync(req);
         }
 
+        public async Task<List<User>> GetUsersByIdAsync(List<int> Ids)
+        {
+            return await dal.GetUsersByIdAsync(Ids);
+        }
+
         public async Task<User?> GetUserByIdAsync(int Id)
         {
             return await dal.GetUserByIdAsync(Id);
@@ -32,6 +37,16 @@ namespace BLL
         public async Task<User?> UpdateUserAsync(User entity)
         {
             return await dal.UpdateUserAsync(entity);
+        }
+
+        public async Task UpdateUsersAsync(List<User> entitys)
+        {
+            await dal.UpdateUsersAsync(entitys);
+        }
+
+        public async Task DelUserAsync(List<int> Ids)
+        {
+            await dal.DelUserAsync(Ids);
         }
     }
 }

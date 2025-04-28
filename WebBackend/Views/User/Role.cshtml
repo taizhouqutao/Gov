@@ -296,7 +296,7 @@
         function delRole()
         {
             var selectedIds = getSelectedIds();
-            if(selectedIds.length!=1)
+            if(!selectedIds.length)
             {
                 swal({
                     title: "提示",
