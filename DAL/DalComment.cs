@@ -65,7 +65,8 @@ namespace DAL
                 var Query= context.Comments.AsQueryable();
                 var QureyRes = Query.Where(i=>
                     (i.IfDel==0) &&
-                    ((req==null||req.newId==null)?true:i.NewId==req.newId)
+                    ((req==null||req.newId==null)?true:i.NewId==req.newId) &&
+                    ((req==null||req.fatherCommentId==null)?true:i.FatherCommentId==req.fatherCommentId) 
                 );
                 QureyRes = QureyRes.OrderBy(j =>j.Id);
                 res = await QureyRes.ToListAsync();

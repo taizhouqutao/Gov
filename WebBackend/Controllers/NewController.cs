@@ -11,6 +11,7 @@ namespace WebBackend.Controllers
     {
         private BLL.BllNew bll = new BLL.BllNew();
         private BLL.BllComment bllcomment = new BLL.BllComment();
+        private BLL.BllUser blluser = new BLL.BllUser();
         private BLL.BllNewType bllNewType = new BLL.BllNewType();
 
         public async Task<IActionResult> Index(int NewTypeId)
@@ -259,6 +260,34 @@ namespace WebBackend.Controllers
             {
                 var res = await bllcomment.GetCommentByIdAsync(Convert.ToInt32(req.id));
                 if (res == null) throw new Exception("编码对应实体不存在");
+                var SonComments = await bllcomment.GetCommentsByAsync(new CommentReqDto(){
+                    fatherCommentId=res.Id
+                });
+                List<User> Users=new List<User>();
+                if(SonComments.Count>0)
+                {
+                    var UserIds = SonComments.Where(i=>i.UserId!=null && i.UserId>0).Select(i=>Convert.ToInt32(i.UserId)).ToList();
+                    if(UserIds.Count>0)
+                    {
+                        Users = await blluser.GetUsersByIdAsync(UserIds);
+                    }
+                }
+                var New = await bll.GetNewByIdAsync(Convert.ToInt32(res.NewId));
+                var NewContent=HtmlHelp.GetString(New.NewContent);
+                res.NewContent=NewContent.Length<500? NewContent:NewContent.Substring(0,500);
+                res.PersonHead="/img/unperson.jpg";
+                res.Deals=SonComments.ConvertAll(i=>{
+                    var User=Users.FirstOrDefault(j=>j.Id==(i.UserId==null?0:Convert.ToInt32(i.UserId)));
+                    return new CommentResDealDto(){
+                        Content=i.Content,
+                        CreateTime=i.CreateTime,
+                        CreateUserId=i.CreateUserId,
+                        PersonName=i.PersonName, 
+                        RoleType=i.RoleType,
+                        UserId=i.UserId,
+                        PersonHead=(User==null||string.IsNullOrEmpty(User.UserHead))?"/img/unperson.jpg": User.UserHead
+                    };
+                });
                 return new Response<CommentResDetailDto?>
                 {
                     IfSuccess = 1,

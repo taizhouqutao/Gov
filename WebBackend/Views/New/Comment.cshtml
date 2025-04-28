@@ -71,11 +71,11 @@
                             </div>
                             <div class="form-inline">
                                 <label>是否显示</label>
-                                <div class="radio i-checks">
+                                <div class="radio commentIsShow">
                                     <label><input type="radio" value="1" name="isShow"> <i></i>显示</label>
                                 </div>
-                                <div class="radio i-checks">
-                                    <label><input type="radio" checked value="0" name="isShow"> <i></i>不显示</label>
+                                <div class="radio commentIsShow">
+                                    <label><input type="radio" value="0" name="isShow"> <i></i>不显示</label>
                                 </div>
                             </div>   
                             
@@ -87,19 +87,17 @@
                                 </div>
                                 <div class="social-avatar">
                                     <a href="" class="pull-left">
-                                        <img alt="image" src="/img/unperson.jpg">
+                                        <img id="personHead" alt="image">
                                     </a>
                                     <div class="media-body">
-                                        <a href="#">尤小右</a>
-                                        <small class="text-muted">8月18日 16:05 来自 微博 weibo.com</small>
+                                        <a href="#" id="personName"></a>
+                                        <small class="text-muted" id="createTime"></small>
                                     </div>
                                 </div>
                                 <div class="social-body">
-                                    <p>
-                                        看到说是 React 的也是醉了，他说的是 falcor... Khan Academy 是最早在生产环境里使用 React 的公司之一
+                                    <p id="commentcontent">
                                     </p>
-                                    <div class="well">
-                                        抽奖，人民币2000元，从转发这个微博的粉丝中抽取一人。11月16日平台开奖。随手一转，万一中了呢？
+                                    <div id="newcontent" class="well">
                                     </div>
                                 </div>
                                 <div class="social-footer">
@@ -299,6 +297,15 @@
                 success:function(result){
                     if(result.ifSuccess)
                     {
+                        $('#newTitle').val(result.data.newTitle);
+                        var IsShow = result.data.isShow;
+                        $('.commentIsShow input[value="' + IsShow + '"]').prop('checked', true);
+                        $('#newTitle').val(result.data.newTitle);
+                        $('#personHead').attr('src',result.data.personHead);
+                        $('#personName').text(result.data.personName);
+                        $('#createTime').text(result.data.createTime);
+                        $('#commentcontent').text(result.data.content);
+                        $('#newcontent').text(result.data.newContent);
                         $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
                     else

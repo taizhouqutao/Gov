@@ -12,6 +12,8 @@ namespace Common
         public int? newTypeId { get; set; }
 
         public int? isShow { get; set; }
+
+        public int? fatherCommentId{get;set;}
     } 
 
     [Serializable]
@@ -51,6 +53,28 @@ namespace Common
     [Serializable]
     public class CommentResDetailDto:CommentResDto
     {
-        
+        public string? NewContent { get; set; }
+
+        public string? PersonHead  { get; set; } 
+
+        public List<CommentResDealDto>? Deals{ get; set; } 
+    }
+
+    [Serializable]
+    public class CommentResDealDto
+    {
+        public string? PersonHead  { get; set; } 
+
+        public string? PersonName  { get; set; }
+
+        public int? UserId{get;set;}
+
+        public DateTime CreateTime { get; set; }
+
+        public int CreateUserId { get; set; }
+
+        public string? Content{get;set;}
+
+        public int? RoleType{get;set;}
     }
 }
