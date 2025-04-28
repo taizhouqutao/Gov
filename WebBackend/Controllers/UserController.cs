@@ -49,7 +49,6 @@ namespace WebBackend.Controllers
                     if (res == null) throw new Exception("编码对应实体不存在");
                     res.UserName=req.userName??"";
                     res.RealName=req.realName??"";
-                    res.PassWord=req.passWord??"";
                     res.UserEmail=req.userEmail??"";
                     res.UserPost=req.userPost??"";
                     await blluser.UpdateUserAsync(res);

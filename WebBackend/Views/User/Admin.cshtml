@@ -88,7 +88,7 @@
                                     <input type="text" placeholder="请输入职位" id="userPost" name="userPost" class="form-control">
                                 </div>
                             </div>
-                            <div class="form-inline">
+                            <div class="form-inline" id="passwordPanl">
                                 <div class="form-group">
                                     <label>密码：</label><label style="color: red;">*</label>
                                     <input type="password" required placeholder="请输入密码" id="passWord" name="passWord" class="form-control">
@@ -255,6 +255,11 @@
 
         function add()
         {
+            $('#userName').prop("readonly",false);
+            $('#passWord').attr("required","required");
+            $('#repassWord').attr("required","required");
+            $('#passwordPanl').show();
+
             $('#userName').val('');
             $('#realName').val('');
             $('#userEmail').val('');
@@ -288,6 +293,10 @@
         }
         function getDetail(roleId)
         {
+            $('#userName').attr("readonly","readonly");
+            $('#passwordPanl').hide();
+            $('#passWord').prop("required",false);
+            $('#repassWord').prop("required",false);
             $.ajax({
                 url:"/User/GetUserById",
                 contentType: "application/json",
