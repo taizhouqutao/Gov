@@ -51,6 +51,7 @@ namespace WebBackend.Controllers
                     res.RealName=req.realName??"";
                     res.UserEmail=req.userEmail??"";
                     res.UserPost=req.userPost??"";
+                    res.UserHead=string.IsNullOrEmpty(req.userHead)?"/img/unperson.jpg":req.userHead;
                     await blluser.UpdateUserAsync(res);
                 }
                 else
@@ -67,6 +68,7 @@ namespace WebBackend.Controllers
                         UserName=req.userName??"",
                         UserEmail=req.userEmail??"",
                         UserPost=req.userPost,
+                        UserHead=string.IsNullOrEmpty(req.userHead)?"/img/unperson.jpg":req.userHead,
                         Enable=1
                     };
                     await blluser.AddUserAsync(res);
@@ -373,24 +375,33 @@ namespace WebBackend.Controllers
                 {
                     Directory.CreateDirectory(savePath);
                 }
-
+                var ResPath="/Uploads/User/";
+                string fileName=string.Empty;
                 // 4. 保存每个文件
                 for (int i = 0; i < uploadedFiles.Count; i++)
                 {
                     var file = uploadedFiles[i];
                     if (file.Length > 0)
                     {
-                        var fileName = Path.GetFileName(file.FileName);
+                        fileName = Path.GetFileName(file.FileName);
+                        var fileExt=fileName.Split('.').LastOrDefault();
+                        // 生成随机数作为文件名
+                        var NewFileName=DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                        var random = new Random();
+                        var randomNum = random.Next(1000, 9999);
+                        fileName = $"{NewFileName}{randomNum}.{fileExt}";
+
                         var filePath = Path.Combine(savePath, fileName);
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             file.CopyTo(stream);
                         }
+                        break;
                     }
                 }
 
                 // 5. 返回成功信息
-                return Json(new { success = true, message = "上传成功" });
+                return Json(new { success = true, message = "上传成功",file=$"{ResPath}{fileName}" });
             }
             catch (Exception ex)
             {

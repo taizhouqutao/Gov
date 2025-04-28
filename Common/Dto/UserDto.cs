@@ -20,6 +20,8 @@ namespace Common
         public string? userEmail{ get; set; }
 
         public string? userPost{ get; set; }
+
+        public string? userHead{ get; set; }
     } 
 
     [Serializable]

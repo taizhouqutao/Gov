@@ -68,6 +68,7 @@
                     <form role="form">
                         <div class="ibox-content">
                             <input type="hidden" id="userId" name="userId" />
+                            <input type="hidden" value="/img/unperson.jpg" id="userHead" name="userHead"/>
                             <div class="form-inline">
                                 <div class="form-group">
                                     <label>用户名：</label><label style="color: red;">*</label>
@@ -269,7 +270,9 @@
             $('#passWord').attr("required","required");
             $('#repassWord').attr("required","required");
             $('#passwordPanl').show();
-
+            
+            $('#userHead').val('/img/unperson.jpg');
+            $('#showUserHead').attr("src",'/img/unperson.jpg');
             $('#userName').val('');
             $('#realName').val('');
             $('#userEmail').val('');
@@ -470,6 +473,8 @@
                         $('#userEmail').val(result.data.userEmail);
                         $('#userPost').val(result.data.userPost);
                         $("#userId").val(result.data.id);
+                        $('#userHead').val(result.data.userHead?result.data.userHead:'/img/unperson.jpg');
+                        $('#showUserHead').attr("src",result.data.userHead?result.data.userHead:'/img/unperson.jpg');
                         $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
                     else
@@ -519,6 +524,7 @@
                     userEmail:$('#userEmail').val(),
                     userPost:$('#userPost').val(),
                     passWord:$('#passWord').val(),
+                    userHead:$('#userHead').val(),
                 }),
                 success:function(result){
                     if(result.ifSuccess)

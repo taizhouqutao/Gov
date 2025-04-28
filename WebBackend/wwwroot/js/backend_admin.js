@@ -411,6 +411,11 @@ jQuery(function() {
       alert( 'Eroor: ' + code );
   };
 
+  uploader.on('uploadSuccess', function (file, response) {
+    $('#userHead').val(response.file);
+    $('#showUserHead').attr("src",response.file);
+  });
+
   $upload.on('click', function() {
       if ( $(this).hasClass( 'disabled' ) ) {
           return false;
