@@ -11,6 +11,12 @@ namespace WebBackend.Controllers
         private BLL.BllRole bllrole = new BLL.BllRole();
         private BLL.BllUser blluser = new BLL.BllUser();
         private BLL.BllBizLog bllbizlog = new BLL.BllBizLog();
+
+        public IActionResult AdminEditPwd()
+        {
+            return View();
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -320,5 +326,37 @@ namespace WebBackend.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<Response> ReSetPwd ([FromBody] UserReqDto req)
+        {
+            try
+            {
+                var UserId = HttpContext.Session.GetInt32("UserId");
+                if (!string.IsNullOrEmpty(req.passWord))
+                {
+                    var user = await blluser.GetUserByIdAsync(Convert.ToInt32(UserId));
+                    if(user!=null)
+                    {
+                        user.PassWord=req.passWord;
+                        await blluser.UpdateUserAsync(user);
+                    }
+                    else
+                    {
+                        throw new Exception("当前用户不存在");
+                    }
+                }
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
     }
 }

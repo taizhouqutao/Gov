@@ -1,0 +1,144 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改密码</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <!-- Data Tables -->
+    <link href="/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/css/animate.css" rel="stylesheet">
+    <link href="/css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="/css/plugins/summernote/summernote.css" rel="stylesheet" />
+    <link href="/css/plugins/summernote/summernote-bs3.css" rel="stylesheet" />
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>修改密码</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="col-md">
+                            <form role="form" id="formUserSetPwd" class="form-horizontal m-t">
+                            <div class="form-group draggable">
+                                <label class="col-sm-3 control-label">密码框：<span style="color: red;">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="passWord" required class="form-control" id="passWord" name="passWord" placeholder="请输入密码">
+                                </div>
+                            </div>
+                            <div class="form-group draggable">
+                                <label class="col-sm-3 control-label">确认密码框：<span style="color: red;">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="repassWord" required class="form-control" id="repassWord" name="repassWord" placeholder="请输入密码">
+                                </div>
+                            </div>
+                            <div class="form-group draggable">
+                                <label class="col-sm-3 control-label" id="password-error" style="color: red;"></label>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs"  style="width: 94px; height: 42px; margin-top: -5px;" type="submit">
+                                    <strong>保存</strong>
+                                </button>
+                            </div>
+                            <div class="clearfix"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 全局js -->
+    <script src="/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.7"></script>
+    <script src="/js/plugins/jeditable/jquery.jeditable.js"></script>
+    <!-- Data Tables -->
+    <script src="/js/plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+    <!-- 自定义js -->
+    <script src="/js/content.js?v=1.0.0"></script>
+    <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <script src="/js/plugins/summernote/summernote.min.js"></script>
+    <script src="/js/plugins/summernote/summernote-zh-CN.js"></script>
+    <!-- Page-Level Scripts -->
+    <script>
+        const password1 = document.getElementById("passWord");
+        const password2 = document.getElementById("repassWord");
+        const errorElement = document.getElementById("password-error");
+
+        function checkPasswordMatch() {
+            if (password1.value !== password2.value) {
+                errorElement.textContent = "密码不一致！";
+            } else {
+                errorElement.textContent = "";
+            }
+        }
+
+        // 监听输入事件（实时检查）
+        password1.addEventListener("input", checkPasswordMatch);
+        password2.addEventListener("input", checkPasswordMatch);
+
+
+        $(document).ready(function () {
+            $('#formUserSetPwd').on('submit', function(event) {
+                ReSetPwd();
+            });
+        });
+        function ReSetPwd()
+        {
+            event.preventDefault();
+            var password = $('#passWord').val();
+            var repassWord = $('#repassWord').val();
+            if(password && repassWord && password!=repassWord)
+            { 
+                swal({
+                    title: "密码不一致！",
+                    text: result.msg
+                });
+                return;
+            }
+            $.ajax({
+                url:"/User/ReSetPwd",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    passWord:$("#passWord").val()
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {   
+                        swal("修改成功！", "密码已经成功修改。", "success");
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

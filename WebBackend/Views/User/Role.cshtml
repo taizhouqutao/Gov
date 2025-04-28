@@ -66,7 +66,7 @@
                                 <input type="text" required placeholder="请输入角色名" id="roleName" name="roleName" class="form-control">
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -35px;" type="submit">
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -5px;" type="submit">
                                     <strong>保存</strong>
                                 </button>
                             </div>
@@ -80,8 +80,15 @@
                 <div class="modal-body">
                     <div class="row">
                         <h3 class="m-t-none m-b">分配权限</h3>
-                        <table class="table table-striped table-bordered table-hover dataTables-right-example" style="width: 100%;"></table>
-                        </table>
+                        <form role="form" action="/User/SaveRoleRight" method="post">
+                            <table class="table table-striped table-bordered table-hover dataTables-right-example" style="width: 100%;"></table>
+                            </table>
+                            <div>
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -5px;" type="submit">
+                                    <strong>保存</strong>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
