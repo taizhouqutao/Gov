@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using BLL;
 using Microsoft.AspNetCore.Mvc;
 using Web.Models;
 
@@ -6,9 +7,10 @@ namespace Web.Controllers;
 
 public class HomeController : Controller
 {
+    BllWeather bll=new BllWeather();
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger,IConfiguration configuration)
     {
         _logger = logger;
     }

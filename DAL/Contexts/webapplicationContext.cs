@@ -31,6 +31,8 @@ namespace DAL.Contexts
         public DbSet<BizLog>? BizLogs { get; set; }
 
         public DbSet<Comment>? Comments { get; set; }
+        
+        public DbSet<Weather>? Weathers { get; set; }
 
         public IConfiguration configuration;
 
