@@ -20,7 +20,8 @@ namespace BLL
             var Now=DateTime.Now;
             var NeedRefTime=Now.AddMinutes(-5);
             var weather = (await dal.GetWeathersAsync(new WeatherReqDto(){
-                StartUpdateTime=NeedRefTime
+                StartUpdateTime=NeedRefTime,
+                WeatherDate=Now.Date
             })).OrderByDescending(i=>i.UpdateTime).Take(1).FirstOrDefault();
             if(weather==null)
             {
