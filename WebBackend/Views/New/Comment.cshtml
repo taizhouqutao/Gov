@@ -458,6 +458,44 @@
                 });
             }
         }
+        function save()
+        {
+            event.stopPropagation(); // 阻止事件冒泡
+            event.preventDefault();
+            $.ajax({
+                url:"/New/SaveNew",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    id: $("#newId").val()?$("#newId").val():null,
+                    newTitle:$("#newTitle").val(),
+                    newContent:$('#newContent').summernote('code'),
+                    newTypeId:@Model.NewTypeId
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        $('#modal-form').modal('hide'); // 显示模态框，并触发 show 事件，从而设置内容。
+                        search();
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
