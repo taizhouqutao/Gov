@@ -22,7 +22,8 @@ namespace DAL
                 where 
                     (QuerComment.IfDel==0) &&
                     ((req==null||req.Query==null||req.Query.newTypeId==null)?true:QueryNew_Join.NewTypeId==req.Query.newTypeId) &&
-                    ((req.search==null||string.IsNullOrEmpty(req.search.value))?true:(
+                    ((req==null||req.Query==null||req.Query.fatherCommentId==null)?true:QuerComment.FatherCommentId==req.Query.fatherCommentId) &&
+                    ((req==null||req.search==null||string.IsNullOrEmpty(req.search.value))?true:(
                         QuerComment.Content.Contains(req.search.value)||
                         (!string.IsNullOrEmpty(QuerComment.PersonCellphone) && QuerComment.PersonCellphone.Contains(req.search.value))||
                         (!string.IsNullOrEmpty(QuerComment.PersonName) && QuerComment.PersonName.Contains(req.search.value)) ||

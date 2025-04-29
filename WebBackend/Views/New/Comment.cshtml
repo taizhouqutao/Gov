@@ -106,32 +106,9 @@
                                             <img alt="image" src="/img/unperson.jpg">
                                         </a>
                                         <div class="media-body">
-                                            <a href="#">尤小右</a> jQuery的作者在Twitter上发了一条这样的推，也是有点平衡了
-                                            <br/>
-                                            <small class="text-muted">8月18日</small>
-                                        </div>
-                                    </div>
-
-                                    <div class="social-comment">
-                                        <a href="" class="pull-left">
-                                            <img alt="image" src="/img/unperson.jpg">
-                                        </a>
-                                        <div class="media-body">
-                                            <a href="#">尤小右</a> John大概是在学习React和Flux。。。
-                                            <br/>
-                                            <small class="text-muted">8月18日</small>
-                                        </div>
-                                    </div>
-
-                                    <div class="social-comment">
-                                        <a href="" class="pull-left">
-                                            <img alt="image" src="/img/unperson.jpg">
-                                        </a>
-                                        <div class="media-body">
                                             <textarea class="form-control" required placeholder="填写反馈..."></textarea>
                                         </div>
                                     </div>
-
                                 </div>
 
                             </div>
@@ -188,7 +165,8 @@
                             search: d.search,
                             order: d.order,
                             Query:{
-                                newTypeId:@Model.NewTypeId
+                                newTypeId:@Model.NewTypeId,
+                                fatherCommentId:0
                             }
                         };
                         return JSON.stringify(request);  // 手动转换为JSON字符串
@@ -255,15 +233,6 @@
                     render: function(data) {
                         return data?"已处理":"未处理";
                     }
-                },
-                {
-                    data: "createTime",
-                    title: "创建时间",
-                    name:"CreateTime",
-                    bSortable: false,
-                    render: function(data) {
-                        return new Date(data).toLocaleString();
-                    }
                 }]
             });
                         // 添加行双击事件
@@ -271,12 +240,6 @@
                 var rowData = datatable.row(this).data();
                 getDetail(rowData.id);
             });
-            $('#newContent').summernote({
-                height: 400,
-                lang: 'zh-CN',
-                focus: true
-            });
-
             $('#modal-form').on('submit', function(event) {
                 save();
             });
@@ -297,15 +260,29 @@
                 success:function(result){
                     if(result.ifSuccess)
                     {
-                        $('#newTitle').val(result.data.newTitle);
                         var IsShow = result.data.isShow;
                         $('.commentIsShow input[value="' + IsShow + '"]').prop('checked', true);
                         $('#newTitle').val(result.data.newTitle);
                         $('#personHead').attr('src',result.data.personHead);
                         $('#personName').text(result.data.personName);
-                        $('#createTime').text(result.data.createTime);
+                        $('#createTime').text(new Date(result.data.createTime).toLocaleString());
                         $('#commentcontent').text(result.data.content);
                         $('#newcontent').text(result.data.newContent);
+                        if(result.data.deals.length)
+                        {
+                            var str_social_comment="";
+                            for(var index=0;index<result.data.deals.length;index++)
+                            {
+                                var deal=result.data.deals[index];
+                                var dealpersonhead=deal.personHead;
+                                var dealpersonName=deal.personName;
+                                var dealcreateTime=new Date(deal.createTime).toLocaleString();
+                                var dealcontent=deal.content;
+                                str_social_comment=str_social_comment+'<div class="social-comment"><a href="#" class="pull-left"><img alt="image" src="'+dealpersonhead+'"></a><div class="media-body"><a href="#">'+dealpersonName+'</a>'+dealcontent+'<br/><small class="text-muted">'+dealcreateTime+'</small></div></div>';
+                            }
+                            $('.social-footer .social-comment:not(:last)').remove();
+                            $('.social-footer .social-comment:last').before(str_social_comment);
+                        }
                         $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
                     else
