@@ -463,7 +463,7 @@
             event.stopPropagation(); // 阻止事件冒泡
             event.preventDefault();
             $.ajax({
-                url:"/New/SaveNew",
+                url:"/New/DealComment",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
                 data:JSON.stringify({
