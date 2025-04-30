@@ -64,7 +64,7 @@
                         <h3 class="m-t-none m-b">@(Model.Title+"反馈处理")
                         </h3>
                         <form role="form">
-                            <input type="hidden" id="newId" name="newId" />
+                            <input type="hidden" id="commentId" name="commentId" />
                             <div class="form-group">
                                 <label>@(Model.Title+"标题")：</label>
                                 <input type="text" required readonly placeholder="请输入标题" id="newTitle" name="newTitle" class="form-control">
@@ -106,7 +106,7 @@
                                             <img alt="image" src="/img/unperson.jpg">
                                         </a>
                                         <div class="media-body">
-                                            <textarea class="form-control" required placeholder="填写反馈..."></textarea>
+                                            <textarea id="dealComment" class="form-control" required placeholder="填写反馈..."></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -262,6 +262,7 @@
                     {
                         var IsShow = result.data.isShow;
                         $('.commentIsShow input[value="' + IsShow + '"]').prop('checked', true);
+                        $('#commentId').val(result.data.id);
                         $('#newTitle').val(result.data.newTitle);
                         $('#personHead').attr('src',result.data.personHead);
                         $('#personName').text(result.data.personName);
@@ -467,16 +468,20 @@
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
                 data:JSON.stringify({
-                    id: $("#newId").val()?$("#newId").val():null,
-                    newTitle:$("#newTitle").val(),
-                    newContent:$('#newContent').summernote('code'),
-                    newTypeId:@Model.NewTypeId
+                    id: $("#commentId").val()?$("#commentId").val():null,
+                    content:$("#dealComment").val(),
                 }),
                 success:function(result){
                     if(result.ifSuccess)
                     {
-                        $('#modal-form').modal('hide'); // 显示模态框，并触发 show 事件，从而设置内容。
-                        search();
+                        $("#dealComment").val('');
+                        var str_social_comment="";
+                        var dealpersonhead=result.data.personHead;
+                        var dealpersonName=result.data.personName;
+                        var dealcreateTime=new Date(result.data.createTime).toLocaleString();
+                        var dealcontent=result.data.content;
+                        str_social_comment=str_social_comment+'<div class="social-comment"><a href="#" class="pull-left"><img alt="image" src="'+dealpersonhead+'"></a><div class="media-body"><a href="#">'+dealpersonName+'</a>'+dealcontent+'<br/><small class="text-muted">'+dealcreateTime+'</small></div></div>';
+                        $('.social-footer .social-comment:last').before(str_social_comment);
                     }
                     else
                     {

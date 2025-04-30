@@ -303,5 +303,27 @@ namespace WebBackend.Controllers
             }
         }
 
+       [HttpPost]
+        public async Task<Response<CommentResDealDto>>  DealComment([FromBody] CommentReqDto req)
+        {
+            try
+            {
+                if (req.ids != null && req.ids.Count>0)
+                {
+                    await bllcomment.SetCommentShowAsync(req);
+                }
+                return new Response<CommentResDealDto>
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<CommentResDealDto>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
     }
 }

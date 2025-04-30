@@ -14,6 +14,8 @@ namespace Common
         public int? isShow { get; set; }
 
         public int? fatherCommentId{get;set;}
+
+        public string? Content{get;set;}
     } 
 
     [Serializable]
