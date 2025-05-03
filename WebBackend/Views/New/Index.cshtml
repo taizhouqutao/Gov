@@ -74,7 +74,7 @@
                                 </div>
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs"  style="width: 94px; height: 42px; margin-top: -35px;" type="submit">
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs"  style="width: 94px; height: 42px;" type="submit">
                                     <strong>保存</strong>
                                 </button>
                             </div>
@@ -199,13 +199,35 @@
             $('#newContent').summernote({
                 height: 400,
                 lang: 'zh-CN',
-                focus: true
+                focus: true,
+                callbacks: {
+                    onImageUpload: function(files, editor, welEditable) {
+                        sendFile(files[0], editor, welEditable); // 处理图片上传的函数
+                    }
+                }
             });
 
             $('#modal-form').on('submit', function(event) {
                 save();
             });
         });
+
+        function sendFile(file, editor, welEditable) {
+            var formData = new FormData();
+            formData.append('file', file); // 将文件添加到表单数据中
+            $.ajax({
+                data: formData,
+                type: "POST",
+                url: '/New/FileUpload', // 后端处理上传的 URL
+                contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+                processData: false, // 告诉jQuery不要去处理发送的数据
+                success: function(data) {
+                    // 插入图片到编辑器中
+                    $('#newContent').summernote('insertImage', data.url); // url是返回的图片地址
+                }
+            });
+        }
+
         function search()
         {
             datatable.ajax.reload(); // 保持当前分页和排序状态
