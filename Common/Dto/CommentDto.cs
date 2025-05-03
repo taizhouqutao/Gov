@@ -15,7 +15,7 @@ namespace Common
 
         public int? fatherCommentId{get;set;}
 
-        public string? Content{get;set;}
+        public string? content{get;set;}
     } 
 
     [Serializable]

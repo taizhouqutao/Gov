@@ -470,6 +470,7 @@
                 data:JSON.stringify({
                     id: $("#commentId").val()?$("#commentId").val():null,
                     content:$("#dealComment").val(),
+                    isShow: $("input[name='isShow']:checked").val()
                 }),
                 success:function(result){
                     if(result.ifSuccess)

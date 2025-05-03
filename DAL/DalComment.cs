@@ -9,6 +9,20 @@ using System.Text.Json.Serialization;
 namespace DAL
 {
     public class DalComment{
+        public async Task<Comment?> GetCommentByIdAsync(int Id)
+        {
+            Comment? res = null;
+            using (var context = new webapplicationContext())
+            {
+                var Query = context.Comments.AsQueryable();
+                res = await Query.FirstOrDefaultAsync(i =>
+                    (i.IfDel == 0) &&
+                    (i.Id==Id)
+                );
+            }
+            return res;
+        }
+
         public async Task<PageList<CommentResDto>> GetCommentsByPageAsync(PageReq<CommentReqDto> req) {
             var res=new List<CommentResDto>();
             int total=0,allcount=0;
@@ -86,6 +100,17 @@ namespace DAL
             return res;
         }
 
+        public async Task<Comment> UpdateCommentAsync(Comment entity)
+        {
+            Comment res = null;
+            using (var context = new webapplicationContext())
+            {
+                res = (context.Comments.Update(entity)).Entity;
+                await context.SaveChangesAsync();
+            }
+            return res;
+        }
+
         public async Task DelCommentAsync(List<int> Ids)
         {
             using (var context = new webapplicationContext())
@@ -112,7 +137,7 @@ namespace DAL
             }
         }
 
-        public async Task<CommentResDetailDto?> GetCommentByIdAsync(int Id)
+        public async Task<CommentResDetailDto?> GetCommentDetailByIdAsync(int Id)
         {
             CommentResDetailDto? res = null;
             using (var context = new webapplicationContext())

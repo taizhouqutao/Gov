@@ -258,7 +258,7 @@ namespace WebBackend.Controllers
         {
             try
             {
-                var res = await bllcomment.GetCommentByIdAsync(Convert.ToInt32(req.id));
+                var res = await bllcomment.GetCommentDetailByIdAsync(Convert.ToInt32(req.id));
                 if (res == null) throw new Exception("编码对应实体不存在");
                 var SonComments = await bllcomment.GetCommentsByAsync(new CommentReqDto(){
                     fatherCommentId=res.Id
@@ -308,13 +308,38 @@ namespace WebBackend.Controllers
         {
             try
             {
-                if (req.ids != null && req.ids.Count>0)
-                {
-                    await bllcomment.SetCommentShowAsync(req);
-                }
+                var Comment = await bllcomment.GetCommentByIdAsync(Convert.ToInt32(req.id));
+                var UserId = HttpContext.Session.GetInt32("UserId");
+                var User = await blluser.GetUserByIdAsync(Convert.ToInt32(UserId));
+                var NewComment = await bllcomment.AddCommentAsync(new DAL.Modles.Comment(){
+                    NewId=Comment.NewId==null?0: Convert.ToInt32(Comment.NewId),
+                    Content=req.content??"",
+                    CreateTime=DateTime.Now,
+                    FatherCommentId=Comment.Id,
+                    CreateUserId=User.Id,
+                    IfDeal=0,
+                    IsShow=1,
+                    PersonCellphone="",
+                    PersonName= User.UserName??"",
+                    IfDel=0,
+                    UserId=User.Id,
+                    RoleType=1
+                });
+                Comment.IfDeal=1;
+                Comment.IsShow=req.isShow??0;
+                await bllcomment.UpdateCommentAsync(Comment);
                 return new Response<CommentResDealDto>
                 {
                     IfSuccess = 1,
+                    Data=new CommentResDealDto(){
+                        Content=NewComment.Content,
+                        CreateTime=NewComment.CreateTime,
+                        CreateUserId=NewComment.CreateUserId,
+                        PersonName=User.UserName,
+                        PersonHead=(User==null||string.IsNullOrEmpty(User.UserHead))?"/img/unperson.jpg": User.UserHead,
+                        RoleType=NewComment.RoleType,
+                        UserId=User.Id,
+                    }
                 };
             }
             catch (Exception ex)
