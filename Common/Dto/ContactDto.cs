@@ -4,6 +4,16 @@ namespace Common
     public class ContactReqDto
     {
         public int? id{get;set;}
+
+        public string? personName { get; set; }
+
+        public string? post{ get; set; }
+
+        public string? depent{ get; set; }
+
+        public string? personHead{ get; set; }
+
+        public string? personDesc{ get; set; }
     }
 
     [Serializable]

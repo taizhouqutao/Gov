@@ -19,3 +19,7 @@
   height: 110px;
   margin-top: 10px;
 }
+#item_list img{
+  width: 100px;
+  height: 100px;
+}

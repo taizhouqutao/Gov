@@ -99,6 +99,76 @@ namespace WebBackend.Controllers
                     Msg = ex.Message
                 };
             }
-        } 
+        }
+
+        [HttpPost]
+        public async Task<Response> DelContact([FromBody] RoleReqDto req)
+        {
+            try
+            {
+                if (req.ids != null && req.ids.Count>0)
+                {
+                    await bllContact.DelContactAsync(req.ids);
+                }
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+    
+        [HttpPost]
+        public async Task<Response<Contact>> SaveContact([FromBody] ContactReqDto req)
+        {
+            try
+            {
+                Contact? res = null;
+                if (req.id != null)
+                {
+                    res = await bllContact.GetContactByIdAsync(Convert.ToInt32(req.id));
+                    if (res == null) throw new Exception("编码对应实体不存在");
+                    res.PersonName = req.personName ?? "";
+                    res.Post=req.post??"";
+                    res.Depent=req.depent;
+                    res.Desc=req.personDesc;
+                    res.PersonHead=req.personHead;
+                    await bllContact.UpdateContactAsync(res);
+                }
+                else
+                {
+                    res = new Contact()
+                    {
+                        IfDel = 0,
+                        CreateTime = DateTime.Now,
+                        CreateUserId = 1,
+                        PersonName=req.personName??"",
+                        Post=req.post??"",
+                        Depent=req.depent,
+                        Desc=req.personDesc,
+                        PersonHead=req.personHead,
+                    };
+                    await bllContact.AddContactAsync(res);
+                }
+                return new Response<Contact>
+                {
+                    IfSuccess = 1,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<Contact>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
     }
 }

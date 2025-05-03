@@ -17,9 +17,10 @@
     <link href="/css/style.css?v=4.1.0" rel="stylesheet">
     <link href="/css/plugins/summernote/summernote.css" rel="stylesheet" />
     <link href="/css/plugins/summernote/summernote-bs3.css" rel="stylesheet" />
+    <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
     <link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
-    <link rel="stylesheet" type="text/css" href="/css/contact.css">
+    <link rel="stylesheet" type="text/css" href="/css/contact.css?v=0.0.1">
 </head>
 
 <body class="gray-bg">
@@ -47,21 +48,21 @@
                             <a data-toggle="modal" class="btn btn-success" onclick="edit()">编辑</a>
                             <a data-toggle="modal" class="btn btn-danger" onclick="del()">删除</a>
                         </div>
-                        <div class="row">
+                        <div id="item_list" class="row">
                             @foreach (var contact in Model.contactList)
                             {
-                                <div class="col-sm-4">
+                                <div class="col-sm-4" id="contact_@contact.id">
                                     <div class="contact-box">
-                                        <a href="profile.html">
+                                        <a href="#">
                                             <div class="col-sm-4">
                                                 <div class="text-center">
-                                                    <img alt="image" class="img-circle m-t-xs img-responsive" src="@contact.personHead">
+                                                    <img alt="image" width="100" height="100" class="img-circle m-t-xs img-responsive" src="@contact.personHead">
                                                     <div class="m-t-xs font-bold">@contact.post</div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-8">
                                                 <h3><input type="checkbox" name="sel_contact" class="checkchild" value="@contact.id"/><strong>@contact.personName</strong></h3>
-                                                <strong>@contact.depent</strong><br>
+                                                <strong class="depent">@contact.depent</strong><br>
                                                 最近值班信息<br>
                                                     Weibo:<a href="">http://weibo.com/xxx</a><br>
                                             </div>
@@ -158,7 +159,7 @@
         var BASE_URL = '/js/plugins/webuploader';
     </script>
     <script src="/js/plugins/webuploader/webuploader.min.js"></script>
-
+    <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
     <!-- 自定义js -->
     <script src="/js/content.js?v=1.0.0"></script>
     <script src="/js/contact.js"></script>
@@ -174,6 +175,10 @@
             $('.contact-box').each(function () {
                 animationHover(this, 'pulse');
             });
+
+            $('#modal-form').on('submit', function(event) {
+                save();
+            });
         });
 
         function add()
@@ -184,6 +189,7 @@
             $('#post').val('');
             $('#depent').val('');
             $('#personDesc').summernote('code', '');
+            $('#contactId').val('');
             $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
         }
         function edit()
@@ -215,6 +221,7 @@
                     {
                         $('#personHead').val(result.data.personHead?result.data.personHead:'/img/unperson.jpg');
                         $('#showUserHead').attr("src",result.data.personHead?result.data.personHead:'/img/unperson.jpg');
+                        $('#contactId').val(result.data.id);
                         $('#personName').val(result.data.personName);
                         $('#post').val(result.data.post);
                         $('#depent').val(result.data.depent);
@@ -245,6 +252,117 @@
                 selectedIds.push($(this).val()); // 获取 data-id 属性值并添加到数组中
             });
             return selectedIds;
+        }
+        function del()
+        {
+            var selectedIds = getSelectedIds();
+            if(!selectedIds.length)
+            {
+                swal({
+                    title: "提示",
+                    text: "请勾选1条记录进行删除"
+                });
+            }
+            else
+            {
+                var delIds=selectedIds;
+                swal({
+                    title: "您确定要删除这"+delIds.length+"条记录吗",
+                    text: "删除后将无法恢复，请谨慎操作！",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "删除",
+                    cancelButtonText: "取消",
+                    closeOnConfirm: false
+                }, function () {
+                    event.stopPropagation(); // 阻止事件冒泡
+                    event.preventDefault();
+                    $.ajax({
+                        url:"/Contact/DelContact",
+                        contentType: "application/json",
+                        type: "POST", // 请求类型，通常是 GET 或 POST
+                        data:JSON.stringify({
+                            ids: selectedIds,
+                        }),
+                        success:function(result){
+                            if(result.ifSuccess)
+                            {
+                                selectedIds.forEach(function(id) {
+                                    $('#contact_' + id).remove();
+                                });
+                                swal("删除成功！", "您已经永久删除了这条信息。", "success");
+                            }
+                            else
+                            {
+                                swal({
+                                    title: "出错了",
+                                    text: result.msg
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                            console.log('Status:', status);
+                            console.log('Details:', xhr.responseText);
+                            if(xhr.status == 401) {
+                                window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+        function save()
+        {
+            event.stopPropagation(); // 阻止事件冒泡
+            event.preventDefault();
+            $.ajax({
+                url:"/Contact/SaveContact",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    id: $("#contactId").val()?$("#contactId").val():null,
+                    post:$("#post").val(),
+                    personName:$('#personName').val(),
+                    depent:$('#depent').val(),
+                    personDesc:$('#personDesc').summernote('code'),
+                    personHead:$('#personHead').val(),
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        $('#modal-form').modal('hide'); // 显示模态框，并触发 show 事件，从而设置内容。
+                        if($("#contactId").val())
+                        {
+                            $("#contact_"+$("#contactId").val()+" img").attr("src",result.data.personHead);
+                            $("#contact_"+$("#contactId").val()+" .col-sm-4 .font-bold").text(result.data.post);
+                            $("#contact_"+$("#contactId").val()+" .col-sm-8 h3 strong").text(result.data.personName); 
+                            $("#contact_"+$("#contactId").val()+" .col-sm-8 .depent").text(result.data.depent); 
+                        }
+                        else
+                        {
+                            var itemHtml='<div class="col-sm-4" id="contact_'+result.data.id+'"><div class="contact-box"><a href="#"><div class="col-sm-4"><div class="text-center"><img alt="image" width="100" height="100" class="img-circle m-t-xs img-responsive" src="'+result.data.personHead+'"><div class="m-t-xs font-bold">'+result.data.post+'</div></div></div><div class="col-sm-8"><h3><input type="checkbox" name="sel_contact" class="checkchild" value="'+result.data.id+'"/><strong>'+result.data.personName+'</strong></h3><strong class="depent">'+result.data.depent+'</strong><br>最近值班信息<br>Weibo:<a href="">http://weibo.com/xxx</a><br></div><div class="clearfix"></div></a></div></div>';
+                            $("#item_list").append(itemHtml);
+                        }
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
         }
     </script>
 
