@@ -23,7 +23,7 @@ public class CheckSessionAttribute : ActionFilterAttribute
         var httpContext = filterContext.HttpContext;
         var request = httpContext.Request;
         var path = request.Path.Value?.ToLower();
-        //return; // 直接放行
+        return; // 直接放行
         if (_excludePaths.Any(p => path?.StartsWith(p.ToLower()) ?? false))
         {
             return; // 直接放行

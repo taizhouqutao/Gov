@@ -1,0 +1,70 @@
+@model Common.ContactPageDto 
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>两委班子</title>
+    <link rel="shortcut icon" href="favicon.ico"> <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <link href="/css/animate.css" rel="stylesheet">
+    <link href="/css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            @foreach (var contact in Model.contactList)
+            {
+                <div class="col-sm-4">
+                    <div class="contact-box">
+                        <a href="profile.html">
+                            <div class="col-sm-4">
+                                <div class="text-center">
+                                    <img alt="image" class="img-circle m-t-xs img-responsive" src="@contact.personHead">
+                                    <div class="m-t-xs font-bold">@contact.post</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-8">
+                                <h3><strong>@contact.personName</strong></h3>
+                                <strong>@contact.depent</strong><br>
+                                最近值班信息<br>
+                                    Weibo:<a href="">http://weibo.com/xxx</a><br>
+                            </div>
+                            <div class="clearfix"></div>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.7"></script>
+
+
+
+    <!-- 自定义js -->
+    <script src="/js/content.js?v=1.0.0"></script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            $('.contact-box').each(function () {
+                animationHover(this, 'pulse');
+            });
+        });
+    </script>
+
+</body>
+
+</html>

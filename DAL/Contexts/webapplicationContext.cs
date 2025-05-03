@@ -34,6 +34,8 @@ namespace DAL.Contexts
         
         public DbSet<Weather>? Weathers { get; set; }
 
+        public DbSet<Contact>? Contacts { get; set; }
+
         public IConfiguration configuration;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
