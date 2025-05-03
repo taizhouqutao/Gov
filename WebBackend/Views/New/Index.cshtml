@@ -222,8 +222,25 @@
                 contentType: false, // 告诉jQuery不要去设置Content-Type请求头
                 processData: false, // 告诉jQuery不要去处理发送的数据
                 success: function(data) {
-                    // 插入图片到编辑器中
-                    $('#newContent').summernote('insertImage', data.url); // url是返回的图片地址
+                    if(data.success)
+                    {
+                        $('#newContent').summernote('insertImage', data.url); // url是返回的图片地址
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: data.message
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
                 }
             });
         }
