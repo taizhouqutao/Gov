@@ -1,0 +1,21 @@
+#uploader {
+  height: 260px;
+  width: 420px;
+  float: left;
+}
+#modal-form .form-group
+{
+  padding: 10px;
+}
+
+#modal-form .modal-dialog
+{
+  width: 670px;
+}
+#modal-form .showuserImg
+{
+  float: left;
+  width: 110px;
+  height: 110px;
+  margin-top: 10px;
+}
