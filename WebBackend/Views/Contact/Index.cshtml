@@ -60,7 +60,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-8">
-                                                <h3><strong>@contact.personName</strong></h3>
+                                                <h3><input type="checkbox" name="sel_contact" class="checkchild" value="@contact.id"/><strong>@contact.personName</strong></h3>
                                                 <strong>@contact.depent</strong><br>
                                                 最近值班信息<br>
                                                     Weibo:<a href="">http://weibo.com/xxx</a><br>
@@ -103,10 +103,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="ibox-content no-padding" id="eg">
-                            <div class="click2edit wrapper" id="personDesc">
-                            </div>
-                        </div>
                         <div class="ibox-content">
                             <p>头像图片</p>
                             <div class="form-inline">
@@ -134,6 +130,11 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="ibox-content" id="eg">
+                            <p>简历：</p>
+                            <div class="click2edit wrapper" id="personDesc">
                             </div>
                         </div>
                         <div>
@@ -165,7 +166,7 @@
 
     <script>
         $(document).ready(function () {
-            $('#newContent').summernote({
+            $('#personDesc').summernote({
                 height: 400,
                 lang: 'zh-CN',
                 focus: true
@@ -177,21 +178,73 @@
 
         function add()
         {
-            $('#userName').prop("readonly",false);
-            $('#passWord').attr("required","required");
-            $('#repassWord').attr("required","required");
-            $('#passwordPanl').show();
-            
-            $('#userHead').val('/img/unperson.jpg');
+            $('#personHead').val('/img/unperson.jpg');
             $('#showUserHead').attr("src",'/img/unperson.jpg');
-            $('#userName').val('');
-            $('#realName').val('');
-            $('#userEmail').val('');
-            $('#userPost').val('');
-            $('#passWord').val('');
-            $('#repassWord').val('');
-            $("#userId").val('');
+            $('#personName').val('');
+            $('#post').val('');
+            $('#depent').val('');
+            $('#personDesc').summernote('code', '');
             $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
+        }
+        function edit()
+        {
+            var selectedIds = getSelectedIds();
+            if(selectedIds.length!=1)
+            {
+                swal({
+                    title: "提示",
+                    text: "请勾选1条记录进行编辑"
+                });
+            }
+            else
+            {
+                getDetail(selectedIds[0]);
+            }
+        }
+        function getDetail(id)
+        {
+            $.ajax({
+                url:"/Contact/GetContactById",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    id:id
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        $('#personHead').val(result.data.personHead?result.data.personHead:'/img/unperson.jpg');
+                        $('#showUserHead').attr("src",result.data.personHead?result.data.personHead:'/img/unperson.jpg');
+                        $('#personName').val(result.data.personName);
+                        $('#post').val(result.data.post);
+                        $('#depent').val(result.data.depent);
+                        $('#personDesc').summernote('code', result.data.desc);
+                        $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
+        }
+        function getSelectedIds() {
+            var selectedIds = [];
+            $('.checkchild:checked').each(function() {
+                selectedIds.push($(this).val()); // 获取 data-id 属性值并添加到数组中
+            });
+            return selectedIds;
         }
     </script>
 

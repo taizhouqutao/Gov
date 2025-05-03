@@ -10,5 +10,10 @@ namespace BLL
       {
         return await dal.GetContactsByAsync(req);
       }
+
+      public async Task<Contact?> GetContactByIdAsync(int Id)
+      {
+          return await dal.GetContactByIdAsync(Id);
+      }      
     }
 }

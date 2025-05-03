@@ -20,5 +20,19 @@ namespace DAL
             }
             return res;
         }
+
+        public async Task<Contact?> GetContactByIdAsync(int Id)
+        {
+            Contact? res = null;
+            using (var context = new webapplicationContext())
+            {
+                var Query = context.Contacts.AsQueryable();
+                res = await Query.FirstOrDefaultAsync(i =>
+                    (i.IfDel == 0) &&
+                    (i.Id==Id)
+                );
+            }
+            return res;
+        }   
     }
 }

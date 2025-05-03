@@ -25,7 +25,7 @@ namespace WebBackend.Controllers
             return View(ContactPageDto);
         }
 
-         [HttpPost]
+        [HttpPost]
         public ActionResult FileUpload()
         {
             try
@@ -78,5 +78,27 @@ namespace WebBackend.Controllers
                 return Json(new { success = false, message = "上传失败: " + ex.Message });
             }
         }
+    
+        [HttpPost]
+        public async Task<Response<Contact>> GetContactById([FromBody] ContactReqDto req)
+        {
+            try
+            {
+                var res = await bllContact.GetContactByIdAsync(Convert.ToInt32(req.id));
+                if (res == null) throw new Exception("编码对应实体不存在");
+                return new Response<Contact>
+                {
+                    IfSuccess = 1,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<Contact>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        } 
     }
 }

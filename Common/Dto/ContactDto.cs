@@ -3,7 +3,7 @@ namespace Common
     [Serializable]
     public class ContactReqDto
     {
-
+        public int? id{get;set;}
     }
 
     [Serializable]
