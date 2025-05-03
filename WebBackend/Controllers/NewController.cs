@@ -26,12 +26,23 @@ namespace WebBackend.Controllers
 
         public async Task<IActionResult> Comment(int NewTypeId)
         {
-            var NewType = await bllNewType.GetNewTypeByIdAsync(NewTypeId);
-            var NewPage=new NewPage(){
-                NewTypeId=NewType.Id,
-                Title=NewType.NewTypeName
-            };
-            return View(NewPage);
+            NewPage? res=null;
+            if(NewTypeId>0)
+            {
+                var NewType = await bllNewType.GetNewTypeByIdAsync(NewTypeId);
+                res=new NewPage(){
+                    NewTypeId=NewType.Id,
+                    Title=NewType.NewTypeName
+                };
+            }
+            else
+            {
+                res=new NewPage(){
+                    NewTypeId=0,
+                    Title="意见收集"
+                };
+            }
+            return View(res);
         }
 
         [HttpPost]
@@ -272,9 +283,12 @@ namespace WebBackend.Controllers
                         Users = await blluser.GetUsersByIdAsync(UserIds);
                     }
                 }
-                var New = await bll.GetNewByIdAsync(Convert.ToInt32(res.NewId));
-                var NewContent=HtmlHelp.GetString(New.NewContent);
-                res.NewContent=NewContent.Length<500? NewContent:NewContent.Substring(0,500);
+                if(res.NewId>0)
+                {                
+                    var New = await bll.GetNewByIdAsync(Convert.ToInt32(res.NewId));
+                    var NewContent=HtmlHelp.GetString(New.NewContent);
+                    res.NewContent=NewContent.Length<500? NewContent:NewContent.Substring(0,500);
+                }
                 res.PersonHead="/img/unperson.jpg";
                 res.Deals=SonComments.ConvertAll(i=>{
                     var User=Users.FirstOrDefault(j=>j.Id==(i.UserId==null?0:Convert.ToInt32(i.UserId)));

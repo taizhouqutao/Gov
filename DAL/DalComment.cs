@@ -26,44 +26,84 @@ namespace DAL
         public async Task<PageList<CommentResDto>> GetCommentsByPageAsync(PageReq<CommentReqDto> req) {
             var res=new List<CommentResDto>();
             int total=0,allcount=0;
-            using (var context = new webapplicationContext())
+            if(req!=null && req.Query!=null && req.Query.newTypeId!=null && req.Query.newTypeId==0)
             {
-                var QuerComments= context.Comments.AsQueryable();
-                var QueryNews= context.News.AsQueryable();
-                var QureyRes = (from QuerComment in QuerComments
-                join QueryNew in QueryNews on QuerComment.NewId equals QueryNew.Id into p_QueryNew
-                from QueryNew_Join in p_QueryNew.DefaultIfEmpty()
-                where 
-                    (QuerComment.IfDel==0) &&
-                    ((req==null||req.Query==null||req.Query.newTypeId==null)?true:QueryNew_Join.NewTypeId==req.Query.newTypeId) &&
-                    ((req==null||req.Query==null||req.Query.fatherCommentId==null)?true:QuerComment.FatherCommentId==req.Query.fatherCommentId) &&
-                    ((req==null||req.search==null||string.IsNullOrEmpty(req.search.value))?true:(
-                        QuerComment.Content.Contains(req.search.value)||
-                        (!string.IsNullOrEmpty(QuerComment.PersonCellphone) && QuerComment.PersonCellphone.Contains(req.search.value))||
-                        (!string.IsNullOrEmpty(QuerComment.PersonName) && QuerComment.PersonName.Contains(req.search.value)) ||
-                        (!string.IsNullOrEmpty(QueryNew_Join.NewTitle) && QueryNew_Join.NewTitle.Contains(req.search.value)) ||
-                        (!string.IsNullOrEmpty(QuerComment.Content) && QuerComment.Content.Contains(req.search.value)) 
-                    ))
-                select new CommentResDto {
-                    Id=QuerComment.Id,
-                    Content=QuerComment.Content,
-                    CreateTime=QuerComment.CreateTime,
-                    CreateUserId=QuerComment.CreateUserId,
-                    FatherCommentId=QuerComment.FatherCommentId,
-                    IfDeal=QuerComment.IfDeal,
-                    IsShow=QuerComment.IsShow,
-                    NewId=QuerComment.NewId,
-                    NewTitle=QueryNew_Join.NewTitle,
-                    PersonCellphone=QuerComment.PersonCellphone,
-                    PersonName=QuerComment.PersonName,
-                    RoleType=QuerComment.RoleType,
-                    UpdateTime=QuerComment.UpdateTime,
-                    UpdateUserId=QuerComment.UpdateUserId,
-                    UserId=QuerComment.UserId
-                }).OrderByDescending(j=>j.Id);
-                res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
-                total= await QureyRes.CountAsync();
-                allcount=await context.Comments.CountAsync(i=>i.IfDel==0);
+                using (var context = new webapplicationContext())
+                {
+                    var QuerComments= context.Comments.AsQueryable();
+                    var QureyRes = (from QuerComment in QuerComments
+                    where 
+                        (QuerComment.IfDel==0) &&
+                        (QuerComment.NewId==0) &&
+                        ((req==null||req.Query==null||req.Query.fatherCommentId==null)?true:QuerComment.FatherCommentId==req.Query.fatherCommentId) &&
+                        ((req==null||req.search==null||string.IsNullOrEmpty(req.search.value))?true:(
+                            QuerComment.Content.Contains(req.search.value)||
+                            (!string.IsNullOrEmpty(QuerComment.PersonCellphone) && QuerComment.PersonCellphone.Contains(req.search.value))||
+                            (!string.IsNullOrEmpty(QuerComment.PersonName) && QuerComment.PersonName.Contains(req.search.value)) ||
+                            (!string.IsNullOrEmpty(QuerComment.Content) && QuerComment.Content.Contains(req.search.value)) 
+                        ))
+                    select new CommentResDto {
+                        Id=QuerComment.Id,
+                        Content=QuerComment.Content,
+                        CreateTime=QuerComment.CreateTime,
+                        CreateUserId=QuerComment.CreateUserId,
+                        FatherCommentId=QuerComment.FatherCommentId,
+                        IfDeal=QuerComment.IfDeal,
+                        IsShow=QuerComment.IsShow,
+                        NewId=QuerComment.NewId,
+                        PersonCellphone=QuerComment.PersonCellphone,
+                        PersonName=QuerComment.PersonName,
+                        RoleType=QuerComment.RoleType,
+                        UpdateTime=QuerComment.UpdateTime,
+                        UpdateUserId=QuerComment.UpdateUserId,
+                        UserId=QuerComment.UserId
+                    }).OrderByDescending(j=>j.Id);
+                    res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
+                    total= await QureyRes.CountAsync();
+                    allcount=await context.Comments.CountAsync(i=>i.IfDel==0);
+                }
+            }
+            else
+            {
+                using (var context = new webapplicationContext())
+                {
+                    var QuerComments= context.Comments.AsQueryable();
+                    var QueryNews= context.News.AsQueryable();
+                    var QureyRes = (from QuerComment in QuerComments
+                    join QueryNew in QueryNews on QuerComment.NewId equals QueryNew.Id into p_QueryNew
+                    from QueryNew_Join in p_QueryNew.DefaultIfEmpty()
+                    where 
+                        (QuerComment.IfDel==0) &&
+                        ((req==null||req.Query==null||req.Query.newTypeId==null)?true:QueryNew_Join.NewTypeId==req.Query.newTypeId) &&
+                        ((req==null||req.Query==null||req.Query.fatherCommentId==null)?true:QuerComment.FatherCommentId==req.Query.fatherCommentId) &&
+                        ((req==null||req.search==null||string.IsNullOrEmpty(req.search.value))?true:(
+                            QuerComment.Content.Contains(req.search.value)||
+                            (!string.IsNullOrEmpty(QuerComment.PersonCellphone) && QuerComment.PersonCellphone.Contains(req.search.value))||
+                            (!string.IsNullOrEmpty(QuerComment.PersonName) && QuerComment.PersonName.Contains(req.search.value)) ||
+                            (!string.IsNullOrEmpty(QueryNew_Join.NewTitle) && QueryNew_Join.NewTitle.Contains(req.search.value)) ||
+                            (!string.IsNullOrEmpty(QuerComment.Content) && QuerComment.Content.Contains(req.search.value)) 
+                        ))
+                    select new CommentResDto {
+                        Id=QuerComment.Id,
+                        Content=QuerComment.Content,
+                        CreateTime=QuerComment.CreateTime,
+                        CreateUserId=QuerComment.CreateUserId,
+                        FatherCommentId=QuerComment.FatherCommentId,
+                        IfDeal=QuerComment.IfDeal,
+                        IsShow=QuerComment.IsShow,
+                        NewId=QuerComment.NewId,
+                        NewTitle=QueryNew_Join.NewTitle,
+                        PersonCellphone=QuerComment.PersonCellphone,
+                        PersonName=QuerComment.PersonName,
+                        RoleType=QuerComment.RoleType,
+                        UpdateTime=QuerComment.UpdateTime,
+                        UpdateUserId=QuerComment.UpdateUserId,
+                        UserId=QuerComment.UserId
+                    }).OrderByDescending(j=>j.Id);
+                    res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
+                    total= await QureyRes.CountAsync();
+                    allcount=await context.Comments.CountAsync(i=>i.IfDel==0);
+                }
             }
             return new PageList<CommentResDto>(){
                 data=res,

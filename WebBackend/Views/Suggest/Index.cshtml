@@ -1,0 +1,498 @@
+@model Common.NewPage 
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Model.Title</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <!-- Data Tables -->
+    <link href="/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/css/animate.css" rel="stylesheet">
+    <link href="/css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="/css/plugins/summernote/summernote.css" rel="stylesheet" />
+    <link href="/css/plugins/summernote/summernote-bs3.css" rel="stylesheet" />
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>@Model.Title<small>反馈列表，查找</small></h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="table_data_tables.html#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="text-left">
+                            <a data-toggle="modal" class="btn btn-danger" onclick="del()">删除</a>
+                            <a data-toggle="modal" class="btn btn-primary" onclick="online()">前台显示</a>
+                            <a data-toggle="modal" class="btn btn-success" onclick="offline()">前台隐藏</a>
+                        </div>
+                        <table class="table table-striped table-bordered table-hover dataTables-example">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="modal-form" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog" style="min-width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <h3 class="m-t-none m-b">@(Model.Title+"反馈处理")
+                        </h3>
+                        <form role="form">
+                            <input type="hidden" id="commentId" name="commentId" />
+                            <div class="form-inline">
+                                <label>是否显示</label>
+                                <div class="radio commentIsShow">
+                                    <label><input type="radio" value="1" name="isShow"> <i></i>显示</label>
+                                </div>
+                                <div class="radio commentIsShow">
+                                    <label><input type="radio" value="0" name="isShow"> <i></i>不显示</label>
+                                </div>
+                            </div>   
+                            
+                            <div class="social-feed-box">
+                                <div class="pull-right social-action dropdown">
+                                    <button data-toggle="dropdown" class="dropdown-toggle btn-white">
+                                        <i class="fa fa-angle-down"></i>
+                                    </button>
+                                </div>
+                                <div class="social-avatar">
+                                    <a href="" class="pull-left">
+                                        <img id="personHead" alt="image">
+                                    </a>
+                                    <div class="media-body">
+                                        <a href="#" id="personName"></a>
+                                        <small class="text-muted" id="createTime"></small>
+                                    </div>
+                                </div>
+                                <div class="social-body">
+                                    <p id="commentcontent">
+                                    </p>
+                                </div>
+                                <div class="social-footer">
+                                    <div class="social-comment">
+                                        <a href="" class="pull-left">
+                                            <img alt="image" src="/img/unperson.jpg">
+                                        </a>
+                                        <div class="media-body">
+                                            <textarea id="dealComment" class="form-control" required placeholder="填写反馈..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                     
+                            <div>
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -5px;" type="submit">
+                                    <strong>保存</strong>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.7"></script>
+    <script src="/js/plugins/jeditable/jquery.jeditable.js"></script>
+    <!-- Data Tables -->
+    <script src="/js/plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+    <!-- 自定义js -->
+    <script src="/js/content.js?v=1.0.0"></script>
+    <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
+
+    <script src="/js/plugins/summernote/summernote.min.js"></script>
+    <script src="/js/plugins/summernote/summernote-zh-CN.js"></script>
+    <!-- Page-Level Scripts -->
+    <script>
+        var datatable=null;
+        $(document).ready(function () {
+            datatable=$('.dataTables-example').DataTable({
+                processing: true, // 开启处理状态提示（例如加载中）
+                serverSide: true, // 启用服务器端处理
+                ajax: {
+                    url: "/New/GetCommentsByPage", // 你的服务器端接口地址
+                    contentType: "application/json",
+                    type: "POST", // 请求类型，通常是 GET 或 POST
+                    data: function(d) {
+                        // 构建请求对象，包含DataTables参数和自定义参数
+                        if (d.order && d.order.length > 0) {
+                            d.order.forEach(function(orderItem) {
+                                const columnIndex = orderItem.column;  // 原始列索引
+                                const columnName = d.columns[columnIndex].name; // 通过索引获取列名
+                                orderItem.columnName = columnName;  // 添加列名参数
+                            });
+                        }
+                        var request = {
+                            draw: d.draw,
+                            start: d.start,
+                            length: d.length,
+                            search: d.search,
+                            order: d.order,
+                            Query:{
+                                newTypeId:@Model.NewTypeId,
+                                fatherCommentId:0
+                            }
+                        };
+                        return JSON.stringify(request);  // 手动转换为JSON字符串
+                    },
+                    dataFilter: function(response) {
+                        var json = JSON.parse(response);
+                        if (json.ifSuccess !== 1) {
+                            console.log(json.msg);
+                            return JSON.stringify({draw: 0,recordsTotal: 0,recordsFiltered: 0,data: []});
+                        }
+                        // 转换为DataTables标准格式
+                        return JSON.stringify({
+                            draw: json.data.draw,
+                            recordsTotal: json.data.recordsTotal,
+                            recordsFiltered: json.data.recordsFiltered,
+                            data: json.data.data
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.log('Status:', status);
+                        console.log('Details:', xhr.responseText);
+                        if(xhr.status == 401) {
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                    }
+                },
+                columns: [{
+                      sClass: "text-center",
+                      data: "id",
+                      render: function (data, type, full, meta) {//这里就是要显示的checkbox多选框了
+                          return '<input type="checkbox" class="checkchild" value="' + data + '" />';
+                      },
+                      bSortable: false
+                },
+                { data: "id",title: "ID",name:"Id",bSortable: false},
+                {
+                    data: "isShow",
+                    title: "是否显示",
+                    name:"IsShow",
+                    bSortable: false,
+                    render: function(data) {
+                        return data?"已显示":"未显示";
+                    }
+                },
+                {
+                    data: "createTime",
+                    title: "反馈时间",
+                    name:"CreateTime",
+                    bSortable: false,
+                    render: function(data) {
+                        return data? new Date(data).toLocaleString():"--";
+                    }
+                },
+                { data: "personName",title: "反馈人",name:"PersonName",bSortable: false},
+                { data: "personCellphone",title: "联系方式",name:"PersonCellphone",bSortable: false},
+                { data: "content",title: "反馈内容",name:"Content",bSortable: false},
+                {
+                    data: "ifDeal",
+                    title: "是否处理",
+                    name:"IfDeal",
+                    bSortable: false,
+                    render: function(data) {
+                        return data?"已处理":"未处理";
+                    }
+                }]
+            });
+                        // 添加行双击事件
+            $('.dataTables-example').on('dblclick', 'tbody tr', function() {
+                var rowData = datatable.row(this).data();
+                getDetail(rowData.id);
+            });
+            $('#modal-form').on('submit', function(event) {
+                save();
+            });
+        });
+        function search()
+        {
+            datatable.ajax.reload(); // 保持当前分页和排序状态
+        }
+        function getDetail(roleId)
+        {
+            $.ajax({
+                url:"/New/GetCommentsById",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    id:roleId
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        var IsShow = result.data.isShow;
+                        $('.commentIsShow input[value="' + IsShow + '"]').prop('checked', true);
+                        $('#commentId').val(result.data.id);
+                        $('#personHead').attr('src',result.data.personHead);
+                        $('#personName').text(result.data.personName);
+                        $('#createTime').text(new Date(result.data.createTime).toLocaleString());
+                        $('#commentcontent').text(result.data.content);
+                        if(result.data.deals.length)
+                        {
+                            var str_social_comment="";
+                            for(var index=0;index<result.data.deals.length;index++)
+                            {
+                                var deal=result.data.deals[index];
+                                var dealpersonhead=deal.personHead;
+                                var dealpersonName=deal.personName;
+                                var dealcreateTime=new Date(deal.createTime).toLocaleString();
+                                var dealcontent=deal.content;
+                                str_social_comment=str_social_comment+'<div class="social-comment"><a href="#" class="pull-left"><img alt="image" src="'+dealpersonhead+'"></a><div class="media-body"><a href="#">'+dealpersonName+'</a>'+dealcontent+'<br/><small class="text-muted">'+dealcreateTime+'</small></div></div>';
+                            }
+                            $('.social-footer .social-comment:not(:last)').remove();
+                            $('.social-footer .social-comment:last').before(str_social_comment);
+                        }
+                        $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
+        }
+        function getSelectedIds() {
+            var selectedIds = [];
+            $('.checkchild:checked').each(function() {
+                selectedIds.push($(this).val()); // 获取 data-id 属性值并添加到数组中
+            });
+            return selectedIds;
+        }
+        function del()
+        {
+            var selectedIds = getSelectedIds();
+            if(!selectedIds.length)
+            {
+                swal({
+                    title: "提示",
+                    text: "请勾选1条记录进行删除"
+                });
+            }
+            else
+            {
+                var delIds=selectedIds;
+                swal({
+                    title: "您确定要删除这"+delIds.length+"条记录吗",
+                    text: "删除后将无法恢复，请谨慎操作！",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "删除",
+                    cancelButtonText: "取消",
+                    closeOnConfirm: false
+                }, function () {
+                    event.stopPropagation(); // 阻止事件冒泡
+                    event.preventDefault();
+                    $.ajax({
+                        url:"/New/DelComments",
+                        contentType: "application/json",
+                        type: "POST", // 请求类型，通常是 GET 或 POST
+                        data:JSON.stringify({
+                            ids: selectedIds,
+                        }),
+                        success:function(result){
+                            if(result.ifSuccess)
+                            {
+                                search();
+                                swal("删除成功！", "您已经永久删除了这条信息。", "success");
+                            }
+                            else
+                            {
+                                swal({
+                                    title: "出错了",
+                                    text: result.msg
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                            console.log('Status:', status);
+                            console.log('Details:', xhr.responseText);
+                            if(xhr.status == 401) {
+                                window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+        function online()
+        {
+            var selectedIds = getSelectedIds();
+            if(!selectedIds.length)
+            {
+                swal({
+                    title: "提示",
+                    text: "请勾选1条记录进行显示"
+                });
+            }
+            else
+            {
+                $.ajax({
+                    url:"/New/SetCommentShow",
+                    contentType: "application/json",
+                    type: "POST", // 请求类型，通常是 GET 或 POST
+                    data:JSON.stringify({
+                        ids: selectedIds,
+                        isShow:1
+                    }),
+                    success:function(result){
+                        if(result.ifSuccess)
+                        {
+                            search();
+                            swal("操作成功！", "您已经显示了这条信息。", "success");
+                        }
+                        else
+                        {
+                            swal({
+                                title: "出错了",
+                                text: result.msg
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.log('Status:', status);
+                        console.log('Details:', xhr.responseText);
+                        if(xhr.status == 401) {
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                    }
+                });
+            }
+        }
+        function offline()
+        {
+            var selectedIds = getSelectedIds();
+            if(!selectedIds.length)
+            {
+                swal({
+                    title: "提示",
+                    text: "请勾选1条记录进行隐藏"
+                });
+            }
+            else
+            {
+                $.ajax({
+                    url:"/New/SetCommentShow",
+                    contentType: "application/json",
+                    type: "POST", // 请求类型，通常是 GET 或 POST
+                    data:JSON.stringify({
+                        ids: selectedIds,
+                        isShow:0
+                    }),
+                    success:function(result){
+                        if(result.ifSuccess)
+                        {
+                            search();
+                            swal("操作成功！", "您已经隐藏了这条信息。", "success");
+                        }
+                        else
+                        {
+                            swal({
+                                title: "出错了",
+                                text: result.msg
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        console.log('Status:', status);
+                        console.log('Details:', xhr.responseText);
+                        if(xhr.status == 401) {
+                            window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                    }
+                });
+            }
+        }
+        function save()
+        {
+            event.stopPropagation(); // 阻止事件冒泡
+            event.preventDefault();
+            $.ajax({
+                url:"/New/DealComment",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    id: $("#commentId").val()?$("#commentId").val():null,
+                    content:$("#dealComment").val(),
+                    isShow: $("input[name='isShow']:checked").val()
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        $("#dealComment").val('');
+                        var str_social_comment="";
+                        var dealpersonhead=result.data.personHead;
+                        var dealpersonName=result.data.personName;
+                        var dealcreateTime=new Date(result.data.createTime).toLocaleString();
+                        var dealcontent=result.data.content;
+                        str_social_comment=str_social_comment+'<div class="social-comment"><a href="#" class="pull-left"><img alt="image" src="'+dealpersonhead+'"></a><div class="media-body"><a href="#">'+dealpersonName+'</a>'+dealcontent+'<br/><small class="text-muted">'+dealcreateTime+'</small></div></div>';
+                        $('.social-footer .social-comment:last').before(str_social_comment);
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
