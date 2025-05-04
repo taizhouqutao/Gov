@@ -71,11 +71,17 @@ namespace WebBackend.Controllers
                 }
 
                 // 5. 返回成功信息
-                return Json(new { success = true, message = "上传成功",file=$"{ResPath}{fileName}" });
+                return Json(new { 
+                    errno = false, 
+                    message = "上传成功",
+                    data= new{
+                        url=$"{ResPath}{fileName}" 
+                    }
+                });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "上传失败: " + ex.Message });
+                return Json(new { errno = true, message = "上传失败: " + ex.Message });
             }
         }
     

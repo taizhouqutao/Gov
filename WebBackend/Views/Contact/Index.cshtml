@@ -15,12 +15,23 @@
 
     <link href="/css/animate.css" rel="stylesheet">
     <link href="/css/style.css?v=4.1.0" rel="stylesheet">
-    <link href="/css/plugins/summernote/summernote.css" rel="stylesheet" />
-    <link href="/css/plugins/summernote/summernote-bs3.css" rel="stylesheet" />
     <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
     <link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
     <link rel="stylesheet" type="text/css" href="/css/contact.css?v=0.0.1">
+    <link href="/css/plugins/wangeditor/style.css" rel="stylesheet"/>
+    <style>
+    #editor—wrapper {
+        border: 1px solid #ccc;
+        z-index: 100; /* 按需定义 */
+    }
+    #toolbar-container {
+        border-bottom: 1px solid #ccc;
+    }
+    #editor-container {
+        height: 500px;
+    }
+    </style>
 </head>
 
 <body class="gray-bg">
@@ -135,13 +146,16 @@
                         </div>
                         <div class="ibox-content" id="eg">
                             <p>简历：</p>
-                            <div class="click2edit wrapper" id="personDesc">
+                            <div id="editor—wrapper">
+                                <div id="toolbar-container"><!-- 工具栏 --></div>
+                                <div id="editor-container"><!-- 编辑器 --></div>
                             </div>
                         </div>
                         <div>
-                            <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -35px;" type="submit">
+                            <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px;" type="submit">
                                 <strong>保存</strong>
                             </button>
+                            <div style="clear: both;"></div>
                         </div>
                     </form>
                 </div>
@@ -151,8 +165,6 @@
     <!-- 全局js -->
     <script src="/js/jquery.min.js?v=2.1.4"></script>
     <script src="/js/bootstrap.min.js?v=3.3.7"></script>
-    <script src="/js/plugins/summernote/summernote.min.js"></script>
-    <script src="/js/plugins/summernote/summernote-zh-CN.js"></script>
     <!-- Web Uploader -->
     <script type="text/javascript">
         // 添加全局站点信息
@@ -160,18 +172,178 @@
     </script>
     <script src="/js/plugins/webuploader/webuploader.min.js"></script>
     <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <script src="/js/plugins/wangeditor/index.js"></script>
     <!-- 自定义js -->
     <script src="/js/content.js?v=1.0.0"></script>
     <script src="/js/contact.js"></script>
 
-
     <script>
+        const E = window.wangEditor
+
+        const editorConfig = {
+            MENU_CONF: {},
+            placeholder: '输入内容...',
+            onChange(editor) {
+                const html = editor.getHtml()
+                console.log('editor content', html)
+            // 也可以同步到 <textarea>
+            },
+        }
+        editorConfig.MENU_CONF['insertVideo'] = {
+            onInsertedVideo(videoNode) {
+                console.log('inserted video', videoNode)
+            },
+        }
+        editorConfig.MENU_CONF['uploadVideo'] = {
+            server: '/Contact/FileUpload',
+            // server: '/api/upload-img-failed', // test failed
+            // server: '/api/xxx', // test 404
+            timeout: 120 * 1000, // 5s
+
+            fieldName: 'custom-fileName',
+            meta: { token: 'xxx', a: 100 },
+            metaWithUrl: true, // join params to url
+            headers: { Accept: 'text/x-json' },
+
+            maxFileSize: 200 * 1024 * 1024, // 10M
+
+            onBeforeUpload(file) {
+                console.log('onBeforeUpload', file)
+
+                return file // will upload this file
+                // return false // prevent upload
+            },
+            onProgress(progress) {
+                console.log('onProgress', progress)
+            },
+            onSuccess(file, res) {
+                console.log('onSuccess', file, res)
+            },
+            onFailed(file, res) {
+                alert(res.message)
+                console.log('onFailed', file, res)
+            },
+            onError(file, err, res) {
+                alert(err.message)
+                console.error('onError', file, err, res)
+            },
+
+            customInsert(res, insertFn) {
+               console.log('customInsert', res)
+               const videoInfo = res.data || {}
+               const { url, poster } = videoInfo
+               if (!url) throw new Error(`Video url is empty`)
+
+               console.log('Your video url ', url)
+               insertFn(url, poster)
+            },
+
+            // customUpload(file, insertFn) {
+            //   console.log('customUpload', file)
+
+            //   return new Promise((resolve) => {
+            //     // Simulate async insert video
+            //     setTimeout(() => {
+            //       const src = `https://www.w3school.com.cn/i/movie.ogg`
+            //       const poster = 'https://www.baidu.com/img/flexible/logo/pc/result@2.png'
+            //       insertFn(src, poster)
+            //       resolve('ok')
+            //     }, 500)
+            //   })
+            // },
+
+            // customBrowseAndUpload(insertFn) {
+            //   alert('Custom browse and upload')
+
+            //   // Simulate async insert video
+            //   setTimeout(() => {
+            //     const src = '<iframe src="//player.bilibili.com/player.html?aid=250348909&bvid=BV1Pv411w7Xr&cid=401518678&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>'
+            //     insertFn(src, '')
+            //   }, 500)
+            // },
+        }
+
+        editorConfig.MENU_CONF['uploadImage'] = {
+            server: '/Contact/FileUpload',
+            timeout: 5 * 1000, // 5s
+            fieldName: 'custom-fileName',
+            meta: { token: 'xxx', a: 100 },
+            metaWithUrl: true, // join params to url
+            headers: { Accept: 'text/x-json' },
+            maxFileSize: 10 * 1024 * 1024, // 10M
+            base64LimitSize: 5 * 1024, // insert base64 format, if file's size less than 5kb
+            onBeforeUpload(file) {
+                console.log('onBeforeUpload', file)
+                return file // will upload this file
+                // return false // prevent upload
+            },
+            onProgress(progress) {
+                console.log('onProgress', progress)
+            },
+            onSuccess(file, res) {
+                console.log('onSuccess', file, res)
+            },
+            onFailed(file, res) {
+                alert(res.message)
+                console.log('onFailed', file, res)
+            },
+            onError(file, err, res) {
+                alert(err.message)
+                console.error('onError', file, err, res)
+            },
+
+            customInsert(res, insertFn) {
+                console.log('customInsert', res)
+                const imgInfo = res.data[0] || res.data
+                const { url, alt, href } = imgInfo
+                if (!url) throw new Error(`Image url is empty`)
+
+                console.log('Your image url ', url)
+                insertFn(url, alt, href)
+            },
+
+            // customUpload(file, insertFn) {
+            //   console.log('customUpload', file)
+
+            //   return new Promise((resolve) => {
+            //     // Simulate async insert image
+            //     setTimeout(() => {
+            //       const src = `https://www.baidu.com/img/flexible/logo/pc/result@2.png?r=${Math.random()}`
+            //       insertFn(src, 'baidu logo', src)
+            //       resolve('ok')
+            //     }, 500)
+            //   })
+            // },
+
+            // customBrowseAndUpload(insertFn) {
+            //   alert('Custom browse and upload')
+
+            //   // Simulate async insert image
+            //   setTimeout(() => {
+            //     const src = 'https://www.baidu.com/img/flexible/logo/pc/result@2.png'
+            //     insertFn(src, 'baidu logo', src) // insert a image
+            //   }, 500)
+            // },
+        }
+
+        window.editor = E.createEditor({
+            selector: '#editor-container',
+            html: '<p><br></p>',
+            config: editorConfig,
+            mode: 'default', // or 'simple'
+        })
+
+        const toolbarConfig = {}
+
+        window.toolbar = E.createToolbar({
+            editor,
+            selector: '#toolbar-container',
+            config: toolbarConfig,
+            mode: 'default', // or 'simple'
+        })
+
         $(document).ready(function () {
-            $('#personDesc').summernote({
-                height: 400,
-                lang: 'zh-CN',
-                focus: true
-            });
+            
             $('.contact-box').each(function () {
                 animationHover(this, 'pulse');
             });
@@ -188,7 +360,10 @@
             $('#personName').val('');
             $('#post').val('');
             $('#depent').val('');
-            $('#personDesc').summernote('code', '');
+            editor.select([]);
+            editor.deleteFragment();
+            E.SlateTransforms.setNodes(editor, { type: 'paragraph' }, { mode: 'highest' });
+            editor.dangerouslyInsertHtml('');
             $('#contactId').val('');
             $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
         }
@@ -225,7 +400,11 @@
                         $('#personName').val(result.data.personName);
                         $('#post').val(result.data.post);
                         $('#depent').val(result.data.depent);
-                        $('#personDesc').summernote('code', result.data.desc);
+                        editor.select([]);
+                        editor.deleteFragment();
+                        E.SlateTransforms.setNodes(editor, { type: 'paragraph' }, { mode: 'highest' });
+                        editor.dangerouslyInsertHtml(result.data.desc);
+
                         $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
                     else
@@ -326,7 +505,7 @@
                     post:$("#post").val(),
                     personName:$('#personName').val(),
                     depent:$('#depent').val(),
-                    personDesc:$('#personDesc').summernote('code'),
+                    personDesc:editor.getHtml(),
                     personHead:$('#personHead').val(),
                 }),
                 success:function(result){
