@@ -36,6 +36,8 @@ namespace DAL.Contexts
 
         public DbSet<Contact>? Contacts { get; set; }
 
+        public DbSet<Duty>? Dutys { get; set; }
+
         public IConfiguration configuration;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

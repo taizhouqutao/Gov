@@ -1,0 +1,245 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>值日排班</title>
+    <link rel="shortcut icon" href="favicon.ico"> <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <link href="/css/animate.css" rel="stylesheet">
+    <link href="/css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+    <link href="/css/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">             
+    <style>
+
+    </style>
+</head>
+
+<body class="gray-bg">
+        <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>值日排班</small></h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="table_data_tables.html#">
+                                <i class="fa fa-wrench"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="text-left">
+                            <a data-toggle="modal" class="btn btn-primary" onclick="add()">新增值班</a>
+                        </div>
+                        <div id="calendar" class="fc fc-ltr fc-unthemed">
+                            <!-- 日历容器 -->
+                        </div>
+
+                        <!-- 值班人员选择弹窗 -->
+                        <div id="modal-duty" class="modal fade" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <h3 class="m-t-none m-b">设置值班人员</h3>
+                                            <form role="form">
+                                                <input type="hidden" id="dutyDate" name="dutyDate" />
+                                                <div class="form-group">
+                                                    <label>值班日期：</label>
+                                                    <span id="selectedDate"></span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>值班人员：</label>
+                                                    <select class="form-control" id="dutyPerson">
+                                                        <!-- 这里通过Ajax加载人员列表 -->
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <button class="btn btn-sm btn-primary pull-right m-t-n-xs" onclick="saveDuty()" type="button">
+                                                        <strong>保存</strong>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.7"></script>
+    <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
+    <!-- 自定义js -->
+    <script src="/js/content.js?v=1.0.0"></script>
+    <script src="/js/plugins/fullcalendar/fullcalendar.min.js"></script>
+
+    <script>
+        var formatDate = function(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const formattedDate = `${year}-${month}-${day}`; // 年-月-日
+            return formattedDate;
+        };
+                    
+        $(document).ready(function() {
+            // 初始化日历
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                locale: 'zh-cn',
+                buttonText: {
+                    today: '今天',
+                    month: '月',
+                    week: '周',
+                    day: '日'
+                },
+                // 点击日期事件
+                dayClick: function(date) {
+                    // 格式化日期
+                    var dateStr = formatDate(date);
+                    $("#dutyDate").val(dateStr);
+                    $("#selectedDate").text(dateStr);
+                    loadDutyPersons();
+                    $('#modal-duty').modal('show');
+                },
+                // 加载值班数据
+                events: function(start, end, callback) {
+                    $.ajax({
+                        url: '/Contact/GetDutyList',
+                        contentType: "application/json",
+                        type: 'POST',
+                        data:JSON.stringify({
+                            start:start,
+                            end:end
+                        }),
+                        success: function(res) {
+                            if(res.ifSuccess) {
+                                var events = [];
+                                $(res.data).each(function() {
+                                    events.push({
+                                        title: this.personName,
+                                        start: this.dutyDate,
+                                        allDay: true
+                                    });
+                                });
+                                callback(events);
+                            }
+                            else
+                            {
+                                swal({
+                                    title: "出错了",
+                                    text: res.msg
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                            console.log('Status:', status);
+                            console.log('Details:', xhr.responseText);
+                            if(xhr.status == 401) {
+                                window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // 加载值班人员列表
+        function loadDutyPersons() {
+            $.ajax({
+                url: '/Contact/GetContactList',
+                contentType: "application/json",
+                type: 'POST',
+                success: function(res) {
+                    if(res.ifSuccess) {
+                        var html = '';
+                        $(res.data).each(function() {
+                            html += '<option value="' + this.id + '">' + this.personName + '</option>';
+                        });
+                        $("#dutyPerson").html(html);
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: res.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
+        }
+
+        // 保存值班安排
+        function saveDuty() {
+            $.ajax({
+                url: '/Contact/SaveDuty',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    dutyDate: $("#dutyDate").val(),
+                    personId: $("#dutyPerson").val()
+                }),
+                success: function(res) {
+                    if(res.ifSuccess) {
+                        $('#modal-duty').modal('hide');
+                        $('#calendar').fullCalendar('refetchEvents');
+                        swal({
+                            title: "成功",
+                            text: "值班安排已保存"
+                        });
+                    } else {
+                        swal({
+                            title: "错误",
+                            text: res.msg
+                        });
+                    }
+                }
+            });
+        }
+
+        function add()
+        {
+            var dateStr = formatDate(new Date());
+            $("#dutyDate").val(dateStr);
+            $("#selectedDate").text(dateStr);
+            loadDutyPersons();
+            $('#modal-duty').modal('show');
+        }
+    </script>
+
+</body>
+
+</html>

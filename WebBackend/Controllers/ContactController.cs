@@ -25,6 +25,11 @@ namespace WebBackend.Controllers
             return View(ContactPageDto);
         }
 
+        public IActionResult Duty()
+        {
+            return View();
+        }
+
         [HttpPost]
         public ActionResult FileUpload()
         {
@@ -171,6 +176,45 @@ namespace WebBackend.Controllers
             catch (Exception ex)
             {
                 return new Response<Contact>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+    
+        [HttpPost]
+        public async Task<Response<List<ContactDuty>>> GetDutyList([FromBody] ContactReqDto req)
+        {
+            return new Response<List<ContactDuty>>
+            {
+                IfSuccess = 1,
+                Data = new List<ContactDuty>(){
+                    new ContactDuty(){
+                        contactId=1,
+                        dutyDate=Convert.ToDateTime("2025-05-04"),
+                        personName="test",
+                        id=1
+                    }
+                }
+            };
+        }
+
+        [HttpPost]
+        public async Task<Response<List<Contact>>> GetContactList([FromBody] ContactReqDto req)
+        {
+            try
+            {
+                var res = await bllContact.GetContactsByAsync(req);
+                if (res == null) throw new Exception("编码对应实体不存在");
+                return new Response<List<Contact>>
+                {
+                    IfSuccess = 1,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<List<Contact>>()
                 {
                     Msg = ex.Message
                 };
