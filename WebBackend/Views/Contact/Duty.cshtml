@@ -16,9 +16,6 @@
     <link href="/css/style.css?v=4.1.0" rel="stylesheet">
     <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <link href="/css/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">             
-    <style>
-
-    </style>
 </head>
 
 <body class="gray-bg">
@@ -63,12 +60,11 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label>值班人员：</label>
-                                                    <select class="form-control" id="dutyPerson">
-                                                        <!-- 这里通过Ajax加载人员列表 -->
-                                                    </select>
+                                                    <div id="dutyPerson">
+                                                    </div>
                                                 </div>
                                                 <div>
-                                                    <button class="btn btn-sm btn-primary pull-right m-t-n-xs" onclick="saveDuty()" type="button">
+                                                    <button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit">
                                                         <strong>保存</strong>
                                                     </button>
                                                 </div>
@@ -133,8 +129,8 @@
                         contentType: "application/json",
                         type: 'POST',
                         data:JSON.stringify({
-                            start:start,
-                            end:end
+                            startDate:start,
+                            endDate:end
                         }),
                         success: function(res) {
                             if(res.ifSuccess) {
@@ -142,8 +138,8 @@
                                 $(res.data).each(function() {
                                     events.push({
                                         title: this.personName,
-                                        start: this.dutyDate,
-                                        allDay: true
+                                        start: this.startDate,
+                                        allDay: this.allDay
                                     });
                                 });
                                 callback(events);
@@ -167,6 +163,10 @@
                     });
                 }
             });
+
+            $('#modal-duty').on('submit', function(event) {
+                saveDuty();
+            });
         });
 
         // 加载值班人员列表
@@ -179,7 +179,7 @@
                     if(res.ifSuccess) {
                         var html = '';
                         $(res.data).each(function() {
-                            html += '<option value="' + this.id + '">' + this.personName + '</option>';
+                            html += '<label class="checkbox-inline"><input type="checkbox" style="margin-top: 2px;" class="ck_dutyperson" value="' + this.id + '" id="inlineCheckbox'+this.id+'"/>' + this.personName + ' '+this.post+'</label>';
                         });
                         $("#dutyPerson").html(html);
                     }
@@ -204,13 +204,21 @@
 
         // 保存值班安排
         function saveDuty() {
+            event.stopPropagation(); // 阻止事件冒泡
+            event.preventDefault();
+            var selectedIds = [];
+            $('.ck_dutyperson:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
             $.ajax({
-                url: '/Contact/SaveDuty',
-                type: 'POST',
-                contentType: 'application/json',
+                url: "/Contact/SaveDuty",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                contentType: "application/json",
                 data: JSON.stringify({
-                    dutyDate: $("#dutyDate").val(),
-                    personId: $("#dutyPerson").val()
+                    startDateStr:$("#dutyDate").val(),
+                    endDateStr: $("#dutyDate").val(),
+                    contactIds: selectedIds,
+                    allDay:true
                 }),
                 success: function(res) {
                     if(res.ifSuccess) {
@@ -225,6 +233,14 @@
                             title: "错误",
                             text: res.msg
                         });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if(xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }
                 }
             });

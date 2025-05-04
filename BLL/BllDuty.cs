@@ -10,5 +10,10 @@ namespace BLL
         {
             return await dal.GetDutyDetailsByAsync(req);
         }
+
+        public async Task SaveDuty(DutyReqDto req)
+        {
+            await dal.SaveDuty(req);
+        }
     }
 }

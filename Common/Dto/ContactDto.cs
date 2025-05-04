@@ -35,15 +35,4 @@ namespace Common
 
         public string? personHead{ get; set; }
     }
-
-    [Serializable]
-    public class ContactDuty{
-        public int id { get; set; }
-
-        public int contactId{ get; set; }
-
-        public required string personName { get; set; }
-
-        public required DateTime dutyDate{ get; set; }
-    }
 }

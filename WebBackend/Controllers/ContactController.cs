@@ -10,6 +10,7 @@ namespace WebBackend.Controllers
     public class ContactController: Controller
     {
         BllContact bllContact=new BllContact();
+        BllDuty bllDuty=new BllDuty();
         public async Task<IActionResult> Index()
         {
             var Contacts = await bllContact.GetContactsByAsync(new ContactReqDto(){});
@@ -183,20 +184,24 @@ namespace WebBackend.Controllers
         }
     
         [HttpPost]
-        public async Task<Response<List<ContactDuty>>> GetDutyList([FromBody] ContactReqDto req)
+        public async Task<Response<List<DutyDetailDto>>> GetDutyList([FromBody] DutyReqDto req)
         {
-            return new Response<List<ContactDuty>>
+            try
             {
-                IfSuccess = 1,
-                Data = new List<ContactDuty>(){
-                    new ContactDuty(){
-                        contactId=1,
-                        dutyDate=Convert.ToDateTime("2025-05-04"),
-                        personName="test",
-                        id=1
-                    }
-                }
-            };
+                var res = await bllDuty.GetDutyDetailsByAsync(req);
+                return new Response<List<DutyDetailDto>>
+                {
+                    IfSuccess = 1,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<List<DutyDetailDto>>()
+                {
+                    Msg = ex.Message
+                };
+            }
         }
 
         [HttpPost]
@@ -215,6 +220,26 @@ namespace WebBackend.Controllers
             catch (Exception ex)
             {
                 return new Response<List<Contact>>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
+        public async Task<Response> SaveDuty([FromBody] DutyReqDto req)
+        {
+            try
+            {
+                await bllDuty.SaveDuty(req);
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
                 {
                     Msg = ex.Message
                 };
