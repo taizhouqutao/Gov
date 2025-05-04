@@ -17,8 +17,19 @@
     <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <link href="/css/animate.css" rel="stylesheet">
     <link href="/css/style.css?v=4.1.0" rel="stylesheet">
-    <link href="/css/plugins/summernote/summernote.css" rel="stylesheet" />
-    <link href="/css/plugins/summernote/summernote-bs3.css" rel="stylesheet" />
+    <link href="/css/plugins/wangeditor/style.css" rel="stylesheet"/>
+    <style>
+    #editor—wrapper {
+        border: 1px solid #ccc;
+        z-index: 100; /* 按需定义 */
+    }
+    #toolbar-container {
+        border-bottom: 1px solid #ccc;
+    }
+    #editor-container {
+        height: 500px;
+    }
+    </style>
 </head>
 
 <body class="gray-bg">
@@ -70,11 +81,13 @@
                                 <input type="text" required placeholder="请输入标题" id="newTitle" name="newTitle" class="form-control">
                             </div>
                             <div class="ibox-content no-padding" id="eg">
-                                <div class="click2edit wrapper" id="newContent">
+                                <div id="editor—wrapper">
+                                    <div id="toolbar-container"><!-- 工具栏 --></div>
+                                    <div id="editor-container"><!-- 编辑器 --></div>
                                 </div>
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs"  style="width: 94px; height: 42px;" type="submit">
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs"  style="width: 94px; height: 42px; margin-top: 10px;" type="submit">
                                     <strong>保存</strong>
                                 </button>
                             </div>
@@ -95,11 +108,100 @@
     <!-- 自定义js -->
     <script src="/js/content.js?v=1.0.0"></script>
     <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
-
-    <script src="/js/plugins/summernote/summernote.min.js"></script>
-    <script src="/js/plugins/summernote/summernote-zh-CN.js"></script>
+    <script src="/js/plugins/wangeditor/index.js"></script>
     <!-- Page-Level Scripts -->
     <script>
+        const E = window.wangEditor
+
+        const editorConfig = {
+            MENU_CONF: {},
+            placeholder: '输入内容...',
+            onChange(editor) {
+                const html = editor.getHtml()
+                console.log('editor content', html)
+            // 也可以同步到 <textarea>
+            },
+        }
+
+        editorConfig.MENU_CONF['uploadImage'] = {
+            server: '/New/FileUpload',
+            timeout: 5 * 1000, // 5s
+            fieldName: 'custom-fileName',
+            meta: { token: 'xxx', a: 100 },
+            metaWithUrl: true, // join params to url
+            headers: { Accept: 'text/x-json' },
+            maxFileSize: 10 * 1024 * 1024, // 10M
+            base64LimitSize: 5 * 1024, // insert base64 format, if file's size less than 5kb
+            onBeforeUpload(file) {
+                console.log('onBeforeUpload', file)
+                return file // will upload this file
+                // return false // prevent upload
+            },
+            onProgress(progress) {
+                console.log('onProgress', progress)
+            },
+            onSuccess(file, res) {
+                console.log('onSuccess', file, res)
+            },
+            onFailed(file, res) {
+                alert(res.message)
+                console.log('onFailed', file, res)
+            },
+            onError(file, err, res) {
+                alert(err.message)
+                console.error('onError', file, err, res)
+            },
+
+            customInsert(res, insertFn) {
+                console.log('customInsert', res)
+                const imgInfo = res.data[0] || res.data
+                const { url, alt, href } = imgInfo
+                if (!url) throw new Error(`Image url is empty`)
+
+                console.log('Your image url ', url)
+                insertFn(url, alt, href)
+            },
+
+            // customUpload(file, insertFn) {
+            //   console.log('customUpload', file)
+
+            //   return new Promise((resolve) => {
+            //     // Simulate async insert image
+            //     setTimeout(() => {
+            //       const src = `https://www.baidu.com/img/flexible/logo/pc/result@2.png?r=${Math.random()}`
+            //       insertFn(src, 'baidu logo', src)
+            //       resolve('ok')
+            //     }, 500)
+            //   })
+            // },
+
+            // customBrowseAndUpload(insertFn) {
+            //   alert('Custom browse and upload')
+
+            //   // Simulate async insert image
+            //   setTimeout(() => {
+            //     const src = 'https://www.baidu.com/img/flexible/logo/pc/result@2.png'
+            //     insertFn(src, 'baidu logo', src) // insert a image
+            //   }, 500)
+            // },
+        }
+
+        window.editor = E.createEditor({
+            selector: '#editor-container',
+            html: '<p><br></p>',
+            config: editorConfig,
+            mode: 'default', // or 'simple'
+        })
+
+        const toolbarConfig = {}
+
+        window.toolbar = E.createToolbar({
+            editor,
+            selector: '#toolbar-container',
+            config: toolbarConfig,
+            mode: 'default', // or 'simple'
+        })
+
         var datatable=null;
         $(document).ready(function () {
             datatable=$('.dataTables-example').DataTable({
@@ -196,16 +298,6 @@
                 var rowData = datatable.row(this).data();
                 getDetail(rowData.id);
             });
-            $('#newContent').summernote({
-                height: 400,
-                lang: 'zh-CN',
-                focus: true,
-                callbacks: {
-                    onImageUpload: function(files, editor, welEditable) {
-                        sendFile(files[0], editor, welEditable); // 处理图片上传的函数
-                    }
-                }
-            });
 
             $('#modal-form').on('submit', function(event) {
                 save();
@@ -224,7 +316,7 @@
                 success: function(data) {
                     if(data.success)
                     {
-                        $('#newContent').summernote('insertImage', data.url); // url是返回的图片地址
+                        //$('#newContent').summernote('insertImage', data.url); // url是返回的图片地址
                     }
                     else
                     {
@@ -253,7 +345,11 @@
         {
             $('#newTitle').val('');
             $("#roleId").val('');
-            $('#newContent').summernote('code', '');
+
+            editor.select([]);
+            editor.deleteFragment();
+            E.SlateTransforms.setNodes(editor, { type: 'paragraph' }, { mode: 'highest' });
+            editor.dangerouslyInsertHtml('');
             $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
         }
         function edit()
@@ -285,7 +381,11 @@
                     {
                         $("#newTitle").val(result.data.newTitle);
                         $("#newId").val(result.data.id);
-                        $('#newContent').summernote('code', result.data.newContent);
+
+                        editor.select([]);
+                        editor.deleteFragment();
+                        E.SlateTransforms.setNodes(editor, { type: 'paragraph' }, { mode: 'highest' });
+                        editor.dangerouslyInsertHtml(result.data.newContent);
                         $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
                     else
@@ -324,7 +424,7 @@
                 data:JSON.stringify({
                     id: $("#newId").val()?$("#newId").val():null,
                     newTitle:$("#newTitle").val(),
-                    newContent:$('#newContent').summernote('code'),
+                    newContent: editor.getHtml(),
                     newTypeId:@Model.NewTypeId
                 }),
                 success:function(result){
