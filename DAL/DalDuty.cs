@@ -17,13 +17,25 @@ namespace DAL
             {
                 var QueryDutys = context.Dutys.AsQueryable();
                 var QuerContacts= context.Contacts.AsQueryable();
+                DateTime? StartDate=null;
+                DateTime? EndDate=null;
+                if(!string.IsNullOrEmpty(req.startDateStr))
+                {
+                    StartDate=Convert.ToDateTime(Convert.ToDateTime(req.startDateStr).ToString("yyyy-MM-dd"));
+                }
+                if(!string.IsNullOrEmpty(req.endDateStr))
+                {
+                    EndDate=Convert.ToDateTime(Convert.ToDateTime(req.endDateStr).ToString("yyyy-MM-dd"));
+                }
                 res =await (from QueryDuty in QueryDutys
                 join QuerContact in QuerContacts on QueryDuty.ContactId equals QuerContact.Id into p_QuerContact
                 from QuerContact_Join in p_QuerContact.DefaultIfEmpty()
                 where 
                     (QueryDuty.IfDel==0) &&
                     ((req==null||req.startDate==null)?true: req.startDate<=QueryDuty.StartDate) &&
-                    ((req==null||req.endDate==null)?true: req.endDate>=QueryDuty.EndDate)
+                    ((req==null||req.endDate==null)?true: req.endDate>=QueryDuty.EndDate) &&
+                    ((StartDate==null)?true: StartDate<=QueryDuty.StartDate) &&
+                    ((EndDate==null)?true: EndDate>=QueryDuty.EndDate) 
                 select new DutyDetailDto{
                     allDay=QueryDuty.AllDay,
                     contactId=QueryDuty.ContactId,

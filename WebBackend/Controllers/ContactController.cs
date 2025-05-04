@@ -227,6 +227,43 @@ namespace WebBackend.Controllers
         }
 
         [HttpPost]
+        public async Task<Response<List<DutyContactDto>>> GetContactWithDutyList([FromBody] DutyReqDto req)
+        {
+            try
+            {
+                var res = await bllContact.GetContactsByAsync(new ContactReqDto());
+                List<DutyDetailDto> DutyDetails=new List<DutyDetailDto>();
+                if(req!=null && !string.IsNullOrEmpty(req.startDateStr))
+                {
+                    DutyDetails = await bllDuty.GetDutyDetailsByAsync(new DutyReqDto(){
+                        startDateStr=req.startDateStr,
+                        endDateStr=req.startDateStr
+                    });
+                }
+                return new Response<List<DutyContactDto>>
+                {
+                    IfSuccess = 1,
+                    Data = res.ConvertAll(i=>{
+                        var ifDuty = (DutyDetails.Exists(j=>j.contactId==i.Id));
+                        return new DutyContactDto{
+                            id=i.Id, 
+                            personName=i.PersonName,
+                            ifDuty=ifDuty,
+                            post=i.Post
+                        };
+                    }),
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<List<DutyContactDto>>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
         public async Task<Response> SaveDuty([FromBody] DutyReqDto req)
         {
             try

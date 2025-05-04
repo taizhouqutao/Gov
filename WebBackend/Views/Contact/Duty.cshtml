@@ -119,7 +119,7 @@
                     var dateStr = formatDate(date);
                     $("#dutyDate").val(dateStr);
                     $("#selectedDate").text(dateStr);
-                    loadDutyPersons();
+                    loadDutyPersons(dateStr,dateStr);
                     $('#modal-duty').modal('show');
                 },
                 // 加载值班数据
@@ -170,16 +170,21 @@
         });
 
         // 加载值班人员列表
-        function loadDutyPersons() {
+        function loadDutyPersons(startDateStr,endDateStr) {
+            $("#dutyPerson").html('');
             $.ajax({
-                url: '/Contact/GetContactList',
+                url: '/Contact/GetContactWithDutyList',
                 contentType: "application/json",
                 type: 'POST',
+                data: JSON.stringify({
+                    startDateStr:startDateStr,
+                    endDateStr:endDateStr
+                }),
                 success: function(res) {
                     if(res.ifSuccess) {
                         var html = '';
                         $(res.data).each(function() {
-                            html += '<label class="checkbox-inline"><input type="checkbox" style="margin-top: 2px;" class="ck_dutyperson" value="' + this.id + '" id="inlineCheckbox'+this.id+'"/>' + this.personName + ' '+this.post+'</label>';
+                            html += '<label class="checkbox-inline"><input '+(this.ifDuty?"checked":"")+' type="checkbox" style="margin-top: 2px;" class="ck_dutyperson" value="' + this.id + '" id="inlineCheckbox'+this.id+'"/>' + this.personName + ' '+this.post+'</label>';
                         });
                         $("#dutyPerson").html(html);
                     }

@@ -33,4 +33,16 @@ namespace Common
 
       public string? post{ get; set; }
     }
+
+    [Serializable]
+    public class DutyContactDto
+    {
+        public int? id{get;set;}
+
+        public string? personName { get; set; }
+
+        public string? post{ get; set; }
+
+        public bool? ifDuty{get;set;}
+    }
 }
