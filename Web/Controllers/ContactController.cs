@@ -48,5 +48,11 @@ namespace Web.Controllers
             };
             return View(contact);
         }
+
+        public async Task<IActionResult> Write(int id)
+        {
+            
+            return View();
+        }
     }
 }
