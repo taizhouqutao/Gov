@@ -5,6 +5,7 @@ namespace Web.Controllers
 {
     public class NewController : Controller
     {
+        public IConfiguration configuration;
         private BLL.BllNewType bllNewType = new BLL.BllNewType();
         private BLL.BllNew bll = new BLL.BllNew();
 
@@ -12,6 +13,7 @@ namespace Web.Controllers
         public NewController(ILogger<NewController> logger)
         {
             _logger = logger;
+            configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
         }
 
         public async Task<IActionResult> Index(int NewTypeId)
@@ -27,7 +29,7 @@ namespace Web.Controllers
             });
             var newPage=new NewPage(){
                 NewTypeId=NewType.Id,
-                Title=NewType.NewTypeName,
+                Title=NewType.NewTypeName.Replace("管理",""),
                 TotalCount=res.recordsTotal
             };
             return View(newPage);
@@ -79,9 +81,21 @@ namespace Web.Controllers
         public async Task<IActionResult> Detail(int NewId)
         {
             var New = await bll.GetNewByIdAsync(NewId);
+            var NewContent=New.NewContent;
+            string Url = configuration["BackEndPoint:Url"];
+            if (!string.IsNullOrEmpty(NewContent))
+            {
+                NewContent = System.Text.RegularExpressions.Regex.Replace(
+                    NewContent,
+                    @"src=""(?!http)([^""]+)""",
+                    $@"src=""{Url}$1""",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+            }
+
             var newDetailPage=new NewDetailPage(){
                 Id=NewId,
-                NewContent=New.NewContent,
+                NewContent=NewContent,
                 NewTitle=New.NewTitle,
                 PublicTime=New.PublicTime
             };

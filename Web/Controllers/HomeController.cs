@@ -22,7 +22,7 @@ public class HomeController : Controller
         var NewType = await bllNewType.GetNewTypeByIdAsync(12);
         var res = await bllNew.GetNewsByPageAsync(new PageReq<NewReqDto>(){
             start=0,
-            length=1,
+            length=18,
             Query=new NewReqDto(){
                 isPublic=1,
                 newTypeId=12
@@ -30,7 +30,7 @@ public class HomeController : Controller
         });
         var homePageDto=new HomePageDto()
         {
-            NewTypeName=NewType.NewTypeName,
+            NewTypeName=NewType.NewTypeName.Replace("管理",""),
             News=res.data.ConvertAll(i=>new HomeNewItemDto(){
                 Id=i.Id,
                 NewContent=i.NewContent,

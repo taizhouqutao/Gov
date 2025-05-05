@@ -44,7 +44,7 @@
     foreach (var news in Model.News)
     {
         <div class="news-item">
-            <a href="/New/Detail/@news.Id">@news.NewTitle</a>
+            <a href="/New/Detail?NewId=@news.Id">@news.NewTitle</a>
             <span class="news-date">@(news.PublicTime?.ToString("yyyy-MM-dd") ?? "未发布")</span>
         </div>
     }
