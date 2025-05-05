@@ -38,6 +38,7 @@
             <div class="scroll-viewport">
                 <div class="button-track">
                     <!-- 原始按钮 -->
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=12'">公告公示</button>
                     <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=1'">政策咨询</button>
                     <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=2'">公益讲座</button>
                     <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=3'">法律援助</button>
@@ -73,7 +74,7 @@
             const buttonWidth = buttons[0].offsetWidth + 15; // 按钮宽度+间隙
             let originalButtons_Len = buttons.length; // 原始按钮数量（因为我们克隆了一组）
             let currentPosition = 0;
-            const buttonmentCount=10;
+            const buttonmentCount=11;
             
             // 右箭头点击 - 向右滚动
             scrollRightBtn.addEventListener('click', function() {

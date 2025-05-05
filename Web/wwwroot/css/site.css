@@ -25,6 +25,10 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed; /* 可选，使背景固定不随内容滚动 */
 }
+.newhomelistpart
+{
+    min-height: 825px; 
+}
 .newlistpart
 {
     min-height: 1250px;
@@ -175,27 +179,27 @@ h2 {
     font-size: 14px;
 }
 
-    .pagination a {
-        display: inline-block;
-        padding: 5px 12px;
-        margin: 0 5px;
-        color: #333;
-        text-decoration: none;
-        border: 1px solid #ddd;
-        border-radius: 3px;
-    }
+.pagination a {
+    display: inline-block;
+    padding: 5px 12px;
+    margin: 0 5px;
+    color: #333;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
 
-        .pagination a:hover {
-            background-color: #f5f5f5;
-            color: #c00;
-        }
+.pagination a:hover {
+    background-color: #f5f5f5;
+    color: #c00;
+}
 
-    .pagination span {
-        display: inline-block;
-        padding: 5px 12px;
-        margin: 0 5px;
-        color: #666;
-    }
+.pagination span {
+    display: inline-block;
+    padding: 5px 12px;
+    margin: 0 5px;
+    color: #666;
+}
 
 .nav-links {
     display: flex;

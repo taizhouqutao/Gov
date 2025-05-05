@@ -18,7 +18,7 @@ namespace Web.Controllers
         {
             var NewType = await bllNewType.GetNewTypeByIdAsync(NewTypeId);
             var res = await bll.GetNewsByPageAsync(new PageReq<NewReqDto>(){
-                start=1,
+                start=0,
                 length=1,
                 Query=new NewReqDto(){
                     isPublic=1,

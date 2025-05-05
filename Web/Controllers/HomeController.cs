@@ -2,12 +2,14 @@ using System.Diagnostics;
 using BLL;
 using Microsoft.AspNetCore.Mvc;
 using Web.Models;
-
+using Common;
 namespace Web.Controllers;
 
 public class HomeController : Controller
 {
     BllWeather bll=new BllWeather();
+    private BLL.BllNew bllNew = new BLL.BllNew();
+    private BLL.BllNewType bllNewType = new BLL.BllNewType();
     private readonly ILogger<HomeController> _logger;
 
     public HomeController(ILogger<HomeController> logger,IConfiguration configuration)
@@ -15,9 +17,28 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var NewType = await bllNewType.GetNewTypeByIdAsync(12);
+        var res = await bllNew.GetNewsByPageAsync(new PageReq<NewReqDto>(){
+            start=0,
+            length=1,
+            Query=new NewReqDto(){
+                isPublic=1,
+                newTypeId=12
+            }
+        });
+        var homePageDto=new HomePageDto()
+        {
+            NewTypeName=NewType.NewTypeName,
+            News=res.data.ConvertAll(i=>new HomeNewItemDto(){
+                Id=i.Id,
+                NewContent=i.NewContent,
+                NewTitle=i.NewTitle,
+                PublicTime=i.PublicTime
+            })
+        };
+        return View(homePageDto);
     }
 
     public IActionResult Privacy()

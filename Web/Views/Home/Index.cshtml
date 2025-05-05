@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Common.HomePageDto 
+@{
     ViewData["Title"] = "Home Page";
 }
 @section Styles {
@@ -36,26 +37,18 @@
         <div class="dot"></div>
     </div>
 </div>
-<h2>公告公示</h2>
-<div class="news-item">
-    <a href="#">怀安县委书记刘源开展工作调研</a>
-    <span class="news-date">2025-02-23</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县委书记刘源赴怀安城镇就农村综合性改革试点试验项目开展调研</a>
-    <span class="news-date">2025-02-20</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县召开优化营商环境暨招商引资大会</a>
-    <span class="news-date">2025-02-18</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县委刘源书记开展工作调研</a>
-    <span class="news-date">2025-02-16</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县召开党政联席会议</a>
-    <span class="news-date">2025-02-14</span>
+<h2>@Model.NewTypeName</h2>
+<div class="newhomelistpart">
+@if (Model.News != null)
+{
+    foreach (var news in Model.News)
+    {
+        <div class="news-item">
+            <a href="/New/Detail/@news.Id">@news.NewTitle</a>
+            <span class="news-date">@(news.PublicTime?.ToString("yyyy-MM-dd") ?? "未发布")</span>
+        </div>
+    }
+}
 </div>
 @section Scripts {
 <script>
