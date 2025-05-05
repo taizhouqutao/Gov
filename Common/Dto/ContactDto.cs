@@ -35,4 +35,20 @@ namespace Common
 
         public string? personHead{ get; set; }
     }
+
+    [Serializable]
+    public class ContactPageDetailDto
+    {
+        public int id { get; set; }
+
+        public required string personName { get; set; }
+
+        public required string post{ get; set; }
+
+        public string? depent{ get; set; }
+
+        public string? personHead{ get; set; }
+
+        public string? desc { get; set; }
+    }
 }

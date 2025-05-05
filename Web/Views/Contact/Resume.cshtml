@@ -1,0 +1,27 @@
+@model Common.ContactPageDetailDto 
+@{
+    ViewData["Title"] = "New Detail Page";
+}
+@section Styles {
+  <link href="/css/contact.css" rel="stylesheet" />
+}
+<h2>@Model.personName</h2>
+<div class="newdetailpart">
+  <div class="news-content">
+      <div>
+        <img class="personHead" src="@Model.personHead" width="200" height=200" alt="头像"/>
+        <div class="card-content">
+          <h3>@Model.personName</h3>
+          <p>@Model.post</p>
+          <p>@Model.depent</p>
+        </div>
+        <div class="card-actions">
+          <button onclick="window.location.href='/Contact/Write?id=@Model.id'">给我写信</button>
+        </div>
+      </div>
+      <div style="clear:both"></div>
+      <div class="news-body">
+          @Html.Raw(Model.desc)
+      </div>
+  </div>
+</div>

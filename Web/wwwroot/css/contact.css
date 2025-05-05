@@ -28,3 +28,10 @@
   padding: 5px 10px;
   cursor: pointer;
 }
+.newdetailpart .personHead
+{
+  float: left; 
+  width: 200px; 
+  height: 200px;
+  margin-right: 20px;
+}
