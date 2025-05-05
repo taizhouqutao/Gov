@@ -1,0 +1,30 @@
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+}
+.card img {
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  margin-right: 20px;
+}
+.card-content {
+  flex-grow: 1;
+}
+.card-actions {
+  display: flex;
+  gap: 10px;
+}
+.card-actions button {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
