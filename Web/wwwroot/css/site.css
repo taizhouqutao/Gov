@@ -145,19 +145,25 @@ h2 {
     overflow: hidden;
 }
 
-    .news-item a {
-        color: #333;
-        text-decoration: none;
-    }
+.news-item a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    overflow: hidden;
+    width: 85%;
+    float: left;
+}
 
-        .news-item a:hover {
-            color: #c00;
-        }
+.news-item a:hover {
+    color: #c00;
+}
 
 .news-date {
     float: right;
     color: #666;
     font-size: 14px;
+    display: block;
+    float: right;
 }
 
 .pagination {
