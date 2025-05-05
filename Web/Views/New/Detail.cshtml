@@ -1,0 +1,15 @@
+@model Common.NewDetailPage 
+@{
+    ViewData["Title"] = "New Detail Page";
+}
+<h2>@Model.NewTitle</h2>
+<div class="newdetailpart">
+  <div class="news-content">
+      <div class="news-meta">
+          <span class="publish-time">发布时间：@(Model.PublicTime?.ToString("yyyy-MM-dd HH:mm") ?? "未发布")</span>
+      </div>
+      <div class="news-body">
+          @Html.Raw(Model.NewContent)
+      </div>
+  </div>
+</div>

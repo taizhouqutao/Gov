@@ -34,5 +34,21 @@ namespace Common
     public class NewPage{
       public required string Title{get;set;}
       public required int NewTypeId{get;set;}
+
+      public int? TotalCount{get;set;}
+
+      public int? PageCount{get;set;}
+    }
+
+    [Serializable]
+    public class NewDetailPage
+    {
+      public int Id { get; set; }
+
+      public required string NewTitle { get; set; }
+
+      public required string NewContent { get; set; }
+
+      public DateTime? PublicTime { get; set; }=null;
     }
 }

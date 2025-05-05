@@ -1,52 +1,90 @@
-﻿@{
+﻿@model Common.NewPage 
+@{
     ViewData["Title"] = "New List Page";
 }
-<h2>党建之窗</h2>
-<div class="news-item">
-    <a href="#">怀安县委书记刘源开展工作调研</a>
-    <span class="news-date">2025-02-23</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县委书记刘源赴怀安城镇就农村综合性改革试点试验项目开展调研</a>
-    <span class="news-date">2025-02-20</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县召开优化营商环境暨招商引资大会</a>
-    <span class="news-date">2025-02-18</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县委刘源书记开展工作调研</a>
-    <span class="news-date">2025-02-16</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县召开党政联席会议</a>
-    <span class="news-date">2025-02-14</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安：社火展演"闹"元宵 传统佳节氛围浓</a>
-    <span class="news-date">2025-02-12</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县委书记刘源调研消防安全工作</a>
-    <span class="news-date">2025-02-12</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县召开党政联席会议</a>
-    <span class="news-date">2025-02-05</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县委书记刘源、县长孙少凯春节期间开展工作调研</a>
-    <span class="news-date">2025-01-28</span>
-</div>
-<div class="news-item">
-    <a href="#">怀安县纪委十四届五次全会召开</a>
-    <span class="news-date">2025-01-27</span>
-</div>
+<h2>@Model.Title</h2>
+<div class="newlistpart">
 
-<div class="pagination">
-    <a href="#">首页</a>
-    <a href="#">上一页</a>
-    <span>1/163</span>
-    <a href="#">下一页</a>
-    <a href="#">尾页</a>
 </div>
+<div class="pagination">
+    <a href="javascript:ShowNewList(1)">首页</a>
+    <a href="javascript:ShowNewPer()">上一页</a>
+    <span id="pageInfo">1/1</span>
+    <a href="javascript:ShowNewNext()">下一页</a>
+    <a href="javascript:ShowNewLast()">尾页</a>
+</div>
+@section Scripts {
+    <script>
+        const PageSize=27;
+        let NowPage=1;
+        let TotalNewCount=@Model.TotalCount;
+        let TotalPage = Math.ceil(TotalNewCount / PageSize);  // 新增总页数计算
+        $('#pageInfo').text(1+'/'+TotalPage);
+        $(document).ready(function () {
+            ShowNewList(NowPage);
+        });
+        function ShowNewPer()
+        {
+            if(NowPage>1)
+            {
+                NowPage=NowPage-1;
+                ShowNewList(NowPage);
+            }
+        }
+        function ShowNewNext()
+        {
+            if(NowPage<TotalPage)
+            {
+                NowPage=NowPage+1;
+                ShowNewList(NowPage);
+            }
+        }
+        function ShowNewLast()
+        {
+            ShowNewList(TotalPage);
+        }
+        function ShowNewList(pageIndex)
+        {
+            $.ajax({
+                url:"/New/GetNewsByPage",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data:JSON.stringify({
+                    start:(pageIndex-1) * PageSize,
+                    length:PageSize,
+                    Query:{
+                        newTypeId: @Model.NewTypeId
+                    }
+                }),
+                success:function(result){
+                    if(result.ifSuccess)
+                    {
+                        $('.news-item').remove();
+                        TotalNewCount = result.data.recordsTotal;
+                        TotalPage = Math.ceil(TotalNewCount / PageSize);  // 新增总页数计算
+                        $('#pageInfo').text(pageIndex+'/'+TotalPage);
+                        result.data.data.forEach(function(item) {
+                            var newsItem = $('<div class="news-item"></div>');
+                            var link = $('<a></a>').attr('href', '/New/Detail?NewId='+item.id).text(item.newTitle);
+                            var date = $('<span class="news-date"></span>').text(new Date(item.createTime).toLocaleDateString());
+                            newsItem.append(link).append(date);
+                            $('.newlistpart').append(newsItem);
+                        });
+                    }
+                    else
+                    {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                }
+            });
+        }
+    </script>
+}

@@ -25,6 +25,14 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed; /* 可选，使背景固定不随内容滚动 */
 }
+.newlistpart
+{
+    min-height: 1250px;
+}
+.newdetailpart
+{
+    min-height: 1378px;
+}
 .title-container
 {
     width: 90%;
@@ -97,8 +105,8 @@ body {
 }
 
 .title-container .content-button {
-    margin-top: 5px;
-    float: right;
+    margin-top: -5px;
+    float: left;
     margin-right: 17px;
 }
 

@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="title-container">
-        <div class="left">“红色代办”一站式服务</div>
+        <div class="left">"红色代办"一站式服务</div>
         <div class="right">
             <div class="weather-card" onclick="GoToWeather()">
                 <div class="weather-title">今日天气</div>
@@ -21,8 +21,10 @@
                 </div>
             </div>
             <div style="clear:both;"></div>
-            <button class="content-button">返回</button>
         </div>
+        <div style="clear:both;"></div>
+        <button class="content-button" onclick="window.location.href='/Home/Index'">首页</button>
+        <button class="content-button" onclick="window.history.back()">返回</button>
         <div style="clear:both;"></div>
     </div>
     <div class="container">
@@ -36,20 +38,16 @@
             <div class="scroll-viewport">
                 <div class="button-track">
                     <!-- 原始按钮 -->
-                    <button class="content-button" onclick="window.location.href='/New'">党建之窗</button>
-                    <button class="content-button" onclick="window.location.href='/New'">廉政建设</button>
-                    <button class="content-button" onclick="window.location.href='/New'">意见收集</button>
-                    <button class="content-button" onclick="window.location.href='/New'">政策咨询</button>
-                    <button class="content-button" onclick="window.location.href='/New'">组织生活</button>
-                    <button class="content-button" onclick="window.location.href='/New'">党员教育</button>
-                    <button class="content-button" onclick="window.location.href='/New'">志愿服务</button>
-                    <button class="content-button" onclick="window.location.href='/New'">通知公告</button>
-                    
-                    <!-- 克隆的按钮（用于循环效果） -->
-                    <button class="content-button" onclick="window.location.href='/New'">党建之窗</button>
-                    <button class="content-button" onclick="window.location.href='/New'">廉政建设</button>
-                    <button class="content-button" onclick="window.location.href='/New'">意见收集</button>
-                    <button class="content-button" onclick="window.location.href='/New'">政策咨询</button>
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=1'">政策咨询</button>
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=2'">公益讲座</button>
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=3'">法律援助</button>
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=4'">禁毒宣传</button>
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=5'">反诈宣传</button>
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=6'">安全宣传</button>
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=8'">党建之窗</button>
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=9'">廉政建设</button>
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=10'">党务公开</button>
+                    <button class="content-button menu_link_button" onclick="window.location.href='/New/Index?NewTypeId=11'">党务要闻</button>
                 </div>
             </div>
             <button class="scroll-button scroll-right">&gt;</button>
@@ -66,29 +64,24 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const track = document.querySelector('.button-track');
-            const buttons = document.querySelectorAll('.content-button');
+            const buttons = document.querySelectorAll('.menu_link_button');
             const scrollLeftBtn = document.querySelector('.scroll-left');
             const scrollRightBtn = document.querySelector('.scroll-right');
             const viewport = document.querySelector('.scroll-viewport');
-            
+            const viewportWidth = viewport.offsetWidth;
+            const oributton_lenth=buttons.length;
             const buttonWidth = buttons[0].offsetWidth + 15; // 按钮宽度+间隙
-            const originalButtons = buttons.length / 2; // 原始按钮数量（因为我们克隆了一组）
+            let originalButtons_Len = buttons.length; // 原始按钮数量（因为我们克隆了一组）
             let currentPosition = 0;
+            const buttonmentCount=10;
             
             // 右箭头点击 - 向右滚动
             scrollRightBtn.addEventListener('click', function() {
                 currentPosition++;
                 
-                // 如果到达克隆部分的末尾，无缝跳回原始部分
-                if (currentPosition > originalButtons) {
-                    track.style.transition = 'none';
-                    currentPosition = 1;
-                    track.style.transform = `translateX(-${currentPosition * buttonWidth}px)`;
-                    
-                    // 强制重绘
-                    void track.offsetWidth;
-                    
-                    track.style.transition = 'transform 0.5s ease';
+                if (currentPosition > originalButtons_Len-6) {
+                    cloneButtons();
+                    originalButtons_Len=originalButtons_Len+oributton_lenth;
                 }
                 
                 track.style.transform = `translateX(-${currentPosition * buttonWidth}px)`;
@@ -97,30 +90,46 @@
             // 左箭头点击 - 向左滚动
             scrollLeftBtn.addEventListener('click', function() {
                 currentPosition--;
-                
-                // 如果到达开头，无缝跳到克隆部分
-                if (currentPosition < 0) {
-                    track.style.transition = 'none';
-                    currentPosition = originalButtons - 1;
+                @* if (currentPosition < 0) {
+                    cloneBefButtons();
+                } *@
+                var postion = currentPosition * buttonWidth;
+                if(postion>=0)
+                {
                     track.style.transform = `translateX(-${currentPosition * buttonWidth}px)`;
-                    
-                    // 强制重绘
+                }
+                else
+                {
+                    currentPosition=0;
+                }
+                @* else
+                {
+                    currentPosition=8-1;
+                    track.style.transition = 'none';
+                    track.style.transform = `translateX(-${currentPosition * buttonWidth}px)`;
                     void track.offsetWidth;
                     
                     track.style.transition = 'transform 0.5s ease';
-                }
-                
-                track.style.transform = `translateX(-${currentPosition * buttonWidth}px)`;
+                } *@
             });
             
             // 初始化克隆按钮（也可以通过JavaScript动态克隆）
             function cloneButtons() {
                 const originalButtons = track.querySelectorAll('.content-button');
-                const cloneCount = Math.ceil(viewport.offsetWidth / buttonWidth) + 1;
+                const cloneCount =buttonmentCount;
                 
                 for (let i = 0; i < cloneCount; i++) {
                     const clone = originalButtons[i].cloneNode(true);
                     track.appendChild(clone);
+                }
+            }
+            function cloneBefButtons() {
+                const originalButtons = track.querySelectorAll('.content-button');
+                const cloneCount =buttonmentCount;
+                
+                for (let i = 0; i < cloneCount; i++) {
+                    const clone = originalButtons[i].cloneNode(true);
+                    track.insertBefore(clone, track.firstChild);
                 }
             }
             
