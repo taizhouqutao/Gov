@@ -1,0 +1,170 @@
+@model Common.ContactPageDetailDto
+@{
+    ViewData["Title"] = "留言板";
+}
+@section Styles {
+    <style>
+        .message-board {
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        .message-form {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            height: 34px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button[type="submit"] {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background: #0056b3;
+        }
+
+        .message-list {
+            margin-top: 40px;
+        }
+
+        .message-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .visitor-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .message-time {
+            color: #999;
+        }
+    </style>
+}
+<h2>给 @Model.personName 留言</h2>
+<div class="message-board">
+    <div class="message-form">
+        <form id="messageForm">
+            <input type="hidden" id="contactId" value="@Model.id" />
+            <div class="form-group">
+                <label for="visitorName">您的姓名：</label>
+                <input type="text" id="visitorName" placeholder="您的姓名不会被公开，或用作除答复您以外的其它用途"  required />
+            </div>
+            <div class="form-group">
+                <label for="visitorEmail">您的联系方式：</label>
+                <input type="text" id="visitorEmail" placeholder="您的联系方式不会被公开，或用作除答复您以外的其它用途" required />
+            </div>
+            <div class="form-group">
+                <label for="messageContent">留言内容：</label>
+                <textarea id="messageContent" rows="4" required></textarea>
+            </div>
+            <button type="submit">提交留言</button>
+        </form>
+    </div>
+    <h2>历史留言</h2>
+    <div class="message-list">
+        <div id="messageHistory">
+            <!-- 留言将通过JavaScript动态加载 -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // 加载历史留言
+            loadMessages();
+
+            // 提交留言
+            $('#messageForm').submit(function(e) {
+                e.preventDefault();
+                submitMessage();
+            });
+        });
+
+        function loadMessages() {
+            const contactId = $('#contactId').val();
+            $.get(`/Conntact/GetMessage?ContactId=${contactId}`, function(messages) {
+                const messageHtml = messages.map(msg => `
+                    <div class="message-item">
+                        <div class="message-header">
+                            <span class="visitor-name">${msg.visitorName}</span>
+                            <span class="message-time">${msg.createTime}</span>
+                        </div>
+                        <div class="message-content">${msg.content}</div>
+                        ${msg.reply ? `
+                            <div class="message-reply">
+                                <div class="reply-header">回复：</div>
+                                <div class="reply-content">${msg.reply}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+                $('#messageHistory').html(messageHtml);
+            });
+        }
+
+        function submitMessage() {
+            const message = {
+                contactId: $('#contactId').val(),
+                visitorName: $('#visitorName').val(),
+                visitorEmail: $('#visitorEmail').val(),
+                content: $('#messageContent').val()
+            };
+
+            $.post('/Conntact/AddMessage', message, function(response) {
+                if (response.success) {
+                    alert('留言成功！');
+                    $('#messageForm')[0].reset();
+                    loadMessages();
+                } else {
+                    alert('留言失败：' + response.message);
+                }
+            });
+        }
+    </script>
+}

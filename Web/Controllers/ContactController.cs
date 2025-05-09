@@ -51,8 +51,25 @@ namespace Web.Controllers
 
         public async Task<IActionResult> Write(int id)
         {
-            
-            return View();
+            var res = await bllContact.GetContactByIdAsync(id);
+            string Url = configuration["BackEndPoint:Url"];
+            var PersonHead=string.IsNullOrEmpty(res.PersonHead)?"/img/unperson.jpg":res.PersonHead;
+            var contact=new ContactPageDetailDto()
+            {
+                id=res.Id,
+                depent=res.Depent,
+                personHead=$"{Url}{PersonHead}",
+                personName=res.PersonName,
+                post=res.Post,
+                desc=res.Desc
+            };
+            return View(contact);
+        }
+    
+        [HttpPost]
+        public async Task<Response<PageList<ContactMessageDto>>> GetMessage([FromBody] PageReq<ContactMessageReqDto> req)
+        {
+          throw new Exception("");
         }
     }
 }

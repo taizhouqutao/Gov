@@ -51,4 +51,20 @@ namespace Common
 
         public string? desc { get; set; }
     }
+
+    [Serializable]
+    public class ContactMessageDto
+    {
+        public required string visitorName{ get; set; }
+
+        public required string createTime{ get; set; }
+
+        public required string content{ get; set; }
+    }
+
+   [Serializable]
+    public class ContactMessageReqDto
+    {
+        public int? contactId{ get; set; }
+    }
 }
