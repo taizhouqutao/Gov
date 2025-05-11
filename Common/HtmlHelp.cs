@@ -17,5 +17,21 @@ namespace Common
             
             return result.Trim();
         }
+
+    public static string MaskChineseName(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return string.Empty;
+        
+        // 如果名字长度小于2，直接返回原名字
+        if (name.Length < 2) return name;
+        
+        // 将名字转换为字符数组
+        char[] nameChars = name.ToCharArray();
+        
+        // 将第二个字符替换为*
+        nameChars[1] = '*';
+        
+        return new string(nameChars);
+    }
     }
 }

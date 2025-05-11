@@ -3,23 +3,23 @@ namespace Common
     [Serializable]
     public class ContactReqDto
     {
-        public int? id{get;set;}
+        public int? id { get; set; }
 
         public string? personName { get; set; }
 
-        public string? post{ get; set; }
+        public string? post { get; set; }
 
-        public string? depent{ get; set; }
+        public string? depent { get; set; }
 
-        public string? personHead{ get; set; }
+        public string? personHead { get; set; }
 
-        public string? personDesc{ get; set; }
+        public string? personDesc { get; set; }
     }
 
     [Serializable]
     public class ContactPageDto
     {
-        public required List<ContactPageItemDto> contactList {get;set;}
+        public required List<ContactPageItemDto> contactList { get; set; }
     }
 
     [Serializable]
@@ -29,11 +29,11 @@ namespace Common
 
         public required string personName { get; set; }
 
-        public required string post{ get; set; }
+        public required string post { get; set; }
 
-        public string? depent{ get; set; }
+        public string? depent { get; set; }
 
-        public string? personHead{ get; set; }
+        public string? personHead { get; set; }
     }
 
     [Serializable]
@@ -43,28 +43,57 @@ namespace Common
 
         public required string personName { get; set; }
 
-        public required string post{ get; set; }
+        public required string post { get; set; }
 
-        public string? depent{ get; set; }
+        public string? depent { get; set; }
 
-        public string? personHead{ get; set; }
+        public string? personHead { get; set; }
 
         public string? desc { get; set; }
+
+        public int TotalCount{ get; set; }
     }
 
     [Serializable]
     public class ContactMessageDto
     {
-        public required string visitorName{ get; set; }
+        public required string personName { get; set; }
 
-        public required string createTime{ get; set; }
+        public required string createTime { get; set; }
+
+        public required string content { get; set; }
+
+        public List<ContactMessageReplyDto>? replys { get; set; }
+    }
+
+    [Serializable]
+    public class ContactMessageAddDto
+    {
+        public required int contactId { get; set; }
+
+        public required string personName{ get; set; }
+
+        public required string personCellphone{ get; set; }
 
         public required string content{ get; set; }
     }
 
-   [Serializable]
+    [Serializable]
+    public class ContactMessageReplyDto
+    {
+        public required string personName { get; set; }
+        public required string createTime { get; set; }
+
+        public required string content { get; set; }
+    }
+
+    [Serializable]
     public class ContactMessageReqDto
     {
-        public int? contactId{ get; set; }
+        public int? contactId { get; set; }
+
+        public int? fatherContactMessageId { get; set; }
+
+        public List<int>? fatherContactMessageIds { get; set; }
     }
 }
