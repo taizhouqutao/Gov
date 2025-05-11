@@ -20,5 +20,30 @@ namespace BLL
     {
       return await dal.AddContactMessageAsync(entity);
     }
+
+    public async Task<ContactMessage?> GetContactMessageByIdAsync(int Id)
+    {
+      return await dal.GetContactMessageByIdAsync(Id);
+    }
+
+    public async Task<CommentResDetailDto?> GetContactMessageDetailByIdAsync(int Id)
+    {
+      return await dal.GetContactMessageDetailByIdAsync(Id);
+    }
+
+    public async Task DelMessagesAsync(List<int> Ids)
+    {
+      await dal.DelMessagesAsync(Ids);
+    }
+
+    public async Task SetMessageShow(ContactMessageReqDto req)
+    {
+      await dal.SetMessageShow(req);
+    }
+
+    public async Task<ContactMessage> UpdateContactMessageAsync(ContactMessage entity)
+    {
+      return await dal.UpdateContactMessageAsync(entity);
+    }
   }
 }

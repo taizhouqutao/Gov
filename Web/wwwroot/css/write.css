@@ -3,6 +3,7 @@
   padding: 20px;
   background: #fff;
   border-radius: 8px;
+  min-height: 1378px;
 }
 
 .message-form {
@@ -76,4 +77,35 @@ button[type="submit"]:hover {
 
 .message-time {
   color: #999;
+}
+.message-replies {
+  margin-left: 20px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.message-reply {
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.message-reply:last-child {
+  margin-bottom: 0;
+}
+
+.message-reply .reply-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.message-reply .reply-content {
+  color: #333;
+  line-height: 1.5;
 }

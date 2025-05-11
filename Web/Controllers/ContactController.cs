@@ -148,7 +148,8 @@ namespace Web.Controllers
           PersonCellphone = req.personCellphone,
           PersonName = req.personName,
           RoleType = 0,
-          IfDel = 0
+          IfDel = 0,
+          IsShow = 0
         });
         return new Response<ContactMessageDto>
         {

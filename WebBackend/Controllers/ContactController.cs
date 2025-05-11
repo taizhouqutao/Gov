@@ -7,23 +7,32 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebBackend.Controllers
 {
-    public class ContactController: Controller
+    public class ContactController : Controller
     {
-        BllContact bllContact=new BllContact();
-        BllDuty bllDuty=new BllDuty();
+        BllContact bllContact = new BllContact();
+        BllContactMessage bllContactMessage = new BllContactMessage();
+        BllUser blluser = new BllUser();
+        BllDuty bllDuty = new BllDuty();
         public async Task<IActionResult> Index()
         {
-            var Contacts = await bllContact.GetContactsByAsync(new ContactReqDto(){});
-            var ContactPageDto=new ContactPageDto(){
-             contactList=Contacts.ConvertAll(i=>new ContactPageItemDto(){
-                depent=i.Depent,
-                personName=i.PersonName,
-                post=i.Post,
-                id=i.Id,
-                personHead= (string.IsNullOrEmpty(i.PersonHead))?"/img/unperson.jpg": i.PersonHead
-             })
+            var Contacts = await bllContact.GetContactsByAsync(new ContactReqDto() { });
+            var ContactPageDto = new ContactPageDto()
+            {
+                contactList = Contacts.ConvertAll(i => new ContactPageItemDto()
+                {
+                    depent = i.Depent,
+                    personName = i.PersonName,
+                    post = i.Post,
+                    id = i.Id,
+                    personHead = (string.IsNullOrEmpty(i.PersonHead)) ? "/img/unperson.jpg" : i.PersonHead
+                })
             };
             return View(ContactPageDto);
+        }
+
+        public async Task<IActionResult> Message()
+        {
+            return View();
         }
 
         public IActionResult Duty()
@@ -51,8 +60,8 @@ namespace WebBackend.Controllers
                 {
                     Directory.CreateDirectory(savePath);
                 }
-                var ResPath="/Uploads/Contact/";
-                string fileName=string.Empty;
+                var ResPath = "/Uploads/Contact/";
+                string fileName = string.Empty;
                 // 4. 保存每个文件
                 for (int i = 0; i < uploadedFiles.Count; i++)
                 {
@@ -60,9 +69,9 @@ namespace WebBackend.Controllers
                     if (file.Length > 0)
                     {
                         fileName = Path.GetFileName(file.FileName);
-                        var fileExt=fileName.Split('.').LastOrDefault();
+                        var fileExt = fileName.Split('.').LastOrDefault();
                         // 生成随机数作为文件名
-                        var NewFileName=DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                        var NewFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
                         var random = new Random();
                         var randomNum = random.Next(1000, 9999);
                         fileName = $"{NewFileName}{randomNum}.{fileExt}";
@@ -77,11 +86,13 @@ namespace WebBackend.Controllers
                 }
 
                 // 5. 返回成功信息
-                return Json(new { 
-                    errno = false, 
+                return Json(new
+                {
+                    errno = false,
                     message = "上传成功",
-                    data= new{
-                        url=$"{ResPath}{fileName}" 
+                    data = new
+                    {
+                        url = $"{ResPath}{fileName}"
                     }
                 });
             }
@@ -90,7 +101,7 @@ namespace WebBackend.Controllers
                 return Json(new { errno = true, message = "上传失败: " + ex.Message });
             }
         }
-    
+
         [HttpPost]
         public async Task<Response<Contact>> GetContactById([FromBody] ContactReqDto req)
         {
@@ -118,7 +129,7 @@ namespace WebBackend.Controllers
         {
             try
             {
-                if (req.ids != null && req.ids.Count>0)
+                if (req.ids != null && req.ids.Count > 0)
                 {
                     await bllContact.DelContactAsync(req.ids);
                 }
@@ -135,7 +146,7 @@ namespace WebBackend.Controllers
                 };
             }
         }
-    
+
         [HttpPost]
         public async Task<Response<Contact>> SaveContact([FromBody] ContactReqDto req)
         {
@@ -147,10 +158,10 @@ namespace WebBackend.Controllers
                     res = await bllContact.GetContactByIdAsync(Convert.ToInt32(req.id));
                     if (res == null) throw new Exception("编码对应实体不存在");
                     res.PersonName = req.personName ?? "";
-                    res.Post=req.post??"";
-                    res.Depent=req.depent;
-                    res.Desc=req.personDesc;
-                    res.PersonHead=req.personHead;
+                    res.Post = req.post ?? "";
+                    res.Depent = req.depent;
+                    res.Desc = req.personDesc;
+                    res.PersonHead = req.personHead;
                     await bllContact.UpdateContactAsync(res);
                 }
                 else
@@ -160,11 +171,11 @@ namespace WebBackend.Controllers
                         IfDel = 0,
                         CreateTime = DateTime.Now,
                         CreateUserId = 1,
-                        PersonName=req.personName??"",
-                        Post=req.post??"",
-                        Depent=req.depent,
-                        Desc=req.personDesc,
-                        PersonHead=req.personHead,
+                        PersonName = req.personName ?? "",
+                        Post = req.post ?? "",
+                        Depent = req.depent,
+                        Desc = req.personDesc,
+                        PersonHead = req.personHead,
                     };
                     await bllContact.AddContactAsync(res);
                 }
@@ -182,7 +193,7 @@ namespace WebBackend.Controllers
                 };
             }
         }
-    
+
         [HttpPost]
         public async Task<Response<List<DutyDetailDto>>> GetDutyList([FromBody] DutyReqDto req)
         {
@@ -232,24 +243,27 @@ namespace WebBackend.Controllers
             try
             {
                 var res = await bllContact.GetContactsByAsync(new ContactReqDto());
-                List<DutyDetailDto> DutyDetails=new List<DutyDetailDto>();
-                if(req!=null && !string.IsNullOrEmpty(req.startDateStr))
+                List<DutyDetailDto> DutyDetails = new List<DutyDetailDto>();
+                if (req != null && !string.IsNullOrEmpty(req.startDateStr))
                 {
-                    DutyDetails = await bllDuty.GetDutyDetailsByAsync(new DutyReqDto(){
-                        startDateStr=req.startDateStr,
-                        endDateStr=req.startDateStr
+                    DutyDetails = await bllDuty.GetDutyDetailsByAsync(new DutyReqDto()
+                    {
+                        startDateStr = req.startDateStr,
+                        endDateStr = req.startDateStr
                     });
                 }
                 return new Response<List<DutyContactDto>>
                 {
                     IfSuccess = 1,
-                    Data = res.ConvertAll(i=>{
-                        var ifDuty = (DutyDetails.Exists(j=>j.contactId==i.Id));
-                        return new DutyContactDto{
-                            id=i.Id, 
-                            personName=i.PersonName,
-                            ifDuty=ifDuty,
-                            post=i.Post
+                    Data = res.ConvertAll(i =>
+                    {
+                        var ifDuty = (DutyDetails.Exists(j => j.contactId == i.Id));
+                        return new DutyContactDto
+                        {
+                            id = i.Id,
+                            personName = i.PersonName,
+                            ifDuty = ifDuty,
+                            post = i.Post
                         };
                     }),
                 };
@@ -282,5 +296,188 @@ namespace WebBackend.Controllers
                 };
             }
         }
+
+        [HttpPost]
+        public async Task<Response<PageList<ContactMessage>>> GetMessage([FromBody] PageReq<ContactMessageReqDto> req)
+        {
+            try
+            {
+                var res = await bllContactMessage.GetContactMessagesByPageAsync(new PageReq<ContactMessageReqDto>()
+                {
+                    start = req.start,
+                    length = req.length,
+                    Query = req.Query
+                });
+                var replys = await bllContactMessage.GetContactMessagesByAsync(new ContactMessageReqDto()
+                {
+                    fatherContactMessageIds = res.data.ConvertAll(j => j.ContactId)
+                });
+                return new Response<PageList<ContactMessage>>
+                {
+                    IfSuccess = 1,
+                    Data = new PageList<ContactMessage>()
+                    {
+                        recordsTotal = res.recordsTotal,
+                        draw = res.draw,
+                        recordsFiltered = res.recordsFiltered,
+                        data = res.data
+                    },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<PageList<ContactMessage>>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
+        public async Task<Response<CommentResDetailDto?>> GetMessageById([FromBody] ContactMessageReqDto req)
+        {
+            try
+            {
+                var res = await bllContactMessage.GetContactMessageDetailByIdAsync(Convert.ToInt32(req.id));
+                if (res == null) throw new Exception("编码对应实体不存在");
+                var SonComments = await bllContactMessage.GetContactMessagesByAsync(new ContactMessageReqDto()
+                {
+                    fatherContactMessageId = res.Id
+                });
+                List<User> Users = new List<User>();
+                if (SonComments.Count > 0)
+                {
+                    var UserIds = SonComments.Where(i => i.UserId != null && i.UserId > 0).Select(i => Convert.ToInt32(i.UserId)).ToList();
+                    if (UserIds.Count > 0)
+                    {
+                        Users = await blluser.GetUsersByIdAsync(UserIds);
+                    }
+                }
+                res.PersonHead = "/img/unperson.jpg";
+                res.Deals = SonComments.ConvertAll(i =>
+                {
+                    var User = Users.FirstOrDefault(j => j.Id == (i.UserId == null ? 0 : Convert.ToInt32(i.UserId)));
+                    return new CommentResDealDto()
+                    {
+                        Content = i.Content,
+                        CreateTime = i.CreateTime,
+                        CreateUserId = i.CreateUserId,
+                        PersonName = i.PersonName,
+                        RoleType = i.RoleType,
+                        UserId = i.UserId,
+                        PersonHead = (User == null || string.IsNullOrEmpty(User.UserHead)) ? "/img/unperson.jpg" : User.UserHead
+                    };
+                });
+                return new Response<CommentResDetailDto?>
+                {
+                    IfSuccess = 1,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<CommentResDetailDto?>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
+        public async Task<Response> DelMessages([FromBody] CommentReqDto req)
+        {
+            try
+            {
+                if (req.ids != null && req.ids.Count > 0)
+                {
+                    await bllContactMessage.DelMessagesAsync(req.ids);
+                }
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
+        public async Task<Response> SetMessageShow([FromBody] ContactMessageReqDto req)
+        {
+            try
+            {
+                if (req.ids != null && req.ids.Count > 0)
+                {
+                    await bllContactMessage.SetMessageShow(req);
+                }
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
+        public async Task<Response<CommentResDealDto>> DealMessage([FromBody] CommentReqDto req)
+        {
+            try
+            {
+                var Comment = await bllContactMessage.GetContactMessageByIdAsync(Convert.ToInt32(req.id));
+                var UserId = HttpContext.Session.GetInt32("UserId");
+                var User = await blluser.GetUserByIdAsync(Convert.ToInt32(UserId));
+                var NewComment = await bllContactMessage.AddContactMessageAsync(new DAL.Modles.ContactMessage()
+                {
+                    ContactId = Comment.ContactId == null ? 0 : Convert.ToInt32(Comment.ContactId),
+                    Content = req.content ?? "",
+                    CreateTime = DateTime.Now,
+                    FatherContactMessageId = Comment.Id,
+                    CreateUserId = User.Id,
+                    IfDeal = 0,
+                    IsShow = 1,
+                    PersonCellphone = "",
+                    PersonName = User.UserName ?? "",
+                    IfDel = 0,
+                    UserId = User.Id,
+                    RoleType = 1,
+                });
+                Comment.IfDeal = 1;
+                Comment.IsShow = req.isShow ?? 0;
+                await bllContactMessage.UpdateContactMessageAsync(Comment);
+                return new Response<CommentResDealDto>
+                {
+                    IfSuccess = 1,
+                    Data = new CommentResDealDto()
+                    {
+                        Content = NewComment.Content,
+                        CreateTime = NewComment.CreateTime,
+                        CreateUserId = NewComment.CreateUserId,
+                        PersonName = User.UserName,
+                        PersonHead = (User == null || string.IsNullOrEmpty(User.UserHead)) ? "/img/unperson.jpg" : User.UserHead,
+                        RoleType = NewComment.RoleType,
+                        UserId = User.Id,
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<CommentResDealDto>()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
     }
 }

@@ -30,6 +30,8 @@ namespace DAL.Modles
     [Column("FatherContactMessageId")]
     public required int FatherContactMessageId{get;set;}
 
+    [Column("IsShow")]
+    public int? IsShow{get;set;}
     /// <summary>
     /// 留言角色类型（0前台用户 1后台用户）
     /// </summary>

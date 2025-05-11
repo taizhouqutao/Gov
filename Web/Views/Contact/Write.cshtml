@@ -3,7 +3,7 @@
     ViewData["Title"] = "留言板";
 }
 @section Styles {
-    <link href="/css/write.css" rel="stylesheet" />
+    <link href="/css/write.css?v=0.0.2" rel="stylesheet" />
 }
 <h2>给 @Model.personName 留言</h2>
 <div class="message-board">
@@ -42,7 +42,7 @@
 
 @section Scripts {
     <script>
-        const PageSize=27;
+        const PageSize=5;
         let NowPage=1;
         let TotalNewCount=@Model.TotalCount;
         let TotalPage = Math.ceil(TotalNewCount / PageSize);  // 新增总页数计算

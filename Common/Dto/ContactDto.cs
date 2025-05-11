@@ -51,7 +51,7 @@ namespace Common
 
         public string? desc { get; set; }
 
-        public int TotalCount{ get; set; }
+        public int TotalCount { get; set; }
     }
 
     [Serializable]
@@ -71,11 +71,11 @@ namespace Common
     {
         public required int contactId { get; set; }
 
-        public required string personName{ get; set; }
+        public required string personName { get; set; }
 
-        public required string personCellphone{ get; set; }
+        public required string personCellphone { get; set; }
 
-        public required string content{ get; set; }
+        public required string content { get; set; }
     }
 
     [Serializable]
@@ -90,6 +90,11 @@ namespace Common
     [Serializable]
     public class ContactMessageReqDto
     {
+        public int? id { get; set; }
+
+        public int? isShow{ get; set; }
+
+        public List<int>? ids{ get; set; }
         public int? contactId { get; set; }
 
         public int? fatherContactMessageId { get; set; }
