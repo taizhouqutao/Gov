@@ -8,6 +8,7 @@ namespace Web.Controllers
     {
         public IConfiguration configuration;
         BllContact bllContact=new BllContact();
+        BllContactMessage bllContactMessage=new BllContactMessage();
         public ContactController()
         {
           configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
@@ -69,7 +70,35 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<Response<PageList<ContactMessageDto>>> GetMessage([FromBody] PageReq<ContactMessageReqDto> req)
         {
-          throw new Exception("");
+            try
+            {
+                var res = await bllContactMessage.GetContactMessagesByPageAsync(new PageReq<ContactMessageReqDto>(){
+                    start=req.start,
+                    length=req.length,
+                    Query=req.Query
+                });
+                return new Response<PageList<ContactMessageDto>>
+                {
+                    IfSuccess = 1,
+                    Data = new PageList<ContactMessageDto>(){
+                        recordsTotal=res.recordsTotal,
+                        draw=res.draw,
+                        recordsFiltered=res.recordsFiltered,
+                        data=res.data.ConvertAll(j=>new ContactMessageDto(){
+                            content=j.Content,
+                            createTime=j.CreateTime.ToString("yyyy-MM-dd"),
+                            visitorName="",
+                        }) 
+                    },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<PageList<ContactMessageDto>>()
+                {
+                    Msg = ex.Message
+                };
+            }
         }
     }
 }
