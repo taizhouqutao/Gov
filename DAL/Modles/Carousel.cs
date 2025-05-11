@@ -20,5 +20,14 @@ namespace DAL.Modles
 
     [Column("Title")]
     public required string Title { get; set; }
+
+    [Column("IsPublic")]
+    public required int IsPublic { get; set; }
+
+    [Column("PublicTime")]
+    public DateTime? PublicTime { get; set; }=null;
+
+    [Column("PublicUserId")]
+    public int? PublicUserId { get; set; }=null;
   }
 }
