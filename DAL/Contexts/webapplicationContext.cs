@@ -31,7 +31,7 @@ namespace DAL.Contexts
         public DbSet<BizLog>? BizLogs { get; set; }
 
         public DbSet<Comment>? Comments { get; set; }
-        
+
         public DbSet<Weather>? Weathers { get; set; }
 
         public DbSet<Contact>? Contacts { get; set; }
@@ -39,6 +39,8 @@ namespace DAL.Contexts
         public DbSet<Duty>? Dutys { get; set; }
 
         public DbSet<ContactMessage>? ContactMessages { get; set; }
+
+        public DbSet<Carousel>? Carousels { get; set; }
 
         public IConfiguration configuration;
 
