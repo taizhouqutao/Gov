@@ -16,14 +16,16 @@ namespace Web.Controllers
         Query = new CommentReqDto()
         {
           fatherCommentId = 0,
-          newId = 0
+          newId = 0,
+          isShow = 1,
+          newTypeId=0
         }
       });
       var newDetailPage = new NewDetailPage()
       {
         NewContent = "",
         NewTitle = "",
-        TotalCount = CommentInfo.recordsTotal
+        TotalCount = CommentInfo.recordsFiltered
       };
       return View(newDetailPage);
     }
@@ -42,7 +44,7 @@ namespace Web.Controllers
           {
             contactId = req.Query.contactId,
             fatherContactMessageId = 0,
-            isShow = 1
+            isShow = 1,
           }
         });
         var replys = await bllComment.GetContactMessagesByAsync(new ContactMessageReqDto()
@@ -54,7 +56,7 @@ namespace Web.Controllers
           IfSuccess = 1,
           Data = new PageList<ContactMessageDto>()
           {
-            recordsTotal = res.recordsTotal,
+            recordsTotal = res.recordsFiltered,
             draw = res.draw,
             recordsFiltered = res.recordsFiltered,
             data = res.data.ConvertAll(j => new ContactMessageDto()

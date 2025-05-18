@@ -1,4 +1,4 @@
-@model Common.ContactPageDetailDto
+@model Common.NewDetailPage
 @{
   ViewData["Title"] = "意见收集";
 }
@@ -94,25 +94,25 @@
             $('#pageInfo').text(pageIndex + '/' + TotalPage);
 
             const messageHtml = result.data.data.map(msg => `<div class="message-item">
-                                              <div class="message-header">
-                                                  <span class="visitor-name">${msg.personName}</span>
-                                                  <span class="message-time">${msg.createTime}</span>
-                                              </div>
-                                              <div class="message-content">${msg.content}</div>
-                                              ${msg.replys && msg.replys.length > 0 ? `
-                                                  <div class="message-replies">
-                                                      ${msg.replys.map(reply => `
-                                                          <div class="message-reply">
-                                                              <div class="reply-header">
-                                                                  <span class="reply-name">${reply.personName}</span>
-                                                                  <span class="reply-time">${reply.createTime}</span>
-                                                              </div>
-                                                              <div class="reply-content">${reply.content}</div>
-                                                          </div>
-                                                      `).join('')}
+                                                  <div class="message-header">
+                                                      <span class="visitor-name">${msg.personName}</span>
+                                                      <span class="message-time">${msg.createTime}</span>
                                                   </div>
-                                              ` : ''}
-                                          </div>`).join('');
+                                                  <div class="message-content">${msg.content}</div>
+                                                  ${msg.replys && msg.replys.length > 0 ? `
+                                                      <div class="message-replies">
+                                                          ${msg.replys.map(reply => `
+                                                              <div class="message-reply">
+                                                                  <div class="reply-header">
+                                                                      <span class="reply-name">${reply.personName}</span>
+                                                                      <span class="reply-time">${reply.createTime}</span>
+                                                                  </div>
+                                                                  <div class="reply-content">${reply.content}</div>
+                                                              </div>
+                                                          `).join('')}
+                                                      </div>
+                                                  ` : ''}
+                                              </div>`).join('');
             $('#messageHistory').html(messageHtml);
           }
           else {

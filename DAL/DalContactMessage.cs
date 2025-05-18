@@ -19,12 +19,15 @@ namespace DAL
             (i.IfDel == 0) &&
             ((req.Query == null || req.Query.contactId == null) ? true : req.Query.contactId == i.ContactId) &&
             ((req.Query == null || req.Query.fatherContactMessageId == null) ? true : req.Query.fatherContactMessageId == i.FatherContactMessageId) &&
-            ((req.Query == null || req.Query.isShow == null) ? true : req.Query.isShow == i.IsShow) 
+            ((req.Query == null || req.Query.isShow == null) ? true : req.Query.isShow == i.IsShow)
         );
         QureyRes = QureyRes.OrderByDescending(j => j.Id);
         res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
         total = await QureyRes.CountAsync();
-        allcount = await context.ContactMessages.CountAsync(i => i.IfDel == 0 && ((req.Query == null || req.Query.contactId == null) ? true : req.Query.contactId == i.ContactId));
+        allcount = await context.ContactMessages.CountAsync(i => i.IfDel == 0 &&
+         ((req.Query == null || req.Query.contactId == null) ? true : req.Query.contactId == i.ContactId) &&
+         ((req.Query == null || req.Query.fatherContactMessageId == null) ? true : req.Query.fatherContactMessageId == i.FatherContactMessageId)
+         );
       }
       return new PageList<ContactMessage>()
       {

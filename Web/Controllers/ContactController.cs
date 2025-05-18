@@ -58,7 +58,7 @@ namespace Web.Controllers
         personName = res.PersonName,
         post = res.Post,
         desc = res.Desc,
-        TotalCount = contactMsg.recordsTotal
+        TotalCount = contactMsg.recordsFiltered
       };
       return View(contact);
     }
@@ -105,7 +105,7 @@ namespace Web.Controllers
           IfSuccess = 1,
           Data = new PageList<ContactMessageDto>()
           {
-            recordsTotal = res.recordsTotal,
+            recordsTotal = res.recordsFiltered,
             draw = res.draw,
             recordsFiltered = res.recordsFiltered,
             data = res.data.ConvertAll(j => new ContactMessageDto()

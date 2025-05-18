@@ -92,7 +92,10 @@ namespace DAL
                     UserId = i.UserId
                 });
                 total = await QureyRes.CountAsync();
-                allcount = await context.Comments.CountAsync(i => i.IfDel == 0 && ((req.Query == null || req.Query.contactId == null) ? true : req.Query.contactId == i.NewId));
+                allcount = await context.Comments.CountAsync(i => i.IfDel == 0 &&
+                ((req.Query == null || req.Query.contactId == null) ? true : req.Query.contactId == i.NewId) &&
+                ((req.Query == null || req.Query.fatherContactMessageId == null) ? true : req.Query.fatherContactMessageId == i.FatherCommentId)
+                );
             }
             return new PageList<ContactMessage>()
             {
@@ -141,7 +144,10 @@ namespace DAL
                                     }).OrderByDescending(j => j.Id);
                     res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
                     total = await QureyRes.CountAsync();
-                    allcount = await context.Comments.CountAsync(i => i.IfDel == 0);
+                    allcount = await context.Comments.CountAsync(i => i.IfDel == 0 &&
+                    i.NewId == 0 &&
+                    ((req == null || req.Query == null || req.Query.fatherCommentId == null) ? true : i.FatherCommentId == req.Query.fatherCommentId)
+                    );
                 }
             }
             else
@@ -184,7 +190,17 @@ namespace DAL
                                     }).OrderByDescending(j => j.Id);
                     res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
                     total = await QureyRes.CountAsync();
-                    allcount = await context.Comments.CountAsync(i => i.IfDel == 0);
+
+                    int AllQureyRes = await ((from QuerComment in QuerComments
+                                              join QueryNew in QueryNews on QuerComment.NewId equals QueryNew.Id into p_QueryNew
+                                              from QueryNew_Join in p_QueryNew.DefaultIfEmpty()
+                                              where
+                                               (QuerComment.IfDel == 0) &&
+                                               ((req == null || req.Query == null || req.Query.newTypeId == null) ? true : QueryNew_Join.NewTypeId == req.Query.newTypeId) &&
+                                               ((req == null || req.Query == null || req.Query.fatherCommentId == null) ? true : QuerComment.FatherCommentId == req.Query.fatherCommentId)
+                                              select new CommentResDto { Id = QuerComment.Id }
+                                            ).CountAsync());
+                    allcount = AllQureyRes;
                 }
             }
             return new PageList<CommentResDto>()

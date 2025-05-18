@@ -34,7 +34,7 @@ namespace Web.Controllers
             {
                 NewTypeId = NewType.Id,
                 Title = NewType.NewTypeName.Replace("管理", ""),
-                TotalCount = res.recordsTotal
+                TotalCount = res.recordsFiltered
             };
             return View(newPage);
         }
@@ -59,7 +59,7 @@ namespace Web.Controllers
                     IfSuccess = 1,
                     Data = new PageList<NewListDto>()
                     {
-                        recordsTotal = res.recordsTotal,
+                        recordsTotal = res.recordsFiltered,
                         draw = res.draw,
                         recordsFiltered = res.recordsFiltered,
                         data = res.data.ConvertAll(j => new NewListDto()
@@ -98,7 +98,8 @@ namespace Web.Controllers
                 Query = new CommentReqDto()
                 {
                     fatherCommentId = 0,
-                    newId = NewId
+                    newId = NewId,
+                    isShow = 1
                 }
             });
             if (!string.IsNullOrEmpty(NewContent))
@@ -117,7 +118,7 @@ namespace Web.Controllers
                 NewContent = NewContent,
                 NewTitle = New.NewTitle,
                 PublicTime = New.PublicTime,
-                TotalCount = CommentInfo.recordsTotal
+                TotalCount = CommentInfo.recordsFiltered
             };
             return View(newDetailPage);
         }
@@ -147,7 +148,7 @@ namespace Web.Controllers
                     IfSuccess = 1,
                     Data = new PageList<ContactMessageDto>()
                     {
-                        recordsTotal = res.recordsTotal,
+                        recordsTotal = res.recordsFiltered,
                         draw = res.draw,
                         recordsFiltered = res.recordsFiltered,
                         data = res.data.ConvertAll(j => new ContactMessageDto()
@@ -155,7 +156,7 @@ namespace Web.Controllers
                             content = j.Content,
                             createTime = j.CreateTime.ToString("yyyy-MM-dd"),
                             personName = HtmlHelp.MaskChineseName(j.PersonName),
-                            replys = replys.Where(k=>k.FatherContactMessageId==j.Id).ToList().ConvertAll(k => new ContactMessageReplyDto()
+                            replys = replys.Where(k => k.FatherContactMessageId == j.Id).ToList().ConvertAll(k => new ContactMessageReplyDto()
                             {
                                 content = k.Content,
                                 createTime = k.CreateTime.ToString("yyyy-MM-dd"),
