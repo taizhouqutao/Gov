@@ -158,7 +158,7 @@
     var BASE_URL = '/js/plugins/webuploader';
   </script>
   <script src="/js/plugins/webuploader/webuploader.min.js"></script>
-  <script src="/js/carousel.js?v=0.0.2"></script>
+  <script src="/js/carousel.js?v=0.0.11"></script>
   <!-- Page-Level Scripts -->
   <script>
     var datatable = null;
@@ -333,10 +333,10 @@
       event.stopPropagation(); // 阻止事件冒泡
       event.preventDefault();
       var linkUrl = $("#linkUrl").val();
-      if (!linkUrl.startsWith('http://') && !linkUrl.startsWith('https://')) {
+      if (!linkUrl.startsWith('http://') && !linkUrl.startsWith('https://') && !linkUrl.startsWith('/')) {
         swal({
           title: "提示",
-          text: "链接必须以http://或https://开头"
+          text: "链接必须以http://或https://或/开头"
         });
         return;
       }

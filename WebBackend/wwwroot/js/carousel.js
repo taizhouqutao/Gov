@@ -330,7 +330,7 @@ jQuery(function() {
 
           case 'confirm':
               $progress.hide();
-              $upload.text( '开始上传' ).addClass( 'disabled' );
+              $upload.text( '开始上传' );//.addClass( 'disabled' );
 
               stats = uploader.getStats();
               if ( stats.successNum && !stats.uploadFailNum ) {
@@ -414,6 +414,9 @@ jQuery(function() {
   uploader.on('uploadSuccess', function (file, response) {
     $('#imageUrl').val(response.file);
     $('#showImageUrl').attr("src",response.file);
+    uploader.removeFile(file);
+    setState('pedding');
+    removeFile( file );
   });
 
   $upload.on('click', function() {
