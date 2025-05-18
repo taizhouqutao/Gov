@@ -1,4 +1,4 @@
-﻿@model Common.NewPage 
+﻿@model Common.NewPage
 @{
     ViewData["Title"] = "New List Page";
 }
@@ -6,7 +6,7 @@
 <div class="newlistpart">
 
 </div>
-<div class="pagination">
+<div class="pagination hidden">
     <a href="javascript:ShowNewList(1)">首页</a>
     <a href="javascript:ShowNewPer()">上一页</a>
     <span id="pageInfo">1/1</span>
@@ -15,71 +15,66 @@
 </div>
 @section Scripts {
     <script>
-        const PageSize=27;
-        let NowPage=1;
-        let TotalNewCount=@Model.TotalCount;
+        const PageSize = 27;
+        let NowPage = 1;
+        let TotalNewCount =@Model.TotalCount;
         let TotalPage = Math.ceil(TotalNewCount / PageSize);  // 新增总页数计算
-        $('#pageInfo').text(1+'/'+TotalPage);
+        if (TotalNewCount > PageSize) {
+            $('.pagination').removeClass('hidden');
+        }
+        $('#pageInfo').text(1 + '/' + TotalPage);
         $(document).ready(function () {
             ShowNewList(NowPage);
         });
-        function ShowNewPer()
-        {
-            if(NowPage>1)
-            {
-                NowPage=NowPage-1;
+        function ShowNewPer() {
+            if (NowPage > 1) {
+                NowPage = NowPage - 1;
                 ShowNewList(NowPage);
             }
         }
-        function ShowNewNext()
-        {
-            if(NowPage<TotalPage)
-            {
-                NowPage=NowPage+1;
+        function ShowNewNext() {
+            if (NowPage < TotalPage) {
+                NowPage = NowPage + 1;
                 ShowNewList(NowPage);
             }
         }
-        function ShowNewLast()
-        {
+        function ShowNewLast() {
             ShowNewList(TotalPage);
         }
-        function ShowNewList(pageIndex)
-        {
+        function ShowNewList(pageIndex) {
             $.ajax({
-                url:"/New/GetNewsByPage",
+                url: "/New/GetNewsByPage",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
-                data:JSON.stringify({
-                    start:(pageIndex-1) * PageSize,
-                    length:PageSize,
-                    Query:{
+                data: JSON.stringify({
+                    start: (pageIndex - 1) * PageSize,
+                    length: PageSize,
+                    Query: {
                         newTypeId: @Model.NewTypeId
-                    }
+                        }
                 }),
-                success:function(result){
-                    if(result.ifSuccess)
-                    {
+                success: function (result) {
+                    if (result.ifSuccess) {
                         $('.news-item').remove();
                         TotalNewCount = result.data.recordsTotal;
                         TotalPage = Math.ceil(TotalNewCount / PageSize);  // 新增总页数计算
-                        $('#pageInfo').text(pageIndex+'/'+TotalPage);
-                        result.data.data.forEach(function(item) {
+                        $('#pageInfo').text(pageIndex + '/' + TotalPage);
+                        result.data.data.forEach(function (item) {
                             var newsItem = $('<div class="news-item"></div>');
-                            var link = $('<a></a>').attr('href', '/New/Detail?NewId='+item.id).text(item.newTitle);
+                            var link = $('<a></a>').attr('href', '/New/Detail?NewId=' + item.id).text(item.newTitle);
                             var date = $('<span class="news-date"></span>').text(new Date(item.createTime).toLocaleDateString());
                             newsItem.append(link).append(date);
                             $('.newlistpart').append(newsItem);
                         });
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: result.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);

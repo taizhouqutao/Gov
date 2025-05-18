@@ -1,17 +1,18 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
+
 body {
     font-family: 'Microsoft YaHei', sans-serif;
     margin: 0;
@@ -23,27 +24,29 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed; /* 可选，使背景固定不随内容滚动 */
+    background-attachment: fixed;
+    /* 可选，使背景固定不随内容滚动 */
 }
-.newhomelistpart
-{
-    min-height: 825px; 
+
+.newhomelistpart {
+    min-height: 825px;
 }
-.newlistpart
-{
+
+.newlistpart {
     min-height: 1250px;
 }
-.newdetailpart
-{
+
+.newdetailpart {
     min-height: 1378px;
 }
-.title-container
-{
+
+.title-container {
     width: 90%;
     max-width: 1000px;
-    margin:0 auto;
+    margin: 0 auto;
 }
-.title-container .left{
+
+.title-container .left {
     float: left;
     width: 80%;
     color: #c00;
@@ -51,20 +54,23 @@ body {
     padding: 20px 0;
     font-size: 40px;
     font-weight: bold;
-    text-shadow: 
-      -1px -1px 0 #fff,  
-       1px -1px 0 #fff,
-      -1px  1px 0 #fff,
-       1px  1px 0 #fff; /* 白色边框 */
+    text-shadow:
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+        1px 1px 0 #fff;
+    /* 白色边框 */
 }
-.title-container .right{
+
+.title-container .right {
     width: 20%;
     float: right;
 }
+
 .weather-card {
     width: 100px;
     background-color: white;
-    border-radius:0 0 15px 15px;
+    border-radius: 0 0 15px 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 5px;
     text-align: center;
@@ -120,10 +126,10 @@ body {
 .container {
     width: 90%;
     max-width: 1000px;
-    margin:5px auto;
+    margin: 5px auto;
     padding: 20px;
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -211,25 +217,25 @@ h2 {
     border: 1px solid #ddd;
 }
 
-    .nav-links a {
-        flex: 1;
-        text-align: center;
-        padding: 12px 0;
-        color: #333;
-        text-decoration: none;
-        font-weight: bold;
-        border-right: 1px solid #ddd;
-        font-size: 16px;
-    }
+.nav-links a {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    border-right: 1px solid #ddd;
+    font-size: 16px;
+}
 
-        .nav-links a:last-child {
-            border-right: none;
-        }
+.nav-links a:last-child {
+    border-right: none;
+}
 
-        .nav-links a:hover {
-            color: #c00;
-            background-color: #e9e9e9;
-        }
+.nav-links a:hover {
+    color: #c00;
+    background-color: #e9e9e9;
+}
 
 .footer {
     text-align: center;
@@ -310,8 +316,11 @@ h2 {
     position: relative;
 }
 
-.zwlink
-{
+.zwlink {
     max-width: 700px;
     width: 100%;
+}
+
+.hidden {
+    display: none;
 }
