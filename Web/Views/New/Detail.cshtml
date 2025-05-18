@@ -1,15 +1,177 @@
-@model Common.NewDetailPage 
+@model Common.NewDetailPage
 @{
     ViewData["Title"] = "New Detail Page";
 }
+@section Styles {
+    <link href="/css/detail.css?v=0.0.2" rel="stylesheet" />
+}
 <h2>@Model.NewTitle</h2>
 <div class="newdetailpart">
-  <div class="news-content">
-      <div class="news-meta">
-          <span class="publish-time">发布时间：@(Model.PublicTime?.ToString("yyyy-MM-dd HH:mm") ?? "未发布")</span>
-      </div>
-      <div class="news-body">
-          @Html.Raw(Model.NewContent)
-      </div>
-  </div>
+    <div class="news-content">
+        <div class="news-meta">
+            <span class="publish-time">发布时间：@(Model.PublicTime?.ToString("yyyy-MM-dd HH:mm") ?? "未发布")</span>
+        </div>
+        <div class="news-body">
+            @Html.Raw(Model.NewContent)
+            <h2>我要留言</h2>
+            <div class="message-form">
+                <form id="messageForm">
+                    <input type="hidden" id="NewId" value="@Model.Id" />
+                    <div class="form-group">
+                        <label for="personName">您的姓名：</label>
+                        <input type="text" id="personName" placeholder="您的姓名不会被公开，或用作除答复您以外的其它用途" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="personCellphone">您的联系方式：</label>
+                        <input type="text" id="personCellphone" placeholder="您的联系方式不会被公开，或用作除答复您以外的其它用途" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="content">留言内容：</label>
+                        <textarea id="content" rows="4" required></textarea>
+                    </div>
+                    <button type="submit">提交留言</button>
+                </form>
+            </div>
+            <h2>历史留言</h2>
+            <div class="message-list">
+                <div id="messageHistory">
+                    <!-- 留言将通过JavaScript动态加载 -->
+                </div>
+            </div>
+            <div class="pagination">
+                <a href="javascript:loadMessages(1)">首页</a>
+                <a href="javascript:ShowNewPer()">上一页</a>
+                <span id="pageInfo">1/1</span>
+                <a href="javascript:ShowNewNext()">下一页</a>
+                <a href="javascript:ShowNewLast()">尾页</a>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        const PageSize = 5;
+        let NowPage = 1;
+        let TotalCommentCount =@Model.TotalCount;
+        let TotalPage = Math.ceil(TotalCommentCount / PageSize);  // 新增总页数计算
+        $('#pageInfo').text(1 + '/' + TotalPage);
+        $(document).ready(function () {
+            // 加载历史留言
+            loadMessages(NowPage);
+            // 提交留言
+            $('#messageForm').submit(function (e) {
+                e.preventDefault();
+                submitMessage();
+            });
+        });
+        function ShowNewPer() {
+            if (NowPage > 1) {
+                NowPage = NowPage - 1;
+                loadMessages(NowPage);
+            }
+        }
+        function ShowNewNext() {
+            if (NowPage < TotalPage) {
+                NowPage = NowPage + 1;
+                loadMessages(NowPage);
+            }
+        }
+        function ShowNewLast() {
+            loadMessages(TotalPage);
+        }
+        function loadMessages(pageIndex) {
+            const newId = $('#NewId').val();
+            $.ajax({
+                url: "/New/GetComment",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data: JSON.stringify({
+                    start: (pageIndex - 1) * PageSize,
+                    length: PageSize,
+                    Query: {
+                        contactId: newId
+                    }
+                }),
+                success: function (result) {
+                    if (result.ifSuccess) {
+                        TotalCommentCount = result.data.recordsTotal;
+                        TotalPage = Math.ceil(TotalCommentCount / PageSize);  // 新增总页数计算
+                        $('#pageInfo').text(pageIndex + '/' + TotalPage);
+
+                        const messageHtml = result.data.data.map(msg => `<div class="message-item">
+                                        <div class="message-header">
+                                            <span class="visitor-name">${msg.personName}</span>
+                                            <span class="message-time">${msg.createTime}</span>
+                                        </div>
+                                        <div class="message-content">${msg.content}</div>
+                                        ${msg.replys && msg.replys.length > 0 ? `
+                                            <div class="message-replies">
+                                                ${msg.replys.map(reply => `
+                                                    <div class="message-reply">
+                                                        <div class="reply-header">
+                                                            <span class="reply-name">${reply.personName}</span>
+                                                            <span class="reply-time">${reply.createTime}</span>
+                                                        </div>
+                                                        <div class="reply-content">${reply.content}</div>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                    </div>`).join('');
+                        $('#messageHistory').html(messageHtml);
+                    }
+                    else {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                }
+            });
+        }
+
+        function submitMessage() {
+            const message = {
+                contactId: $('#NewId').val(),
+                personName: $('#personName').val(),
+                personCellphone: $('#personCellphone').val(),
+                content: $('#content').val()
+            };
+
+            $.ajax({
+                url: "/New/AddComment",
+                contentType: "application/json",
+                type: "POST", // 请求类型，通常是 GET 或 POST
+                data: JSON.stringify(message),
+                success: function (result) {
+                    if (result.ifSuccess) {
+                        $('#personName').val('');
+                        $('#personCellphone').val('');
+                        $('#content').val('');
+                        swal({
+                            title: "留言成功",
+                            text: "我们已经收到您的信息，将会尽快处理"
+                        });
+                    }
+                    else {
+                        swal({
+                            title: "出错了",
+                            text: result.msg
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                }
+            });
+        }
+    </script>
+}

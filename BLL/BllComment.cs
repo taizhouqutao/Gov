@@ -5,7 +5,7 @@ namespace BLL
 {
     public class BllComment
     {
-        private DalComment dal=new DalComment();
+        private DalComment dal = new DalComment();
         public async Task<Comment?> GetCommentByIdAsync(int Id)
         {
             return await dal.GetCommentByIdAsync(Id);
@@ -25,8 +25,18 @@ namespace BLL
             return await dal.UpdateCommentAsync(entity);
         }
 
-        public async Task<PageList<CommentResDto>> GetCommentsByPageAsync(PageReq<CommentReqDto> req) {
+        public async Task<PageList<CommentResDto>> GetCommentsByPageAsync(PageReq<CommentReqDto> req)
+        {
             return await dal.GetCommentsByPageAsync(req);
+        }
+        public async Task<PageList<ContactMessage>> GetContactMessagesByPageAsync(PageReq<ContactMessageReqDto> req)
+        {
+            return await dal.GetContactMessagesByPageAsync(req);
+        }
+
+        public async Task<List<ContactMessage>> GetContactMessagesByAsync(ContactMessageReqDto req)
+        {
+            return await dal.GetContactMessagesByAsync(req);
         }
 
         public async Task DelCommentAsync(List<int> Ids)

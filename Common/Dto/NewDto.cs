@@ -45,6 +45,8 @@ namespace Common
     {
       public int Id { get; set; }
 
+      public int TotalCount{ get; set; }
+
       public required string NewTitle { get; set; }
 
       public required string NewContent { get; set; }
