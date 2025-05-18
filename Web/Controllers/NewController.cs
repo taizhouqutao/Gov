@@ -140,7 +140,7 @@ namespace Web.Controllers
                 });
                 var replys = await bllComment.GetContactMessagesByAsync(new ContactMessageReqDto()
                 {
-                    fatherContactMessageIds = res.data.ConvertAll(j => j.ContactId)
+                    fatherContactMessageIds = res.data.ConvertAll(j => j.Id)
                 });
                 return new Response<PageList<ContactMessageDto>>
                 {
@@ -155,7 +155,7 @@ namespace Web.Controllers
                             content = j.Content,
                             createTime = j.CreateTime.ToString("yyyy-MM-dd"),
                             personName = HtmlHelp.MaskChineseName(j.PersonName),
-                            replys = replys.ConvertAll(k => new ContactMessageReplyDto()
+                            replys = replys.Where(k=>k.FatherContactMessageId==j.Id).ToList().ConvertAll(k => new ContactMessageReplyDto()
                             {
                                 content = k.Content,
                                 createTime = k.CreateTime.ToString("yyyy-MM-dd"),
