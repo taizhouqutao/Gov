@@ -32,7 +32,7 @@ jQuery(function() {
       ratio = window.devicePixelRatio || 1,
 
       // 缩略图大小
-      thumbnailWidth = 110 * ratio,
+      thumbnailWidth = 220 * ratio,
       thumbnailHeight = 110 * ratio,
 
       // 可能有pedding, ready, uploading, confirm, done.
@@ -412,8 +412,8 @@ jQuery(function() {
   };
 
   uploader.on('uploadSuccess', function (file, response) {
-    $('#userHead').val(response.file);
-    $('#showUserHead').attr("src",response.file);
+    $('#imageUrl').val(response.file);
+    $('#showImageUrl').attr("src",response.file);
   });
 
   $upload.on('click', function() {

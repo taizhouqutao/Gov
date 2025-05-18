@@ -33,5 +33,78 @@ namespace DAL
         recordsTotal = allcount
       };
     }
+
+    public async Task<List<Carousel>> GetCarouselsByIdAsync(List<int> Ids)
+    {
+      List<Carousel> res = new List<Carousel>();
+      using (var context = new webapplicationContext())
+      {
+        var Query = context.Carousels.AsQueryable();
+        res = await Query.Where(i =>
+            (i.IfDel == 0) &&
+            (Ids.Contains(i.Id))
+        ).ToListAsync();
+      }
+      return res;
+    }
+
+    public async Task<Carousel?> GetCarouselByIdAsync(int Id)
+    {
+      Carousel? res = null;
+      using (var context = new webapplicationContext())
+      {
+        var Query = context.Carousels.AsQueryable();
+        res = await Query.FirstOrDefaultAsync(i =>
+            (i.IfDel == 0) &&
+            (i.Id == Id)
+        );
+      }
+      return res;
+    }
+
+    public async Task<Carousel> AddCarouselAsync(Carousel entity)
+    {
+      Carousel res = null;
+      using (var context = new webapplicationContext())
+      {
+        res = (await context.Carousels.AddAsync(entity)).Entity;
+        await context.SaveChangesAsync();
+      }
+      return res;
+    }
+
+    public async Task<Carousel> UpdateCarouselAsync(Carousel entity)
+    {
+      Carousel res = null;
+      using (var context = new webapplicationContext())
+      {
+        res = (context.Carousels.Update(entity)).Entity;
+        await context.SaveChangesAsync();
+      }
+      return res;
+    }
+
+    public async Task UpdateCarouselsAsync(List<Carousel> entitys)
+    {
+      using (var context = new webapplicationContext())
+      {
+        context.Carousels.UpdateRange(entitys);
+        await context.SaveChangesAsync();
+      }
+    }
+
+    public async Task DelCarouselAsync(List<int> Ids)
+    {
+      using (var context = new webapplicationContext())
+      {
+        var res = await context.Carousels.Where(i => Ids.Contains(i.Id)).ToListAsync();
+        res.ForEach(i =>
+        {
+          i.IfDel = 1;
+        });
+        context.Carousels.UpdateRange(res);
+        await context.SaveChangesAsync();
+      }
+    }
   }
 }

@@ -18,7 +18,7 @@
   <link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
   <link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
   <link href="/css/style.css?v=4.1.0" rel="stylesheet">
-  <link href="/css/carousel.css?v=4.1.3" rel="stylesheet">
+  <link href="/css/carousel.css?v=4.1.7" rel="stylesheet">
   <style>
     #editor—wrapper {
       border: 1px solid #ccc;
@@ -80,15 +80,24 @@
             </h3>
             <form role="form">
               <div class="ibox-content">
-                <input type="hidden" id="newId" name="newId" />
+                <input type="hidden" id="carouselId" name="id" />
+                <input type="hidden" id="imageUrl" name="imageUrl" />
                 <div class="form-group">
                   <label>标题：</label>
-                  <input type="text" required placeholder="请输入标题" id="carouselTitle" name="carouselTitle"
-                    class="form-control">
+                  <input type="text" required placeholder="请输入标题" id="carouselTitle" name="title" class="form-control">
                 </div>
                 <div class="form-group">
                   <label>跳转链接：</label>
                   <input type="text" required placeholder="请输入跳转链接" id="linkUrl" name="linkUrl" class="form-control">
+                </div>
+                <div class="form-inline">
+                  <label>是否发布</label>
+                  <div class="radio isPublic">
+                    <label><input type="radio" value="1" name="isPublic"> <i></i>发布</label>
+                  </div>
+                  <div class="radio isPublic">
+                    <label><input type="radio" value="0" name="isPublic"> <i></i>撤下</label>
+                  </div>
                 </div>
               </div>
               <div class="ibox-content">
@@ -96,7 +105,7 @@
                 <div class="form-inline">
                   <div class="form-group">
                     <div class="showuserImg">
-                      <img id="showUserHead" src="/img/unperson.jpg" width="110" height="110" />
+                      <img id="showImageUrl" src="/img/webuploader.png" width="500" height="250" />
                     </div>
                     <div id="uploader" class="wu-example">
                       <div class="queueList">
@@ -149,7 +158,7 @@
     var BASE_URL = '/js/plugins/webuploader';
   </script>
   <script src="/js/plugins/webuploader/webuploader.min.js"></script>
-  <script src="/js/carousel.js?v=0.0.1"></script>
+  <script src="/js/carousel.js?v=0.0.2"></script>
   <!-- Page-Level Scripts -->
   <script>
     var datatable = null;
@@ -258,7 +267,11 @@
     }
     function add() {
       $('#carouselTitle').val('');
+      $('#carouselId').val('');
       $("#linkUrl").val('');
+      $('#imageUrl').val('/img/webuploader.png');
+      $('#showImageUrl').attr("src", '/img/webuploader.png');
+      $('.isPublic input[value="0"]').prop('checked', true);
       $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
     }
     function edit() {
@@ -283,13 +296,13 @@
         }),
         success: function (result) {
           if (result.ifSuccess) {
-            $("#newTitle").val(result.data.newTitle);
-            $("#newId").val(result.data.id);
-
-            editor.select([]);
-            editor.deleteFragment();
-            E.SlateTransforms.setNodes(editor, { type: 'paragraph' }, { mode: 'highest' });
-            editor.dangerouslyInsertHtml(result.data.newContent);
+            $('#carouselTitle').val(result.data.title);
+            $('#carouselId').val(result.data.id);
+            $("#linkUrl").val(result.data.linkUrl);
+            $('#imageUrl').val(result.data.imageUrl);
+            $('#showImageUrl').attr("src", result.data.imageUrl);
+            var isPublic = result.data.isPublic;
+            $('.isPublic input[value="' + isPublic + '"]').prop('checked', true);
             $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
           }
           else {
@@ -319,14 +332,24 @@
     function save() {
       event.stopPropagation(); // 阻止事件冒泡
       event.preventDefault();
+      var linkUrl = $("#linkUrl").val();
+      if (!linkUrl.startsWith('http://') && !linkUrl.startsWith('https://')) {
+        swal({
+          title: "提示",
+          text: "链接必须以http://或https://开头"
+        });
+        return;
+      }
       $.ajax({
-        url: "/New/SaveNew",
+        url: "/Carousel/SaveCarousel",
         contentType: "application/json",
         type: "POST", // 请求类型，通常是 GET 或 POST
         data: JSON.stringify({
-          id: $("#newId").val() ? $("#newId").val() : null,
-          newTitle: $("#newTitle").val(),
-          newContent: editor.getHtml(),
+          id: $("#carouselId").val() ? $("#carouselId").val() : null,
+          linkUrl: $("#linkUrl").val(),
+          imageUrl: $('#imageUrl').val(),
+          title: $("#carouselTitle").val(),
+          isPublic: $("input[name='isPublic']:checked").val()
         }),
         success: function (result) {
           if (result.ifSuccess) {
@@ -373,7 +396,7 @@
           event.stopPropagation(); // 阻止事件冒泡
           event.preventDefault();
           $.ajax({
-            url: "/New/DelNew",
+            url: "/Carousel/DelCarousel",
             contentType: "application/json",
             type: "POST", // 请求类型，通常是 GET 或 POST
             data: JSON.stringify({
@@ -413,7 +436,7 @@
       }
       else {
         $.ajax({
-          url: "/New/SetNewPublic",
+          url: "/Carousel/SetCarouselPublic",
           contentType: "application/json",
           type: "POST", // 请求类型，通常是 GET 或 POST
           data: JSON.stringify({
@@ -453,7 +476,7 @@
       }
       else {
         $.ajax({
-          url: "/New/SetNewPublic",
+          url: "/Carousel/SetCarouselPublic",
           contentType: "application/json",
           type: "POST", // 请求类型，通常是 GET 或 POST
           data: JSON.stringify({

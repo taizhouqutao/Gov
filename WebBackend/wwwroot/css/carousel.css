@@ -5,8 +5,8 @@
 #modal-form .showuserImg
 {
   float: left;
-  width: 110px;
-  height: 110px;
+  width: 500px;
+  height: 250px;
   margin-top: 10px;
 }
 #uploader {
@@ -93,7 +93,7 @@
 }
 
 #uploader .filelist li {
-  width: 110px;
+  width: 220px;
   height: 110px;
   background: url(../../img/bg.png) no-repeat;
   text-align: center;
@@ -189,7 +189,7 @@
   line-height: 110px;
   vertical-align: middle;
   overflow: hidden;
-  width: 110px;
+  width: 220px;
   height: 110px;
 
   -webkit-transform-origin: 50% 50%;

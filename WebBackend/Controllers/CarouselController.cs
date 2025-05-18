@@ -48,7 +48,7 @@ namespace WebBackend.Controllers
 
         // 2. 遍历所有上传的文件
         var uploadedFiles = Request.Form.Files;
-        var savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Uploads", "User"); // 存储路径
+        var savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Uploads", "Carousel"); // 存储路径
 
         // 3. 如果目录不存在则创建
         if (!Directory.Exists(savePath))
@@ -86,6 +86,130 @@ namespace WebBackend.Controllers
       catch (Exception ex)
       {
         return Json(new { success = false, message = "上传失败: " + ex.Message });
+      }
+    }
+
+    [HttpPost]
+    public async Task<Response<Carousel>> SaveCarousel([FromBody] CarouselReqDto req)
+    {
+      try
+      {
+        var UserId = HttpContext.Session.GetInt32("UserId");
+        Carousel? res = null;
+        if (req.id != null)
+        {
+          res = await bllCarousel.GetCarouselByIdAsync(Convert.ToInt32(req.id));
+          if (res == null) throw new Exception("编码对应实体不存在");
+          res.ImageUrl = req.imageUrl ?? "";
+          res.IsPublic = Convert.ToInt32(req.isPublic);
+          res.LinkUrl = req.linkUrl;
+          res.Title = req.title ?? "";
+          res.PublicTime = Convert.ToInt32(req.isPublic) == 1 ? DateTime.Now : null;
+          res.PublicUserId = Convert.ToInt32(req.isPublic) == 1 ? UserId : null;
+          await bllCarousel.UpdateCarouselAsync(res);
+        }
+        else
+        {
+          res = new Carousel()
+          {
+            IfDel = 0,
+            CreateTime = DateTime.Now,
+            CreateUserId = 1,
+            ImageUrl = req.imageUrl ?? "",
+            IsPublic = Convert.ToInt32(req.isPublic),
+            LinkUrl = req.linkUrl,
+            Title = req.title ?? "",
+            PublicTime = Convert.ToInt32(req.isPublic) == 1 ? DateTime.Now : null,
+            PublicUserId = Convert.ToInt32(req.isPublic) == 1 ? UserId : null,
+          };
+          await bllCarousel.AddCarouselAsync(res);
+        }
+        return new Response<Carousel>
+        {
+          IfSuccess = 1,
+          Data = res,
+        };
+      }
+      catch (Exception ex)
+      {
+        return new Response<Carousel>()
+        {
+          Msg = ex.Message
+        };
+      }
+    }
+
+    [HttpPost]
+    public async Task<Response> DelCarousel([FromBody] CarouselReqDto req)
+    {
+      try
+      {
+        if (req.ids != null && req.ids.Count > 0)
+        {
+          await bllCarousel.DelCarouselAsync(req.ids);
+        }
+        return new Response
+        {
+          IfSuccess = 1,
+        };
+      }
+      catch (Exception ex)
+      {
+        return new Response()
+        {
+          Msg = ex.Message
+        };
+      }
+    }
+
+    [HttpPost]
+    public async Task<Response<Carousel>> GetCarouselById([FromBody] CarouselReqDto req)
+    {
+      try
+      {
+        var res = await bllCarousel.GetCarouselByIdAsync(Convert.ToInt32(req.id));
+        if (res == null) throw new Exception("编码对应实体不存在");
+        return new Response<Carousel>
+        {
+          IfSuccess = 1,
+          Data = res,
+        };
+      }
+      catch (Exception ex)
+      {
+        return new Response<Carousel>()
+        {
+          Msg = ex.Message
+        };
+      }
+    }
+
+    [HttpPost]
+    public async Task<Response> SetCarouselPublic([FromBody] CarouselReqDto req)
+    {
+      try
+      {
+        if (req.ids != null && req.ids.Count > 0)
+        {
+          var Carousels = await bllCarousel.GetCarouselsByIdAsync(req.ids);
+          Carousels.ForEach(i =>
+          {
+            i.IsPublic = (int)req.isPublic;
+            i.PublicTime = ((int)req.isPublic) == 1 ? DateTime.Now : null;
+          });
+          await bllCarousel.UpdateCarouselsAsync(Carousels);
+        }
+        return new Response
+        {
+          IfSuccess = 1,
+        };
+      }
+      catch (Exception ex)
+      {
+        return new Response()
+        {
+          Msg = ex.Message
+        };
       }
     }
   }
