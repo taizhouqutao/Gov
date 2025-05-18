@@ -92,7 +92,8 @@ namespace Web.Controllers
           Query = new ContactMessageReqDto()
           {
             contactId = req.Query.contactId,
-            fatherContactMessageId = 0
+            fatherContactMessageId = 0,
+            isShow=1
           }
         });
         var replys = await bllContactMessage.GetContactMessagesByAsync(new ContactMessageReqDto()

@@ -298,7 +298,7 @@ namespace WebBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<Response<PageList<ContactMessage>>> GetMessage([FromBody] PageReq<ContactMessageReqDto> req)
+        public async Task<Response<PageList<ContactMessageResDto>>> GetMessage([FromBody] PageReq<ContactMessageReqDto> req)
         {
             try
             {
@@ -312,21 +312,46 @@ namespace WebBackend.Controllers
                 {
                     fatherContactMessageIds = res.data.ConvertAll(j => j.ContactId)
                 });
-                return new Response<PageList<ContactMessage>>
+                var Contacts = await bllContact.GetContactsByAsync(new ContactReqDto()
+                {
+                    ids = res.data.ConvertAll(j => j.ContactId)
+                });
+                return new Response<PageList<ContactMessageResDto>>
                 {
                     IfSuccess = 1,
-                    Data = new PageList<ContactMessage>()
+                    Data = new PageList<ContactMessageResDto>()
                     {
                         recordsTotal = res.recordsTotal,
                         draw = res.draw,
                         recordsFiltered = res.recordsFiltered,
-                        data = res.data
+                        data = res.data.ConvertAll(i =>
+                        {
+                            var Contact = Contacts.FirstOrDefault(j => j.Id == i.ContactId);
+                            return new ContactMessageResDto()
+                            {
+                                ContactId = i.ContactId,
+                                Content = i.Content,
+                                CreateTime = i.CreateTime,
+                                CreateUserId = i.CreateUserId,
+                                FatherContactMessageId = i.FatherContactMessageId,
+                                IfDeal = i.IfDeal,
+                                PersonName = i.PersonName,
+                                RoleType = i.RoleType,
+                                Id = i.Id,
+                                IsShow = i.IsShow,
+                                PersonCellphone = i.PersonCellphone,
+                                UpdateTime = i.UpdateTime,
+                                UpdateUserId = i.UpdateUserId,
+                                ContactName = Contact == null ? "" : Contact.PersonName,
+                                UserId = i.UserId
+                            };
+                        })
                     },
                 };
             }
             catch (Exception ex)
             {
-                return new Response<PageList<ContactMessage>>()
+                return new Response<PageList<ContactMessageResDto>>()
                 {
                     Msg = ex.Message
                 };
@@ -439,7 +464,7 @@ namespace WebBackend.Controllers
                 var User = await blluser.GetUserByIdAsync(Convert.ToInt32(UserId));
                 var NewComment = await bllContactMessage.AddContactMessageAsync(new DAL.Modles.ContactMessage()
                 {
-                    ContactId = Comment.ContactId == null ? 0 : Convert.ToInt32(Comment.ContactId),
+                    ContactId = Convert.ToInt32(Comment.ContactId),
                     Content = req.content ?? "",
                     CreateTime = DateTime.Now,
                     FatherContactMessageId = Comment.Id,
