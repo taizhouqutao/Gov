@@ -3,7 +3,7 @@
   margin: 0 auto;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
 }
 
@@ -29,10 +29,15 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   color: white;
   padding: 15px;
   text-align: center;
+}
+
+.slide-caption a {
+  color: white;
+  text-decoration: none;
 }
 
 .slider-nav {
@@ -45,7 +50,7 @@
 }
 
 .slider-nav button {
-  background: rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.5);
   border: none;
   padding: 10px 15px;
   cursor: pointer;
@@ -55,7 +60,7 @@
 }
 
 .slider-nav button:hover {
-  background: rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .slider-dots {
@@ -79,14 +84,14 @@
 
 @media (max-width: 768px) {
   .slider-container {
-      height: 300px;
+    height: 300px;
   }
-  
+
   .header h1 {
-      font-size: 22px;
+    font-size: 22px;
   }
-  
+
   .header h2 {
-      font-size: 16px;
+    font-size: 16px;
   }
 }

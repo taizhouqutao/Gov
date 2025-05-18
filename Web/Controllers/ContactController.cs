@@ -93,7 +93,7 @@ namespace Web.Controllers
           {
             contactId = req.Query.contactId,
             fatherContactMessageId = 0,
-            isShow=1
+            isShow = 1
           }
         });
         var replys = await bllContactMessage.GetContactMessagesByAsync(new ContactMessageReqDto()
@@ -113,7 +113,7 @@ namespace Web.Controllers
               content = j.Content,
               createTime = j.CreateTime.ToString("yyyy-MM-dd"),
               personName = HtmlHelp.MaskChineseName(j.PersonName),
-              replys = replys.Where(k=>k.FatherContactMessageId==j.Id).ToList().ConvertAll(k => new ContactMessageReplyDto()
+              replys = replys.Where(k => k.FatherContactMessageId == j.Id).ToList().ConvertAll(k => new ContactMessageReplyDto()
               {
                 content = k.Content,
                 createTime = k.CreateTime.ToString("yyyy-MM-dd"),
