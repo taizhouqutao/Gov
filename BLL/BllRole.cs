@@ -5,8 +5,11 @@ namespace BLL
 {
     public class BllRole
     {
-        private DalRole dal=new DalRole();
-        public async Task<PageList<Role>> GetRolesByPageAsync(PageReq<RoleReqDto> req) {
+        private DalRole dal = new DalRole();
+        private DalBizLog dalLog = new DalBizLog();
+        private BllUser bllUser = new BllUser();
+        public async Task<PageList<Role>> GetRolesByPageAsync(PageReq<RoleReqDto> req)
+        {
             return await dal.GetRolesByPageAsync(req);
         }
 
@@ -17,17 +20,64 @@ namespace BLL
 
         public async Task<Role> AddRoleAsync(Role role)
         {
-            return await dal.AddRoleAsync(role);
+            var user = await bllUser.GetUserByIdAsync(role.CreateUserId);
+            var res = await dal.AddRoleAsync(role);
+            await dalLog.AddBizLogAsync(new BizLog()
+            {
+                ActionType = "角色管理",
+                CreateTime = DateTime.Now,
+                CreateUserId = user?.Id ?? 0,
+                IfDel = 0,
+                ModelTitle = $"系统设置",
+                OptUserName = user?.UserName ?? "系统",
+                ActionDesc = "添加",
+                ActionRemark = "添加角色，角色编码为：" + role.Id,
+                ActionJson = "{}",
+                UpdateTime = DateTime.Now,
+                UpdateUserId = user?.Id ?? 0,
+            });
+            return res;
         }
 
         public async Task<Role> UpdateRoleAsync(Role role)
         {
-            return await dal.UpdateRoleAsync(role);
+            var user = await bllUser.GetUserByIdAsync(role.UpdateUserId ?? 0);
+            var res = await dal.UpdateRoleAsync(role);
+            await dalLog.AddBizLogAsync(new BizLog()
+            {
+                ActionType = "角色管理",
+                CreateTime = DateTime.Now,
+                CreateUserId = user?.Id ?? 0,
+                IfDel = 0,
+                ModelTitle = $"系统设置",
+                OptUserName = user?.UserName ?? "系统",
+                ActionDesc = "编辑",
+                ActionRemark = "编辑角色，角色编码为：" + role.Id,
+                ActionJson = "{}",
+                UpdateTime = DateTime.Now,
+                UpdateUserId = user?.Id ?? 0,
+            });
+            return res;
         }
 
-        public async Task DelRoleAsync(List<int> Ids)
+        public async Task DelRoleAsync(List<int> Ids, int CreateUserId = 0)
         {
+            var user = await bllUser.GetUserByIdAsync(CreateUserId);
             await dal.DelRoleAsync(Ids);
+            await dalLog.AddBizLogAsync(new BizLog()
+            {
+                ActionType = "角色管理",
+                CreateTime = DateTime.Now,
+                CreateUserId = user?.Id ?? 0,
+                IfDel = 0,
+                ModelTitle = $"系统设置",
+                OptUserName = user?.UserName ?? "系统",
+                ActionDesc = "删除",
+                ActionRemark = "删除角色，角色编码为：" + string.Join("、", Ids),
+                ActionJson = "{}",
+                UpdateTime = DateTime.Now,
+                UpdateUserId = user?.Id ?? 0,
+            });
         }
     }
 }

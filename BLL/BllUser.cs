@@ -5,12 +5,16 @@ namespace BLL
 {
     public class BllUser
     {
-        private DalUser dal=new DalUser();
-        public async Task<PageList<User>> GetUsersByPageAsync(PageReq<UserReqDto> req) {
+        private DalUser dal = new DalUser();
+        private DalBizLog dalLog = new DalBizLog();
+        private BllUser bllUser = new BllUser();
+        public async Task<PageList<User>> GetUsersByPageAsync(PageReq<UserReqDto> req)
+        {
             return await dal.GetUsersByPageAsync(req);
         }
 
-        public async Task<List<User>> GetUsersAsync(UserReqDto req) {
+        public async Task<List<User>> GetUsersAsync(UserReqDto req)
+        {
             return await dal.GetUsersAsync(req);
         }
 
@@ -24,29 +28,110 @@ namespace BLL
             return await dal.GetUserByIdAsync(Id);
         }
 
-        public async Task<User?> LoginAsync(LoginReqDto req) {
-            return await dal.LoginAsync(req);
+        public async Task<User?> LoginAsync(LoginReqDto req)
+        {
+            var res = await dal.LoginAsync(req);
+            if (res != null)
+            {
+                await dalLog.AddBizLogAsync(new BizLog()
+                {
+                    ActionType = "用户管理",
+                    CreateTime = DateTime.Now,
+                    CreateUserId = res?.Id ?? 0,
+                    IfDel = 0,
+                    ModelTitle = $"系统设置",
+                    OptUserName = "系统",
+                    ActionDesc = "登录",
+                    ActionRemark = "用户登录，用户为：" + res?.UserName,
+                    ActionJson = "{}",
+                    UpdateTime = DateTime.Now,
+                    UpdateUserId = res?.Id ?? 0
+                });
+            }
+            return res;
         }
 
 
         public async Task<User?> AddUserAsync(User entity)
         {
-            return await dal.AddUserAsync(entity);
+            var user = await bllUser.GetUserByIdAsync(entity.CreateUserId);
+            var res = await dal.AddUserAsync(entity);
+            await dalLog.AddBizLogAsync(new BizLog()
+            {
+                ActionType = "用户管理",
+                CreateTime = DateTime.Now,
+                CreateUserId = res?.Id ?? 0,
+                IfDel = 0,
+                ModelTitle = $"系统设置",
+                OptUserName = "系统",
+                ActionDesc = "添加",
+                ActionRemark = "用户新增，用户为：" + res?.UserName,
+                ActionJson = "{}",
+                UpdateTime = DateTime.Now,
+                UpdateUserId = res?.Id ?? 0
+            });
+            return res;
         }
 
         public async Task<User?> UpdateUserAsync(User entity)
         {
-            return await dal.UpdateUserAsync(entity);
+            var user = await bllUser.GetUserByIdAsync(entity.CreateUserId);
+            var res = await dal.UpdateUserAsync(entity);
+            await dalLog.AddBizLogAsync(new BizLog()
+            {
+                ActionType = "用户管理",
+                CreateTime = DateTime.Now,
+                CreateUserId = res?.Id ?? 0,
+                IfDel = 0,
+                ModelTitle = $"系统设置",
+                OptUserName = "系统",
+                ActionDesc = "编辑",
+                ActionRemark = "用户编辑，用户为：" + res?.UserName,
+                ActionJson = "{}",
+                UpdateTime = DateTime.Now,
+                UpdateUserId = res?.Id ?? 0
+            });
+            return res;
         }
 
         public async Task UpdateUsersAsync(List<User> entitys)
         {
+            var user = await bllUser.GetUserByIdAsync(entitys[0].CreateUserId);
             await dal.UpdateUsersAsync(entitys);
+            await dalLog.AddBizLogAsync(new BizLog()
+            {
+                ActionType = "用户管理",
+                CreateTime = DateTime.Now,
+                CreateUserId = user?.Id ?? 0,
+                IfDel = 0,
+                ModelTitle = $"系统设置",
+                OptUserName = "系统",
+                ActionDesc = entitys[0].Enable == 1 ? "启用" : "禁用",
+                ActionRemark = "用户" + (entitys[0].Enable == 1 ? "启用" : "禁用") + "，用户为：" + user?.UserName,
+                ActionJson = "{}",
+                UpdateTime = DateTime.Now,
+                UpdateUserId = user?.Id ?? 0
+            });
         }
 
-        public async Task DelUserAsync(List<int> Ids)
+        public async Task DelUserAsync(List<int> Ids, int CreateUserId = 0)
         {
+            var user = await bllUser.GetUserByIdAsync(CreateUserId);
             await dal.DelUserAsync(Ids);
+            await dalLog.AddBizLogAsync(new BizLog()
+            {
+                ActionType = "用户管理",
+                CreateTime = DateTime.Now,
+                CreateUserId = user?.Id ?? 0,
+                IfDel = 0,
+                ModelTitle = $"系统设置",
+                OptUserName = "系统",
+                ActionDesc = "删除",
+                ActionRemark = "用户删除，用户编码为：" + string.Join("、", Ids),
+                ActionJson = "{}",
+                UpdateTime = DateTime.Now,
+                UpdateUserId = user?.Id ?? 0
+            });
         }
     }
 }

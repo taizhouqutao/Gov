@@ -129,9 +129,10 @@ namespace WebBackend.Controllers
         {
             try
             {
+                var UserId = HttpContext.Session.GetInt32("UserId");
                 if (req.ids != null && req.ids.Count > 0)
                 {
-                    await bllContact.DelContactAsync(req.ids);
+                    await bllContact.DelContactAsync(req.ids, UserId ?? 0);
                 }
                 return new Response
                 {
@@ -152,6 +153,7 @@ namespace WebBackend.Controllers
         {
             try
             {
+                var UserId = HttpContext.Session.GetInt32("UserId");
                 Contact? res = null;
                 if (req.id != null)
                 {
@@ -162,6 +164,8 @@ namespace WebBackend.Controllers
                     res.Depent = req.depent;
                     res.Desc = req.personDesc;
                     res.PersonHead = req.personHead;
+                    res.UpdateTime = DateTime.Now;
+                    res.UpdateUserId = UserId ?? 0;
                     await bllContact.UpdateContactAsync(res);
                 }
                 else
@@ -170,7 +174,7 @@ namespace WebBackend.Controllers
                     {
                         IfDel = 0,
                         CreateTime = DateTime.Now,
-                        CreateUserId = 1,
+                        CreateUserId = UserId ?? 0,
                         PersonName = req.personName ?? "",
                         Post = req.post ?? "",
                         Depent = req.depent,
@@ -282,7 +286,8 @@ namespace WebBackend.Controllers
         {
             try
             {
-                await bllDuty.SaveDuty(req);
+                var UserId = HttpContext.Session.GetInt32("UserId");
+                await bllDuty.SaveDuty(req, UserId ?? 0);
                 return new Response
                 {
                     IfSuccess = 1,
@@ -413,9 +418,10 @@ namespace WebBackend.Controllers
         {
             try
             {
+                var UserId = HttpContext.Session.GetInt32("UserId");
                 if (req.ids != null && req.ids.Count > 0)
                 {
-                    await bllContactMessage.DelMessagesAsync(req.ids);
+                    await bllContactMessage.DelMessagesAsync(req.ids, UserId ?? 0);
                 }
                 return new Response
                 {
@@ -436,9 +442,10 @@ namespace WebBackend.Controllers
         {
             try
             {
+                var UserId = HttpContext.Session.GetInt32("UserId");
                 if (req.ids != null && req.ids.Count > 0)
                 {
-                    await bllContactMessage.SetMessageShow(req);
+                    await bllContactMessage.SetMessageShow(req, UserId ?? 0);
                 }
                 return new Response
                 {
@@ -479,6 +486,8 @@ namespace WebBackend.Controllers
                 });
                 Comment.IfDeal = 1;
                 Comment.IsShow = req.isShow ?? 0;
+                Comment.UpdateTime = DateTime.Now;
+                Comment.UpdateUserId = UserId ?? 0;
                 await bllContactMessage.UpdateContactMessageAsync(Comment);
                 return new Response<CommentResDealDto>
                 {

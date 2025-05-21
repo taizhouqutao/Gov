@@ -39,37 +39,40 @@ namespace WebBackend.Controllers
         {
             try
             {
+                var UserId = HttpContext.Session.GetInt32("UserId");
                 User? res = null;
-                if(string.IsNullOrEmpty(req.userName)) throw new Exception("用户名不能为空");
+                if (string.IsNullOrEmpty(req.userName)) throw new Exception("用户名不能为空");
                 if (req.id != null)
                 {
-                    var User = (await blluser.GetUsersAsync(new UserReqDto(){ userName=req.userName, idNot=req.id})).FirstOrDefault();
-                    if(User!=null) throw new Exception("用户名已存在");
+                    var User = (await blluser.GetUsersAsync(new UserReqDto() { userName = req.userName, idNot = req.id })).FirstOrDefault();
+                    if (User != null) throw new Exception("用户名已存在");
                     res = await blluser.GetUserByIdAsync(Convert.ToInt32(req.id));
                     if (res == null) throw new Exception("编码对应实体不存在");
-                    res.UserName=req.userName??"";
-                    res.RealName=req.realName??"";
-                    res.UserEmail=req.userEmail??"";
-                    res.UserPost=req.userPost??"";
-                    res.UserHead=string.IsNullOrEmpty(req.userHead)?"/img/unperson.jpg":req.userHead;
+                    res.UserName = req.userName ?? "";
+                    res.RealName = req.realName ?? "";
+                    res.UserEmail = req.userEmail ?? "";
+                    res.UserPost = req.userPost ?? "";
+                    res.UserHead = string.IsNullOrEmpty(req.userHead) ? "/img/unperson.jpg" : req.userHead;
+                    res.UpdateTime = DateTime.Now;
+                    res.UpdateUserId = UserId ?? 0;
                     await blluser.UpdateUserAsync(res);
                 }
                 else
                 {
-                    var User = (await blluser.GetUsersAsync(new UserReqDto(){ userName=req.userName})).FirstOrDefault();
-                    if(User!=null) throw new Exception("用户名已存在");
+                    var User = (await blluser.GetUsersAsync(new UserReqDto() { userName = req.userName })).FirstOrDefault();
+                    if (User != null) throw new Exception("用户名已存在");
                     res = new User()
                     {
-                        CreateTime=DateTime.Now,
-                        CreateUserId=1,
-                        IfDel=0,
-                        RealName=req.realName??"",
-                        PassWord=req.passWord??"",
-                        UserName=req.userName??"",
-                        UserEmail=req.userEmail??"",
-                        UserPost=req.userPost,
-                        UserHead=string.IsNullOrEmpty(req.userHead)?"/img/unperson.jpg":req.userHead,
-                        Enable=1
+                        CreateTime = DateTime.Now,
+                        CreateUserId = UserId ?? 0,
+                        IfDel = 0,
+                        RealName = req.realName ?? "",
+                        PassWord = req.passWord ?? "",
+                        UserName = req.userName ?? "",
+                        UserEmail = req.userEmail ?? "",
+                        UserPost = req.userPost,
+                        UserHead = string.IsNullOrEmpty(req.userHead) ? "/img/unperson.jpg" : req.userHead,
+                        Enable = 1
                     };
                     await blluser.AddUserAsync(res);
                 }
@@ -139,18 +142,19 @@ namespace WebBackend.Controllers
                 return new Response<UserResDto>
                 {
                     IfSuccess = 1,
-                    Data = new UserResDto(){
-                        Id=res.Id, 
-                        RealName=res.RealName,
-                        UserName=res.UserName,
-                        UserEmail=res.UserEmail,
-                        UserHead=res.UserHead, 
-                        UserPost=res.UserPost,
-                        Enable=res.Enable,
-                        CreateTime=res.CreateTime,
-                        CreateUserId=res.CreateUserId,
-                        UpdateTime=res.UpdateTime, 
-                        UpdateUserId=res.UpdateUserId
+                    Data = new UserResDto()
+                    {
+                        Id = res.Id,
+                        RealName = res.RealName,
+                        UserName = res.UserName,
+                        UserEmail = res.UserEmail,
+                        UserHead = res.UserHead,
+                        UserPost = res.UserPost,
+                        Enable = res.Enable,
+                        CreateTime = res.CreateTime,
+                        CreateUserId = res.CreateUserId,
+                        UpdateTime = res.UpdateTime,
+                        UpdateUserId = res.UpdateUserId
                     },
                 };
             }
@@ -171,22 +175,24 @@ namespace WebBackend.Controllers
                 return new Response<PageList<UserResDto>>
                 {
                     IfSuccess = 1,
-                    Data = new PageList<UserResDto>(){
-                        recordsFiltered=res.recordsFiltered,
-                        recordsTotal=res.recordsTotal,
-                        draw=res.draw,
-                        data=res.data.ConvertAll(i=>new UserResDto(){
-                            Id=i.Id, 
-                            RealName=i.RealName,
-                            UserName=i.UserName,
-                            UserEmail=i.UserEmail,
-                            UserHead=i.UserHead, 
-                            UserPost=i.UserPost,
-                            Enable=i.Enable,
-                            CreateTime=i.CreateTime,
-                            CreateUserId=i.CreateUserId,
-                            UpdateTime=i.UpdateTime, 
-                            UpdateUserId=i.UpdateUserId
+                    Data = new PageList<UserResDto>()
+                    {
+                        recordsFiltered = res.recordsFiltered,
+                        recordsTotal = res.recordsTotal,
+                        draw = res.draw,
+                        data = res.data.ConvertAll(i => new UserResDto()
+                        {
+                            Id = i.Id,
+                            RealName = i.RealName,
+                            UserName = i.UserName,
+                            UserEmail = i.UserEmail,
+                            UserHead = i.UserHead,
+                            UserPost = i.UserPost,
+                            Enable = i.Enable,
+                            CreateTime = i.CreateTime,
+                            CreateUserId = i.CreateUserId,
+                            UpdateTime = i.UpdateTime,
+                            UpdateUserId = i.UpdateUserId
                         })
                     },
                 };
@@ -248,12 +254,15 @@ namespace WebBackend.Controllers
         {
             try
             {
+                var UserId = HttpContext.Session.GetInt32("UserId");
                 Role res = null;
                 if (req.id != null)
                 {
                     res = await bllrole.GetRoleByIdAsync(Convert.ToInt32(req.id));
                     if (res == null) throw new Exception("编码对应角色不存在");
                     res.RoleName = req.roleName ?? "";
+                    res.UpdateTime = DateTime.Now;
+                    res.UpdateUserId = UserId ?? 0;
                     await bllrole.UpdateRoleAsync(res);
                 }
                 else
@@ -263,7 +272,7 @@ namespace WebBackend.Controllers
                         RoleName = req.roleName ?? "",
                         IfDel = 0,
                         CreateTime = DateTime.Now,
-                        CreateUserId = 1
+                        CreateUserId = UserId ?? 0
                     };
                     await bllrole.AddRoleAsync(res);
                 }
@@ -281,15 +290,16 @@ namespace WebBackend.Controllers
                 };
             }
         }
-    
+
         [HttpPost]
         public async Task<Response> DelRole([FromBody] RoleReqDto req)
         {
             try
             {
-                if (req.ids != null && req.ids.Count>0)
+                var UserId = HttpContext.Session.GetInt32("UserId");
+                if (req.ids != null && req.ids.Count > 0)
                 {
-                    await bllrole.DelRoleAsync(req.ids);
+                    await bllrole.DelRoleAsync(req.ids, UserId ?? 0);
                 }
                 return new Response
                 {
@@ -304,15 +314,16 @@ namespace WebBackend.Controllers
                 };
             }
         }
-    
+
         [HttpPost]
         public async Task<Response> DelUser([FromBody] RoleReqDto req)
         {
             try
             {
-                if (req.ids != null && req.ids.Count>0)
+                var UserId = HttpContext.Session.GetInt32("UserId");
+                if (req.ids != null && req.ids.Count > 0)
                 {
-                    await blluser.DelUserAsync(req.ids);
+                    await blluser.DelUserAsync(req.ids, UserId ?? 0);
                 }
                 return new Response
                 {
@@ -333,11 +344,15 @@ namespace WebBackend.Controllers
         {
             try
             {
-                if (req.ids != null && req.ids.Count>0)
+                var UserId = HttpContext.Session.GetInt32("UserId");
+                if (req.ids != null && req.ids.Count > 0)
                 {
                     var Users = await blluser.GetUsersByIdAsync(req.ids);
-                    Users.ForEach(i=>{
-                      i.Enable=(int) req.enable;
+                    Users.ForEach(i =>
+                    {
+                        i.Enable = (int)req.enable;
+                        i.UpdateTime = DateTime.Now;
+                        i.UpdateUserId = UserId ?? 0;
                     });
                     await blluser.UpdateUsersAsync(Users);
                 }
@@ -354,7 +369,7 @@ namespace WebBackend.Controllers
                 };
             }
         }
-        
+
         [HttpPost]
         public ActionResult FileUpload()
         {
@@ -375,8 +390,8 @@ namespace WebBackend.Controllers
                 {
                     Directory.CreateDirectory(savePath);
                 }
-                var ResPath="/Uploads/User/";
-                string fileName=string.Empty;
+                var ResPath = "/Uploads/User/";
+                string fileName = string.Empty;
                 // 4. 保存每个文件
                 for (int i = 0; i < uploadedFiles.Count; i++)
                 {
@@ -384,9 +399,9 @@ namespace WebBackend.Controllers
                     if (file.Length > 0)
                     {
                         fileName = Path.GetFileName(file.FileName);
-                        var fileExt=fileName.Split('.').LastOrDefault();
+                        var fileExt = fileName.Split('.').LastOrDefault();
                         // 生成随机数作为文件名
-                        var NewFileName=DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                        var NewFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
                         var random = new Random();
                         var randomNum = random.Next(1000, 9999);
                         fileName = $"{NewFileName}{randomNum}.{fileExt}";
@@ -401,7 +416,7 @@ namespace WebBackend.Controllers
                 }
 
                 // 5. 返回成功信息
-                return Json(new { success = true, message = "上传成功",file=$"{ResPath}{fileName}" });
+                return Json(new { success = true, message = "上传成功", file = $"{ResPath}{fileName}" });
             }
             catch (Exception ex)
             {
@@ -410,7 +425,7 @@ namespace WebBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<Response> ReSetPwd ([FromBody] UserReqDto req)
+        public async Task<Response> ReSetPwd([FromBody] UserReqDto req)
         {
             try
             {
@@ -418,9 +433,11 @@ namespace WebBackend.Controllers
                 if (!string.IsNullOrEmpty(req.passWord))
                 {
                     var user = await blluser.GetUserByIdAsync(Convert.ToInt32(UserId));
-                    if(user!=null)
+                    if (user != null)
                     {
-                        user.PassWord=req.passWord;
+                        user.PassWord = req.passWord;
+                        user.UpdateTime = DateTime.Now;
+                        user.UpdateUserId = UserId ?? 0;
                         await blluser.UpdateUserAsync(user);
                     }
                     else

@@ -134,6 +134,7 @@ namespace WebBackend.Controllers
         {
             try
             {
+                var UserId = HttpContext.Session.GetInt32("UserId");
                 New res = null;
                 if (req.id != null)
                 {
@@ -141,6 +142,8 @@ namespace WebBackend.Controllers
                     if (res == null) throw new Exception("编码对应实体不存在");
                     res.NewTitle = req.newTitle ?? "";
                     res.NewContent = req.newContent ?? "";
+                    res.UpdateTime = DateTime.Now;
+                    res.UpdateUserId = UserId ?? 0;
                     await bll.UpdateNewAsync(res);
                 }
                 else
@@ -152,7 +155,7 @@ namespace WebBackend.Controllers
                         NewContent = req.newContent ?? "",
                         IfDel = 0,
                         CreateTime = DateTime.Now,
-                        CreateUserId = 1,
+                        CreateUserId = UserId ?? 0,
                         NewTypeId = req.newTypeId
                     };
                     await bll.AddNewAsync(res);
@@ -177,9 +180,10 @@ namespace WebBackend.Controllers
         {
             try
             {
+                var UserId = HttpContext.Session.GetInt32("UserId");
                 if (req.ids != null && req.ids.Count > 0)
                 {
-                    await bll.DelNewAsync(req.ids);
+                    await bll.DelNewAsync(req.ids, UserId ?? 0);
                 }
                 return new Response
                 {
@@ -200,6 +204,7 @@ namespace WebBackend.Controllers
         {
             try
             {
+                var UserId = HttpContext.Session.GetInt32("UserId");
                 if (req.ids != null && req.ids.Count > 0)
                 {
                     var News = await bll.GetNewsByIdAsync(req.ids);
@@ -207,6 +212,8 @@ namespace WebBackend.Controllers
                     {
                         i.IsPublic = (int)req.isPublic;
                         i.PublicTime = ((int)req.isPublic) == 1 ? DateTime.Now : null;
+                        i.UpdateTime = DateTime.Now;
+                        i.UpdateUserId = UserId ?? 0;
                     });
                     await bll.UpdateNewsAsync(News);
                 }
