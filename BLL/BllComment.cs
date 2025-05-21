@@ -7,7 +7,7 @@ namespace BLL
     {
         private DalComment dal = new DalComment();
         private DalBizLog dalLog = new DalBizLog();
-        private BllUser bllUser = new BllUser();
+        private DalUser bllUser = new DalUser();
         public async Task<Comment?> GetCommentByIdAsync(int Id)
         {
             return await dal.GetCommentByIdAsync(Id);

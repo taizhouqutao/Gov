@@ -7,7 +7,6 @@ namespace BLL
     {
         private DalUser dal = new DalUser();
         private DalBizLog dalLog = new DalBizLog();
-        private BllUser bllUser = new BllUser();
         public async Task<PageList<User>> GetUsersByPageAsync(PageReq<UserReqDto> req)
         {
             return await dal.GetUsersByPageAsync(req);
@@ -54,7 +53,7 @@ namespace BLL
 
         public async Task<User?> AddUserAsync(User entity)
         {
-            var user = await bllUser.GetUserByIdAsync(entity.CreateUserId);
+            var user = await GetUserByIdAsync(entity.CreateUserId);
             var res = await dal.AddUserAsync(entity);
             await dalLog.AddBizLogAsync(new BizLog()
             {
@@ -75,7 +74,7 @@ namespace BLL
 
         public async Task<User?> UpdateUserAsync(User entity)
         {
-            var user = await bllUser.GetUserByIdAsync(entity.CreateUserId);
+            var user = await GetUserByIdAsync(entity.CreateUserId);
             var res = await dal.UpdateUserAsync(entity);
             await dalLog.AddBizLogAsync(new BizLog()
             {
@@ -96,7 +95,7 @@ namespace BLL
 
         public async Task UpdateUsersAsync(List<User> entitys)
         {
-            var user = await bllUser.GetUserByIdAsync(entitys[0].CreateUserId);
+            var user = await GetUserByIdAsync(entitys[0].CreateUserId);
             await dal.UpdateUsersAsync(entitys);
             await dalLog.AddBizLogAsync(new BizLog()
             {
@@ -116,7 +115,7 @@ namespace BLL
 
         public async Task DelUserAsync(List<int> Ids, int CreateUserId = 0)
         {
-            var user = await bllUser.GetUserByIdAsync(CreateUserId);
+            var user = await GetUserByIdAsync(CreateUserId);
             await dal.DelUserAsync(Ids);
             await dalLog.AddBizLogAsync(new BizLog()
             {

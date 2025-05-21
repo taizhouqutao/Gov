@@ -7,7 +7,7 @@ namespace BLL
   {
     private DalCarousel dal = new DalCarousel();
     private DalBizLog dalLog = new DalBizLog();
-    private BllUser bllUser = new BllUser();
+    private DalUser bllUser = new DalUser();
     public async Task<PageList<Carousel>> GetCarouselsByPageAsync(PageReq<CarouselReqDto> req)
     {
       return await dal.GetCarouselsByPageAsync(req);

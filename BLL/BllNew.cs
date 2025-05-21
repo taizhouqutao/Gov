@@ -7,8 +7,8 @@ namespace BLL
     {
         private DalNew dal = new DalNew();
         private DalBizLog dalLog = new DalBizLog();
-        private BllUser bllUser = new BllUser();
-        private BllNewType bllNewType = new BllNewType();
+        private DalUser bllUser = new DalUser();
+        private DalNewType bllNewType = new DalNewType();
         public async Task<PageList<New>> GetNewsByPageAsync(PageReq<NewReqDto> req)
         {
             return await dal.GetNewsByPageAsync(req);

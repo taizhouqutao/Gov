@@ -7,7 +7,7 @@ namespace BLL
     {
         private DalContact dal = new DalContact();
         private DalBizLog dalLog = new DalBizLog();
-        private BllUser bllUser = new BllUser();
+        private DalUser bllUser = new DalUser();
         public async Task<List<Contact>> GetContactsByAsync(ContactReqDto req)
         {
             return await dal.GetContactsByAsync(req);
