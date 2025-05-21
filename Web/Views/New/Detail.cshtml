@@ -13,37 +13,39 @@
         </div>
         <div class="news-body">
             @Html.Raw(Model.NewContent)
-            <h2>我要留言</h2>
-            <div class="message-form">
-                <form id="messageForm">
-                    <input type="hidden" id="NewId" value="@Model.Id" />
-                    <div class="form-group">
-                        <label for="personName">您的姓名：</label>
-                        <input type="text" id="personName" placeholder="您的姓名不会被公开，或用作除答复您以外的其它用途" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="personCellphone">您的联系方式：</label>
-                        <input type="text" id="personCellphone" placeholder="您的联系方式不会被公开，或用作除答复您以外的其它用途" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="content">留言内容：</label>
-                        <textarea id="content" rows="4" required></textarea>
-                    </div>
-                    <button type="submit">提交留言</button>
-                </form>
-            </div>
-            <h2>历史留言</h2>
-            <div class="message-list">
-                <div id="messageHistory">
-                    <!-- 留言将通过JavaScript动态加载 -->
+            <div class="@(Model.IfHiddenComment ? "hidden" : "")">
+                <h2>我要留言</h2>
+                <div class="message-form">
+                    <form id="messageForm">
+                        <input type="hidden" id="NewId" value="@Model.Id" />
+                        <div class="form-group">
+                            <label for="personName">您的姓名：</label>
+                            <input type="text" id="personName" placeholder="您的姓名不会被公开，或用作除答复您以外的其它用途" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="personCellphone">您的联系方式：</label>
+                            <input type="text" id="personCellphone" placeholder="您的联系方式不会被公开，或用作除答复您以外的其它用途" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="content">留言内容：</label>
+                            <textarea id="content" rows="4" required></textarea>
+                        </div>
+                        <button type="submit">提交留言</button>
+                    </form>
                 </div>
-            </div>
-            <div class="pagination hidden">
-                <a href="javascript:loadMessages(1)">首页</a>
-                <a href="javascript:ShowNewPer()">上一页</a>
-                <span id="pageInfo">1/1</span>
-                <a href="javascript:ShowNewNext()">下一页</a>
-                <a href="javascript:ShowNewLast()">尾页</a>
+                <h2>历史留言</h2>
+                <div class="message-list">
+                    <div id="messageHistory">
+                        <!-- 留言将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+                <div class="pagination hidden">
+                    <a href="javascript:loadMessages(1)">首页</a>
+                    <a href="javascript:ShowNewPer()">上一页</a>
+                    <span id="pageInfo">1/1</span>
+                    <a href="javascript:ShowNewNext()">下一页</a>
+                    <a href="javascript:ShowNewLast()">尾页</a>
+                </div>
             </div>
         </div>
     </div>
@@ -103,25 +105,25 @@
                         $('#pageInfo').text(pageIndex + '/' + TotalPage);
 
                         const messageHtml = result.data.data.map(msg => `<div class="message-item">
-                                            <div class="message-header">
-                                                <span class="visitor-name">${msg.personName}</span>
-                                                <span class="message-time">${msg.createTime}</span>
-                                            </div>
-                                            <div class="message-content">${msg.content}</div>
-                                            ${msg.replys && msg.replys.length > 0 ? `
-                                                <div class="message-replies">
-                                                    ${msg.replys.map(reply => `
-                                                        <div class="message-reply">
-                                                            <div class="reply-header">
-                                                                <span class="reply-name">${reply.personName}</span>
-                                                                <span class="reply-time">${reply.createTime}</span>
-                                                            </div>
-                                                            <div class="reply-content">${reply.content}</div>
-                                                        </div>
-                                                    `).join('')}
+                                                <div class="message-header">
+                                                    <span class="visitor-name">${msg.personName}</span>
+                                                    <span class="message-time">${msg.createTime}</span>
                                                 </div>
-                                            ` : ''}
-                                        </div>`).join('');
+                                                <div class="message-content">${msg.content}</div>
+                                                ${msg.replys && msg.replys.length > 0 ? `
+                                                    <div class="message-replies">
+                                                        ${msg.replys.map(reply => `
+                                                            <div class="message-reply">
+                                                                <div class="reply-header">
+                                                                    <span class="reply-name">${reply.personName}</span>
+                                                                    <span class="reply-time">${reply.createTime}</span>
+                                                                </div>
+                                                                <div class="reply-content">${reply.content}</div>
+                                                            </div>
+                                                        `).join('')}
+                                                    </div>
+                                                ` : ''}
+                                            </div>`).join('');
                         $('#messageHistory').html(messageHtml);
                     }
                     else {

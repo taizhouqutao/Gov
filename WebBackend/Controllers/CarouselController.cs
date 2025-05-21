@@ -106,6 +106,8 @@ namespace WebBackend.Controllers
           res.Title = req.title ?? "";
           res.PublicTime = Convert.ToInt32(req.isPublic) == 1 ? DateTime.Now : null;
           res.PublicUserId = Convert.ToInt32(req.isPublic) == 1 ? UserId : null;
+          res.UpdateUserId = UserId ?? 0;
+          res.UpdateTime = DateTime.Now;
           await bllCarousel.UpdateCarouselAsync(res);
         }
         else
@@ -114,7 +116,7 @@ namespace WebBackend.Controllers
           {
             IfDel = 0,
             CreateTime = DateTime.Now,
-            CreateUserId = 1,
+            CreateUserId = UserId ?? 0,
             ImageUrl = req.imageUrl ?? "",
             IsPublic = Convert.ToInt32(req.isPublic),
             LinkUrl = req.linkUrl,
@@ -144,9 +146,10 @@ namespace WebBackend.Controllers
     {
       try
       {
+        var UserId = HttpContext.Session.GetInt32("UserId");
         if (req.ids != null && req.ids.Count > 0)
         {
-          await bllCarousel.DelCarouselAsync(req.ids);
+          await bllCarousel.DelCarouselAsync(req.ids, UserId ?? 0);
         }
         return new Response
         {
@@ -189,6 +192,7 @@ namespace WebBackend.Controllers
     {
       try
       {
+        var UserId = HttpContext.Session.GetInt32("UserId");
         if (req.ids != null && req.ids.Count > 0)
         {
           var Carousels = await bllCarousel.GetCarouselsByIdAsync(req.ids);
@@ -196,6 +200,8 @@ namespace WebBackend.Controllers
           {
             i.IsPublic = (int)req.isPublic;
             i.PublicTime = ((int)req.isPublic) == 1 ? DateTime.Now : null;
+            i.UpdateTime = DateTime.Now;
+            i.UpdateUserId = UserId ?? 0;
           });
           await bllCarousel.UpdateCarouselsAsync(Carousels);
         }

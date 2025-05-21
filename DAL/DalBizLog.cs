@@ -8,27 +8,29 @@ namespace DAL
 {
     public class DalBizLog
     {
-        public async Task<PageList<BizLog>> GetBizLogsByPageAsync(PageReq<BizLogReqDto> req) {
-            var res=new List<BizLog>();
-            int total=0,allcount=0;
+        public async Task<PageList<BizLog>> GetBizLogsByPageAsync(PageReq<BizLogReqDto> req)
+        {
+            var res = new List<BizLog>();
+            int total = 0, allcount = 0;
             using (var context = new webapplicationContext())
             {
-                var Query= context.BizLogs.AsQueryable();
-                var QureyRes = Query.Where(i=>
-                    (i.IfDel==0) &&
-                    ((req.search==null||string.IsNullOrEmpty(req.search.value))?true:
-                    (i.ModelTitle.Contains(req.search.value)||i.ActionType.Contains(req.search.value)))
+                var Query = context.BizLogs.AsQueryable();
+                var QureyRes = Query.Where(i =>
+                    (i.IfDel == 0) &&
+                    ((req.search == null || string.IsNullOrEmpty(req.search.value)) ? true :
+                    (i.ModelTitle.Contains(req.search.value) || i.ActionType.Contains(req.search.value)))
                 );
-                QureyRes = QureyRes.OrderByDescending(j =>j.Id);
+                QureyRes = QureyRes.OrderByDescending(j => j.Id);
                 res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
-                total= await QureyRes.CountAsync();
-                allcount=await context.BizLogs.CountAsync(i=>i.IfDel==0);
+                total = await QureyRes.CountAsync();
+                allcount = await context.BizLogs.CountAsync(i => i.IfDel == 0);
             }
-            return new PageList<BizLog>(){
-                data=res,
-                recordsFiltered=total,
-                draw=req.draw,
-                recordsTotal=allcount
+            return new PageList<BizLog>()
+            {
+                data = res,
+                recordsFiltered = total,
+                draw = req.draw,
+                recordsTotal = allcount
             };
         }
 
@@ -40,11 +42,21 @@ namespace DAL
                 var Query = context.BizLogs.AsQueryable();
                 res = await Query.FirstOrDefaultAsync(i =>
                     (i.IfDel == 0) &&
-                    (i.Id==Id)
+                    (i.Id == Id)
                 );
             }
             return res;
         }
 
+        public async Task<BizLog> AddBizLogAsync(BizLog entity)
+        {
+            BizLog res = null;
+            using (var context = new webapplicationContext())
+            {
+                res = (await context.BizLogs.AddAsync(entity)).Entity;
+                await context.SaveChangesAsync();
+            }
+            return res;
+        }
     }
 }

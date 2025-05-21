@@ -52,5 +52,7 @@ namespace Common
       public required string NewContent { get; set; }
 
       public DateTime? PublicTime { get; set; }=null;
+
+      public bool IfHiddenComment{get;set;}
     }
 }

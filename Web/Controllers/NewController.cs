@@ -111,14 +111,15 @@ namespace Web.Controllers
                     System.Text.RegularExpressions.RegexOptions.IgnoreCase
                 );
             }
-
+            var ifHiddenComment = !HtmlHelp.GetShowCommentTypes().Contains(New.NewTypeId ?? 0);
             var newDetailPage = new NewDetailPage()
             {
                 Id = NewId,
                 NewContent = NewContent,
                 NewTitle = New.NewTitle,
                 PublicTime = New.PublicTime,
-                TotalCount = CommentInfo.recordsFiltered
+                TotalCount = CommentInfo.recordsFiltered,
+                IfHiddenComment = ifHiddenComment
             };
             return View(newDetailPage);
         }
