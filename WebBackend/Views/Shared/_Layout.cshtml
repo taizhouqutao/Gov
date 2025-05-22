@@ -32,7 +32,8 @@
 				<ul class="nav" id="side-menu">
 					<li class="nav-header">
 						<div class="dropdown profile-element">
-							<span><img alt="image" class="img-circle" src="img/profile_small.jpg" /></span>
+							<span><img alt="image" id="user_profile" class="img-circle" width="64" height="64"
+									src="/img/unperson.jpg" /></span>
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<span class="clear">
 									<span class="block m-t-xs"><strong class="font-bold">Beaut-ruoyi</strong></span>
@@ -670,7 +671,31 @@
 	<!-- 自定义js -->
 	<script src="js/hplus.js?v=4.1.0"></script>
 	<script type="text/javascript" src="js/contabs.js"></script>
-
+	<script>
+		$(function () {
+			$.ajax({
+				url: "/User/GetMyInfo",
+				contentType: "application/json",
+				type: "POST", // 请求类型，通常是 GET 或 POST
+				data: JSON.stringify({}),
+				success: function (result) {
+					if (result.ifSuccess) {
+						if (result.data.userHead) {
+							$("#user_profile").attr("src", result.data.userHead);
+						}
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error('Error:', error);
+					console.log('Status:', status);
+					console.log('Details:', xhr.responseText);
+					if (xhr.status == 401) {
+						window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+					}
+				}
+			});
+		});
+	</script>
 	<!-- 第三方插件 -->
 	<script src="js/plugins/pace/pace.min.js"></script>
 	@await RenderSectionAsync("Scripts", required: false)

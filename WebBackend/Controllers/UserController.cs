@@ -17,6 +17,12 @@ namespace WebBackend.Controllers
             return View();
         }
 
+        public IActionResult AdminLoginOut()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login", "Home");
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -453,6 +459,42 @@ namespace WebBackend.Controllers
             catch (Exception ex)
             {
                 return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
+
+        [HttpPost]
+        public async Task<Response<UserResDto>> GetMyInfo()
+        {
+            try
+            {
+                var UserId = HttpContext.Session.GetInt32("UserId");
+                var res = await blluser.GetUserByIdAsync(Convert.ToInt32(UserId));
+                if (res == null) throw new Exception("编码对应实体不存在");
+                return new Response<UserResDto>
+                {
+                    IfSuccess = 1,
+                    Data = new UserResDto()
+                    {
+                        Id = res.Id,
+                        RealName = res.RealName,
+                        UserName = res.UserName,
+                        UserEmail = res.UserEmail,
+                        UserHead = res.UserHead,
+                        UserPost = res.UserPost,
+                        Enable = res.Enable,
+                        CreateTime = res.CreateTime,
+                        CreateUserId = res.CreateUserId,
+                        UpdateTime = res.UpdateTime,
+                        UpdateUserId = res.UpdateUserId
+                    },
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<UserResDto>()
                 {
                     Msg = ex.Message
                 };
