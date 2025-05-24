@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using WebBackend.Models;
 using Common;
 using Microsoft.AspNetCore.Authorization;
+using BLL;
 
 namespace WebBackend.Controllers;
 
 public class HomeController : Controller
 {
     private BLL.BllUser blluser = new BLL.BllUser();
+    private BLL.BllComment bllcomment = new BLL.BllComment();
     private BLL.BllViewLog bllviewlog = new BLL.BllViewLog();
     private BLL.BllNewType bllNewType = new BLL.BllNewType();
     private readonly ILogger<HomeController> _logger;
@@ -150,6 +152,30 @@ public class HomeController : Controller
         catch (Exception ex)
         {
             return new Response<ViewLogLineResDto>()
+            {
+                Msg = ex.Message
+            };
+        }
+    }
+
+    [HttpPost]
+    public async Task<Response<List<CommentGroupResDto>>> GetCommentGroupsByAsync([FromBody] CommentReqDto req)
+    {
+        try
+        {
+            req.newTypeIds = Common.HtmlHelp.GetShowCommentTypes();
+            req.fatherCommentId = 0;
+            req.ifDeal = 0;
+            var res = await bllcomment.GetCommentGroupsByAsync(req);
+            return new Response<List<CommentGroupResDto>>()
+            {
+                Data = res,
+                IfSuccess = 1
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Response<List<CommentGroupResDto>>()
             {
                 Msg = ex.Message
             };

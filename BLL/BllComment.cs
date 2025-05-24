@@ -13,6 +13,11 @@ namespace BLL
             return await dal.GetCommentByIdAsync(Id);
         }
 
+        public async Task<List<CommentGroupResDto>> GetCommentGroupsByAsync(CommentReqDto req)
+        {
+            return await dal.GetCommentGroupsByAsync(req);
+        }
+
         public async Task<List<Comment>> GetCommentsByAsync(CommentReqDto req)
         {
             return await dal.GetCommentsByAsync(req);

@@ -211,6 +211,55 @@ namespace DAL
                 recordsTotal = allcount
             };
         }
+
+        public async Task<List<CommentGroupResDto>> GetCommentGroupsByAsync(CommentReqDto req)
+        {
+            var res = new List<CommentGroupResDto>();
+            using (var context = new webapplicationContext())
+            {
+                var QueryComments = context.Comments.AsQueryable();
+                var QueryNews = context.News.AsQueryable();
+                var QueryNewTypes = context.NewTypes.AsQueryable();
+                var QureyRes = (from QueryComment in QueryComments
+                                join QueryNew in QueryNews on QueryComment.NewId equals QueryNew.Id into p_QueryNew
+                                from QueryNew_Join in p_QueryNew.DefaultIfEmpty()
+                                join QueryNewType in QueryNewTypes on QueryNew_Join.NewTypeId equals QueryNewType.Id into p_QueryNewType
+                                from QueryNewType_Join in p_QueryNewType.DefaultIfEmpty()
+                                where
+                                    (QueryComment.IfDel == 0) &&
+                                    ((req == null || req.fatherCommentId == null) ? true : QueryComment.FatherCommentId == req.fatherCommentId) &&
+                                    ((req == null || req.newTypeId == null) ? true : QueryNew_Join.NewTypeId == req.newTypeId) &&
+                                    ((req == null || req.newTypeIds == null) ? true : req.newTypeIds.Contains(QueryNew_Join.NewTypeId ?? 0)) &&
+                                    ((req == null || req.ifDeal == null) ? true : QueryComment.IfDeal == req.ifDeal)
+                                select new
+                                {
+                                    NewTypeId = QueryNew_Join.NewTypeId,
+                                    NewTypeName = QueryNewType_Join.NewTypeName,
+                                    CreateTime = QueryComment.CreateTime
+                                }).GroupBy(i => new
+                                {
+                                    NewTypeId = i.NewTypeId,
+                                    NewTypeName = i.NewTypeName
+                                }).Select(i => new
+                                {
+                                    NewTypeId = i.Key.NewTypeId,
+                                    NewTypeName = i.Key.NewTypeName,
+                                    Count = i.Count(),
+                                    CreateTime = i.Max(j => j.CreateTime)
+                                }).OrderByDescending(i => i.CreateTime);
+                var tempres = await QureyRes.ToListAsync();
+                res = tempres.ConvertAll(i => new CommentGroupResDto()
+                {
+                    count = i.Count,
+                    newTypeId = i.NewTypeId,
+                    newTypeName = i.NewTypeName,
+                    Link = $"New/Index?NewTypeId={i.NewTypeId}",
+                    createTime = i.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")
+                });
+            }
+            return res;
+        }
+
         public async Task<List<Comment>> GetCommentsByAsync(CommentReqDto req)
         {
             var res = new List<Comment>();
