@@ -27,6 +27,51 @@ namespace DAL
       return res;
     }
 
+    public async Task<ViewLogReportResDto> GetViewLogDetailReports(ViewLogReportReqDto req)
+    {
+      ViewLogReportResDto result = null;
+      using (var context = new webapplicationContext())
+      {
+        var QuerViewLogs = context.ViewLogs.AsQueryable();
+        var QueryNews = context.News.AsQueryable();
+        var QureyRes = (from QuerViewLog in QuerViewLogs
+                        join QueryNew in QueryNews on QuerViewLog.NewId equals QueryNew.Id into p_QueryNew
+                        from QueryNew_Join in p_QueryNew.DefaultIfEmpty()
+                        where
+                            (QuerViewLog.IfDel == 0) &&
+                            ((req == null || req.viewType == null) ? true : QuerViewLog.ViewType == req.viewType) &&
+                            ((req == null || req.newTypeId == null) ? true : QuerViewLog.NewTypeId == req.newTypeId) &&
+                            ((req == null || req.StartDate == null) ? true : QuerViewLog.ViewData >= req.StartDate) &&
+                            ((req == null || req.EndDate == null) ? true : QuerViewLog.ViewData <= req.EndDate)
+                        select new
+                        {
+                          NewId = QuerViewLog.NewId,
+                          NewTitle = QueryNew_Join.NewTitle,
+                          ViewCount = QuerViewLog.ViewCount
+                        }).GroupBy(i => new
+                        {
+                          NewId = i.NewId,
+                          NewTitle = i.NewTitle
+                        }).Select(i => new
+                        {
+                          NewId = i.Key.NewId,
+                          NewTitle = i.Key.NewTitle,
+                          ViewCount = i.Sum(j => j.ViewCount)
+                        }).OrderByDescending(i => i.ViewCount);
+        var res = await QureyRes.Take(9).ToListAsync();
+        result = new ViewLogReportResDto()
+        {
+          newTypeName = res.ConvertAll(i => i.NewTitle.Length > 10 ? i.NewTitle.Substring(0, 10) + "..." : i.NewTitle),
+          details = res.ConvertAll(i => new ViewLogReportResItemDto()
+          {
+            name = i.NewTitle.Length > 10 ? i.NewTitle.Substring(0, 10) + "..." : i.NewTitle,
+            value = i.ViewCount
+          })
+        };
+      }
+      return result;
+    }
+
     public async Task<ViewLogReportResDto> GetViewLogReports(ViewLogReportReqDto req)
     {
       ViewLogReportResDto result = null;

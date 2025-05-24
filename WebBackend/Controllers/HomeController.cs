@@ -10,7 +10,7 @@ public class HomeController : Controller
 {
     private BLL.BllUser blluser = new BLL.BllUser();
     private BLL.BllViewLog bllviewlog = new BLL.BllViewLog();
-
+    private BLL.BllNewType bllNewType = new BLL.BllNewType();
     private readonly ILogger<HomeController> _logger;
 
     public HomeController(ILogger<HomeController> logger)
@@ -37,6 +37,17 @@ public class HomeController : Controller
     public IActionResult Privacy()
     {
         return View();
+    }
+
+    public async Task<IActionResult> newReport(int NewTypeId)
+    {
+        var NewType = await bllNewType.GetNewTypeByIdAsync(NewTypeId);
+        var NewPage = new NewPage()
+        {
+            NewTypeId = NewType.Id,
+            Title = NewType.NewTypeName
+        };
+        return View(NewPage);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -82,6 +93,30 @@ public class HomeController : Controller
             req.StartDate = Now.AddDays(-30);
             req.EndDate = Now;
             var res = await bllviewlog.GetViewLogReports(req);
+            return new Response<ViewLogReportResDto>()
+            {
+                Data = res,
+                IfSuccess = 1
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Response<ViewLogReportResDto>()
+            {
+                Msg = ex.Message
+            };
+        }
+    }
+
+    [HttpPost]
+    public async Task<Response<ViewLogReportResDto>> GetViewLogDetailReports([FromBody] ViewLogReportReqDto req)
+    {
+        try
+        {
+            var Now = DateTime.Now.Date;
+            req.StartDate = Now.AddDays(-30);
+            req.EndDate = Now;
+            var res = await bllviewlog.GetViewLogDetailReports(req);
             return new Response<ViewLogReportResDto>()
             {
                 Data = res,
