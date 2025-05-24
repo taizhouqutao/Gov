@@ -3,6 +3,7 @@ using System;
 using DAL.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(webapplicationContext))]
-    partial class webapplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20250524132530_ViewLogTabale")]
+    partial class ViewLogTabale
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -747,10 +749,6 @@ namespace DAL.Migrations
                     b.Property<int?>("UpdateUserId")
                         .HasColumnType("int")
                         .HasColumnName("UpdateUserId");
-
-                    b.Property<int>("ViewCount")
-                        .HasColumnType("int")
-                        .HasColumnName("ViewCount");
 
                     b.Property<DateTime>("ViewData")
                         .HasColumnType("datetime(6)")

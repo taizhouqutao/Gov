@@ -156,7 +156,9 @@ namespace WebBackend.Controllers
                         IfDel = 0,
                         CreateTime = DateTime.Now,
                         CreateUserId = UserId ?? 0,
-                        NewTypeId = req.newTypeId
+                        NewTypeId = req.newTypeId,
+                        CommentCount = 0,
+                        ViewCount = 0
                     };
                     await bll.AddNewAsync(res);
                 }

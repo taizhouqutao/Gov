@@ -9,6 +9,7 @@ namespace BLL
         private DalBizLog dalLog = new DalBizLog();
         private DalUser bllUser = new DalUser();
         private DalNewType bllNewType = new DalNewType();
+        private DalViewLog dalViewLog = new DalViewLog();
         public async Task<PageList<New>> GetNewsByPageAsync(PageReq<NewReqDto> req)
         {
             return await dal.GetNewsByPageAsync(req);
@@ -22,6 +23,44 @@ namespace BLL
         public async Task<New> GetNewByIdAsync(int Id)
         {
             return await dal.GetNewByIdAsync(Id);
+        }
+
+        public async Task AddNewCommentCountAsync(int Id)
+        {
+            var New = await dal.GetNewByIdAsync(Id);
+            New.CommentCount = New.CommentCount + 1;
+            await dal.UpdateNewAsync(New);
+
+            await dalViewLog.SaveViewLog(new ViewLog()
+            {
+                CreateTime = DateTime.Now,
+                CreateUserId = 1,
+                NewId = Id,
+                NewTypeId = New.NewTypeId ?? 0,
+                ViewCount = 1,
+                ViewData = DateTime.Now.Date,
+                ViewType = 2,
+                IfDel = 0
+            });
+        }
+
+        public async Task AddNewViewCountAsync(int Id)
+        {
+            var New = await dal.GetNewByIdAsync(Id);
+            New.ViewCount = New.ViewCount + 1;
+            await dal.UpdateNewAsync(New);
+
+            await dalViewLog.SaveViewLog(new ViewLog()
+            {
+                CreateTime = DateTime.Now,
+                CreateUserId = 1,
+                NewId = Id,
+                NewTypeId = New.NewTypeId ?? 0,
+                ViewCount = 1,
+                ViewData = DateTime.Now.Date,
+                ViewType = 1,
+                IfDel = 0
+            });
         }
 
         public async Task<New> AddNewAsync(New entity)
@@ -92,7 +131,7 @@ namespace BLL
         public async Task DelNewAsync(List<int> Ids, int CreateUserId = 0)
         {
             var user = await bllUser.GetUserByIdAsync(CreateUserId);
-            var New = await GetNewByIdAsync(Ids[0]);
+            var New = await dal.GetNewByIdAsync(Ids[0]);
             var newType = await bllNewType.GetNewTypeByIdAsync(New?.NewTypeId ?? 0);
             await dal.DelNewAsync(Ids);
             await dalLog.AddBizLogAsync(new BizLog()

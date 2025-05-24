@@ -111,6 +111,7 @@ namespace Web.Controllers
                     System.Text.RegularExpressions.RegexOptions.IgnoreCase
                 );
             }
+            await bll.AddNewViewCountAsync(NewId);
             var ifHiddenComment = !HtmlHelp.GetShowCommentTypes().Contains(New.NewTypeId ?? 0);
             var newDetailPage = new NewDetailPage()
             {
@@ -196,6 +197,7 @@ namespace Web.Controllers
                     IfDel = 0,
                     IsShow = 0
                 });
+                await bll.AddNewCommentCountAsync(req.contactId);
                 return new Response<ContactMessageDto>
                 {
                     IfSuccess = 1,
@@ -215,6 +217,5 @@ namespace Web.Controllers
                 };
             }
         }
-
     }
 }

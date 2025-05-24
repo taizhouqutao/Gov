@@ -42,6 +42,8 @@ namespace DAL.Contexts
 
         public DbSet<Carousel>? Carousels { get; set; }
 
+        public DbSet<ViewLog>? ViewLogs { get; set; }
+
         public IConfiguration configuration;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
