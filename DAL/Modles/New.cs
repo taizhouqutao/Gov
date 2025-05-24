@@ -22,12 +22,18 @@ namespace DAL.Modles
     public required int IsPublic { get; set; }
 
     [Column("PublicTime")]
-    public DateTime? PublicTime { get; set; }=null;
+    public DateTime? PublicTime { get; set; } = null;
 
     [Column("PublicUserId")]
-    public int? PublicUserId { get; set; }=null;
+    public int? PublicUserId { get; set; } = null;
 
     [Column("NewTypeId")]
-    public int? NewTypeId{get;set;}=null;
+    public int? NewTypeId { get; set; } = null;
+
+    [Column("ViewCount")]
+    public int ViewCount { get; set; } = 0;
+
+    [Column("CommentCount")]
+    public int CommentCount { get; set; } = 0;
   }
 }

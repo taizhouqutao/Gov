@@ -3,6 +3,7 @@ using System;
 using DAL.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(webapplicationContext))]
-    partial class webapplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20250524130527_ViewCount")]
+    partial class ViewCount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -386,8 +388,7 @@ namespace DAL.Migrations
                         .HasColumnName("Id");
 
                     b.Property<int>("CommentCount")
-                        .HasColumnType("int")
-                        .HasColumnName("CommentCount");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("datetime(6)")
@@ -436,8 +437,7 @@ namespace DAL.Migrations
                         .HasColumnName("UpdateUserId");
 
                     b.Property<int>("ViewCount")
-                        .HasColumnType("int")
-                        .HasColumnName("ViewCount");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
