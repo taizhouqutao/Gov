@@ -11,5 +11,15 @@ namespace BLL
     {
       return await dal.SaveViewLog(entity);
     }
+
+    public async Task<ViewLogReportResDto> GetViewLogReports(ViewLogReportReqDto entity)
+    {
+      return await dal.GetViewLogReports(entity);
+    }
+
+    public async Task<ViewLogLineResDto> GetViewLogLines(ViewLogReportReqDto entity)
+    {
+      return await dal.GetViewLogLines(entity);
+    }
   }
 }

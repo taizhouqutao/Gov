@@ -9,6 +9,7 @@ namespace WebBackend.Controllers;
 public class HomeController : Controller
 {
     private BLL.BllUser blluser = new BLL.BllUser();
+    private BLL.BllViewLog bllviewlog = new BLL.BllViewLog();
 
     private readonly ILogger<HomeController> _logger;
 
@@ -56,15 +57,64 @@ public class HomeController : Controller
             return new Response<LoginResDto>
             {
                 IfSuccess = 1,
-                Data = new LoginResDto(){
-                    RealName=res.RealName,
-                    UserName=res.UserName
+                Data = new LoginResDto()
+                {
+                    RealName = res.RealName,
+                    UserName = res.UserName
                 }
             };
         }
         catch (Exception ex)
         {
             return new Response<LoginResDto>()
+            {
+                Msg = ex.Message
+            };
+        }
+    }
+
+    [HttpPost]
+    public async Task<Response<ViewLogReportResDto>> GetViewLogReports([FromBody] ViewLogReportReqDto req)
+    {
+        try
+        {
+            var Now = DateTime.Now.Date;
+            req.StartDate = Now.AddDays(-30);
+            req.EndDate = Now;
+            var res = await bllviewlog.GetViewLogReports(req);
+            return new Response<ViewLogReportResDto>()
+            {
+                Data = res,
+                IfSuccess = 1
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Response<ViewLogReportResDto>()
+            {
+                Msg = ex.Message
+            };
+        }
+    }
+
+    [HttpPost]
+    public async Task<Response<ViewLogLineResDto>> GetViewLogLines([FromBody] ViewLogReportReqDto req)
+    {
+        try
+        {
+            var Now = DateTime.Now.Date;
+            req.StartDate = Now.AddDays(-7);
+            req.EndDate = Now;
+            var res = await bllviewlog.GetViewLogLines(req);
+            return new Response<ViewLogLineResDto>()
+            {
+                Data = res,
+                IfSuccess = 1
+            };
+        }
+        catch (Exception ex)
+        {
+            return new Response<ViewLogLineResDto>()
             {
                 Msg = ex.Message
             };
