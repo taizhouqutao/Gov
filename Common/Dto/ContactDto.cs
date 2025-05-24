@@ -94,10 +94,12 @@ namespace Common
     {
         public int? id { get; set; }
 
-        public int? isShow{ get; set; }
+        public int? isShow { get; set; }
 
-        public List<int>? ids{ get; set; }
+        public List<int>? ids { get; set; }
         public int? contactId { get; set; }
+
+        public int? ifDeal { get; set; }
 
         public int? fatherContactMessageId { get; set; }
 
@@ -105,28 +107,28 @@ namespace Common
     }
 
     [Serializable]
-    public class ContactMessageResDto:BasicDto
+    public class ContactMessageResDto : BasicDto
     {
         public int Id { get; set; }
 
-        public required string PersonName{ get; set; }
+        public required string PersonName { get; set; }
 
-        public string? PersonCellphone  { get; set; }
+        public string? PersonCellphone { get; set; }
 
-        public required string Content{get;set;}
+        public required string Content { get; set; }
 
-        public required int ContactId{get;set;}
+        public required int ContactId { get; set; }
 
-        public required string ContactName{get;set;}
+        public required string ContactName { get; set; }
 
-        public required int IfDeal{get;set;}
+        public required int IfDeal { get; set; }
 
-        public required int FatherContactMessageId{get;set;}
+        public required int FatherContactMessageId { get; set; }
 
-        public int? IsShow{get;set;}
+        public int? IsShow { get; set; }
 
-        public required int RoleType{get;set;}
+        public required int RoleType { get; set; }
 
-        public int? UserId{get;set;}
+        public int? UserId { get; set; }
     }
 }

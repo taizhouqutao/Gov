@@ -4,12 +4,14 @@ using WebBackend.Models;
 using Common;
 using Microsoft.AspNetCore.Authorization;
 using BLL;
+using DAL.Modles;
 
 namespace WebBackend.Controllers;
 
 public class HomeController : Controller
 {
     private BLL.BllUser blluser = new BLL.BllUser();
+    private BLL.BllContactMessage bllContactMessage = new BLL.BllContactMessage();
     private BLL.BllComment bllcomment = new BLL.BllComment();
     private BLL.BllViewLog bllviewlog = new BLL.BllViewLog();
     private BLL.BllNewType bllNewType = new BLL.BllNewType();
@@ -159,7 +161,7 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public async Task<Response<List<CommentGroupResDto>>> GetCommentGroupsByAsync([FromBody] CommentReqDto req)
+    public async Task<Response<List<CommentGroupResDto>>> GetCommentGroups([FromBody] CommentReqDto req)
     {
         try
         {
@@ -167,6 +169,13 @@ public class HomeController : Controller
             req.fatherCommentId = 0;
             req.ifDeal = 0;
             var res = await bllcomment.GetCommentGroupsByAsync(req);
+            var part = await bllContactMessage.GetContactMessageGroupsByAsync(new ContactMessageReqDto()
+            {
+                ifDeal = 0,
+                fatherContactMessageId = 0
+            });
+            res.AddRange(part);
+            res = res.OrderByDescending(i => i.createTime).ToList();
             return new Response<List<CommentGroupResDto>>()
             {
                 Data = res,

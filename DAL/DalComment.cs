@@ -234,6 +234,7 @@ namespace DAL
                                 select new
                                 {
                                     NewTypeId = QueryNew_Join.NewTypeId,
+                                    NewId = QueryComment.NewId,
                                     NewTypeName = QueryNewType_Join.NewTypeName,
                                     CreateTime = QueryComment.CreateTime
                                 }).GroupBy(i => new
@@ -244,6 +245,7 @@ namespace DAL
                                 {
                                     NewTypeId = i.Key.NewTypeId,
                                     NewTypeName = i.Key.NewTypeName,
+                                    NewId = i.Max(j => j.NewId),
                                     Count = i.Count(),
                                     CreateTime = i.Max(j => j.CreateTime)
                                 }).OrderByDescending(i => i.CreateTime);
@@ -252,9 +254,9 @@ namespace DAL
                 {
                     count = i.Count,
                     newTypeId = i.NewTypeId,
-                    newTypeName = i.NewTypeName,
-                    Link = $"New/Index?NewTypeId={i.NewTypeId}",
-                    createTime = i.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")
+                    newTypeName = i.NewId == 0 ? "群众意见收集" : i.NewTypeName.Substring(0, i.NewTypeName.Length - 2),
+                    Link = i.NewId == 0 ? "Suggest/Index" : $"New/Comment?NewTypeId={i.NewTypeId}",
+                    createTime = i.CreateTime.ToString("yyyy-MM-dd HH:mm")
                 });
             }
             return res;

@@ -8,6 +8,12 @@ namespace BLL
     private DalContactMessage dal = new DalContactMessage();
     private DalBizLog dalLog = new DalBizLog();
     private DalUser bllUser = new DalUser();
+
+    public async Task<List<CommentGroupResDto>> GetContactMessageGroupsByAsync(ContactMessageReqDto req)
+    {
+      return await dal.GetContactMessageGroupsByAsync(req);
+    }
+
     public async Task<PageList<ContactMessage>> GetContactMessagesByPageAsync(PageReq<ContactMessageReqDto> req)
     {
       return await dal.GetContactMessagesByPageAsync(req);

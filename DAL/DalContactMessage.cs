@@ -8,6 +8,39 @@ namespace DAL
 {
   public class DalContactMessage
   {
+    public async Task<List<CommentGroupResDto>> GetContactMessageGroupsByAsync(ContactMessageReqDto req)
+    {
+      var res = new List<CommentGroupResDto>();
+      using (var context = new webapplicationContext())
+      {
+        var QueryContactMessages = context.ContactMessages.AsQueryable();
+        var QureyRes = (from QueryContactMessage in QueryContactMessages
+                        where
+                            (QueryContactMessage.IfDel == 0) &&
+                            ((req == null || req.fatherContactMessageId == null) ? true : req.fatherContactMessageId == QueryContactMessage.FatherContactMessageId) &&
+                            ((req == null || req.ifDeal == null) ? true : QueryContactMessage.IfDeal == req.ifDeal)
+                        select new
+                        {
+                          ContactMessageId = QueryContactMessage.Id,
+                          CreateTime = QueryContactMessage.CreateTime
+                        });
+        var Count = await QureyRes.CountAsync();
+        if (Count > 0)
+        {
+          var createTime = (await QureyRes.MaxAsync(i => i.CreateTime));
+          res.Add(new CommentGroupResDto()
+          {
+            Link = "Contact/Message",
+            newTypeName = "群众留言",
+            newTypeId = 0,
+            count = Count,
+            createTime = createTime.ToString("yyyy-MM-dd HH:mm"),
+          });
+        }
+      }
+      return res;
+    }
+
     public async Task<PageList<ContactMessage>> GetContactMessagesByPageAsync(PageReq<ContactMessageReqDto> req)
     {
       var res = new List<ContactMessage>();
