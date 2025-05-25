@@ -1,31 +1,36 @@
 namespace Common
 {
     [Serializable]
+    public class UserDto
+    {
+        public string? userHead { get; set; }
+    }
+    [Serializable]
     public class UserReqDto
     {
-        public int? id{get;set;}
+        public int? id { get; set; }
 
-        public List<int>? ids{get;set;}
+        public List<int>? ids { get; set; }
 
-        public int? enable{get;set;}
+        public int? enable { get; set; }
 
-        public int? idNot{get;set;}
+        public int? idNot { get; set; }
 
-        public string? realName{get;set;}
+        public string? realName { get; set; }
 
         public string? userName { get; set; }
 
         public string? passWord { get; set; }
 
-        public string? userEmail{ get; set; }
+        public string? userEmail { get; set; }
 
-        public string? userPost{ get; set; }
+        public string? userPost { get; set; }
 
-        public string? userHead{ get; set; }
-    } 
+        public string? userHead { get; set; }
+    }
 
     [Serializable]
-    public class UserResDto:BasicDto
+    public class UserResDto : BasicDto
     {
         public int Id { get; set; }
 
@@ -33,12 +38,12 @@ namespace Common
 
         public required string RealName { get; set; }
 
-        public required string UserEmail{ get; set; }
+        public required string UserEmail { get; set; }
 
-        public string? UserPost{ get; set; }
+        public string? UserPost { get; set; }
 
-        public string? UserHead{ get; set; }
+        public string? UserHead { get; set; }
 
-        public required int Enable{ get; set; }
+        public required int Enable { get; set; }
     }
 }

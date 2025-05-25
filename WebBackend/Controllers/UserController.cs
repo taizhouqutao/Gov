@@ -12,9 +12,15 @@ namespace WebBackend.Controllers
         private BLL.BllUser blluser = new BLL.BllUser();
         private BLL.BllBizLog bllbizlog = new BLL.BllBizLog();
 
-        public IActionResult AdminEditPwd()
+        public async Task<IActionResult> AdminEditPwd()
         {
-            return View();
+            var UserId = HttpContext.Session.GetInt32("UserId");
+            var user = await blluser.GetUserByIdAsync(Convert.ToInt32(UserId));
+            var Res = new UserDto()
+            {
+                userHead = user.UserHead
+            };
+            return View(Res);
         }
 
         public IActionResult AdminLoginOut()
@@ -39,7 +45,31 @@ namespace WebBackend.Controllers
         {
             return View();
         }
-
+        [HttpPost]
+        public async Task<Response> SaveMyHead([FromBody] UserReqDto req)
+        {
+            try
+            {
+                var UserId = HttpContext.Session.GetInt32("UserId");
+                var user = await blluser.GetUserByIdAsync(Convert.ToInt32(UserId));
+                if (user == null) throw new Exception("用户名不存在");
+                user.UserHead = string.IsNullOrEmpty(req.userHead) ? "/img/unperson.jpg" : req.userHead;
+                user.UpdateTime = DateTime.Now;
+                user.UpdateUserId = UserId ?? 0;
+                await blluser.UpdateUserAsync(user);
+                return new Response
+                {
+                    IfSuccess = 1,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
         [HttpPost]
         public async Task<Response> SaveUser([FromBody] UserReqDto req)
         {
