@@ -36,8 +36,8 @@
 									src="/img/unperson.jpg" /></span>
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 								<span class="clear">
-									<span class="block m-t-xs"><strong class="font-bold">Beaut-ruoyi</strong></span>
-									<span class="text-muted text-xs block">超级管理员<b class="caret"></b></span>
+									<span class="block m-t-xs"><strong class="font-bold" id="nowloginusername"></strong></span>
+									<span class="text-muted text-xs block"><span id="nowloginrealname"></span><b class="caret"></b></span>
 								</span>
 							</a>
 							<ul class="dropdown-menu animated fadeInRight m-t-xs">
@@ -431,6 +431,8 @@
 					if (result.ifSuccess) {
 						if (result.data.userHead) {
 							$("#user_profile").attr("src", result.data.userHead);
+							$('#nowloginusername').text(result.data.userName);
+							$('#nowloginrealname').text("您好！"+result.data.realName);
 						}
 					}
 				},
