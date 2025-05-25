@@ -142,7 +142,7 @@ namespace DAL
                                         UpdateTime = QuerComment.UpdateTime,
                                         UpdateUserId = QuerComment.UpdateUserId,
                                         UserId = QuerComment.UserId
-                                    }).OrderByDescending(j => j.Id);
+                                    }).OrderBy(j => j.IfDeal).ThenByDescending(j => j.Id);
                     res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
                     total = await QureyRes.CountAsync();
                     allcount = await context.Comments.CountAsync(i => i.IfDel == 0 &&
@@ -188,7 +188,7 @@ namespace DAL
                                         UpdateTime = QuerComment.UpdateTime,
                                         UpdateUserId = QuerComment.UpdateUserId,
                                         UserId = QuerComment.UserId
-                                    }).OrderByDescending(j => j.Id);
+                                    }).OrderBy(j => j.IfDeal).ThenByDescending(j => j.Id);
                     res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
                     total = await QureyRes.CountAsync();
 
@@ -234,7 +234,7 @@ namespace DAL
                                     ((req == null || req.ifDeal == null) ? true : QueryComment.IfDeal == req.ifDeal)
                                 select new
                                 {
-                                    NewTypeId = QueryNew_Join.NewTypeId??0,
+                                    NewTypeId = QueryNew_Join.NewTypeId ?? 0,
                                     NewId = QueryComment.NewId,
                                     NewTypeName = QueryNewType_Join.NewTypeName,
                                     CreateTime = QueryComment.CreateTime
@@ -255,7 +255,7 @@ namespace DAL
                 {
                     count = i.Count,
                     newTypeId = i.NewTypeId,
-                    tabName = i.NewId == 0 ? "意见收集" :HtmlHelp.GetTabName(i.NewTypeId),
+                    tabName = i.NewId == 0 ? "意见收集" : HtmlHelp.GetTabName(i.NewTypeId),
                     newTypeName = i.NewId == 0 ? "群众意见收集" : i.NewTypeName.Substring(0, i.NewTypeName.Length - 2),
                     Link = i.NewId == 0 ? "Suggest/Index" : $"New/Comment?NewTypeId={i.NewTypeId}",
                     createTime = i.CreateTime.ToString("yyyy-MM-dd HH:mm")

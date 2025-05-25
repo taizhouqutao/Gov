@@ -16,6 +16,8 @@ namespace Common
         public string? personHead { get; set; }
 
         public string? personDesc { get; set; }
+
+        public string? cellphone{ get; set; }
     }
 
     [Serializable]

@@ -55,7 +55,7 @@ namespace DAL
             ((req.Query == null || req.Query.fatherContactMessageId == null) ? true : req.Query.fatherContactMessageId == i.FatherContactMessageId) &&
             ((req.Query == null || req.Query.isShow == null) ? true : req.Query.isShow == i.IsShow)
         );
-        QureyRes = QureyRes.OrderByDescending(j => j.Id);
+        QureyRes = QureyRes.OrderBy(j=>j.IfDeal).ThenByDescending(j => j.Id);
         res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
         total = await QureyRes.CountAsync();
         allcount = await context.ContactMessages.CountAsync(i => i.IfDel == 0 &&

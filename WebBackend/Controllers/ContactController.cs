@@ -166,6 +166,7 @@ namespace WebBackend.Controllers
                     res.PersonHead = req.personHead;
                     res.UpdateTime = DateTime.Now;
                     res.UpdateUserId = UserId ?? 0;
+                    res.Cellphone = req.cellphone ?? "";
                     await bllContact.UpdateContactAsync(res);
                 }
                 else
@@ -179,6 +180,7 @@ namespace WebBackend.Controllers
                         Post = req.post ?? "",
                         Depent = req.depent,
                         Desc = req.personDesc,
+                        Cellphone = req.cellphone ?? "",
                         PersonHead = req.personHead,
                     };
                     await bllContact.AddContactAsync(res);

@@ -16,13 +16,16 @@ namespace DAL.Modles
     public required string PersonName { get; set; }
 
     [Column("Post")]
-    public required string Post{ get; set; }
+    public required string Post { get; set; }
+
+    [Column("Cellphone")]
+    public string? Cellphone { get; set; }
 
     [Column("Depent")]
-    public string? Depent{ get; set; }
+    public string? Depent { get; set; }
 
     [Column("PersonHead")]
-    public string? PersonHead{ get; set; }
+    public string? PersonHead { get; set; }
 
     [Column("Desc")]
     public string? Desc { get; set; }

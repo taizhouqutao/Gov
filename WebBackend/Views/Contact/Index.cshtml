@@ -1,4 +1,4 @@
-@model Common.ContactPageDto 
+@model Common.ContactPageDto
 @{
     Layout = null;
 }
@@ -10,7 +10,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>两委班子</title>
-    <link rel="shortcut icon" href="favicon.ico"> <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
     <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
 
     <link href="/css/animate.css" rel="stylesheet">
@@ -19,23 +20,26 @@
     <link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
     <link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
     <link rel="stylesheet" type="text/css" href="/css/contact.css?v=0.0.1">
-    <link href="/css/plugins/wangeditor/style.css" rel="stylesheet"/>
+    <link href="/css/plugins/wangeditor/style.css" rel="stylesheet" />
     <style>
-    #editor—wrapper {
-        border: 1px solid #ccc;
-        z-index: 100; /* 按需定义 */
-    }
-    #toolbar-container {
-        border-bottom: 1px solid #ccc;
-    }
-    #editor-container {
-        height: 500px;
-    }
+        #editor—wrapper {
+            border: 1px solid #ccc;
+            z-index: 100;
+            /* 按需定义 */
+        }
+
+        #toolbar-container {
+            border-bottom: 1px solid #ccc;
+        }
+
+        #editor-container {
+            height: 500px;
+        }
     </style>
 </head>
 
 <body class="gray-bg">
-        <div class="wrapper wrapper-content animated fadeInRight">
+    <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
             <div class="col-sm-12">
                 <div class="ibox float-e-margins">
@@ -67,15 +71,17 @@
                                         <a href="#" onclick="getDetail(@contact.id)">
                                             <div class="col-sm-4">
                                                 <div class="text-center">
-                                                    <img alt="image" width="100" height="100" class="img-circle m-t-xs img-responsive" src="@contact.personHead">
+                                                    <img alt="image" width="100" height="100"
+                                                        class="img-circle m-t-xs img-responsive" src="@contact.personHead">
                                                     <div class="m-t-xs font-bold">@contact.post</div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-8">
-                                                <h3><input type="checkbox" name="sel_contact" class="checkchild" value="@contact.id"/><strong>@contact.personName</strong></h3>
+                                                <h3><input type="checkbox" name="sel_contact" class="checkchild"
+                                                        value="@contact.id" /><strong>@contact.personName</strong></h3>
                                                 <strong class="depent">@contact.depent</strong><br>
                                                 最近值班信息<br>
-                                                   周一、周二<br>
+                                                周一、周二<br>
                                             </div>
                                             <div class="clearfix"></div>
                                         </a>
@@ -97,21 +103,29 @@
                     <form role="form">
                         <div class="ibox-content">
                             <input type="hidden" id="contactId" name="contactId" />
-                            <input type="hidden" value="/img/unperson.jpg" id="personHead" name="personHead"/>
+                            <input type="hidden" value="/img/unperson.jpg" id="personHead" name="personHead" />
                             <div class="form-inline">
                                 <div class="form-group">
                                     <label>姓名：</label><label style="color: red;">*</label>
-                                    <input type="text" required placeholder="请输入姓名" id="personName" name="personName" class="form-control">
+                                    <input type="text" required placeholder="请输入姓名" id="personName" name="personName"
+                                        class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>职务：</label><label style="color: red;">*</label>
-                                    <input type="text" required placeholder="请输入职务" id="post" name="post" class="form-control">
+                                    <input type="text" required placeholder="请输入职务" id="post" name="post"
+                                        class="form-control">
                                 </div>
                             </div>
                             <div class="form-inline">
                                 <div class="form-group">
                                     <label>组织结构：</label>
-                                    <input type="text" placeholder="请输入组织结构" id="depent" name="depent" class="form-control">
+                                    <input type="text" placeholder="请输入组织结构" id="depent" name="depent"
+                                        class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>联系方式：</label>
+                                    <input type="text" placeholder="请输入联系方式" id="cellphone" name="cellphone"
+                                        class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -120,7 +134,7 @@
                             <div class="form-inline">
                                 <div class="form-group">
                                     <div class="showuserImg">
-                                        <img id="showUserHead" src="/img/unperson.jpg" width="110" height="110"/>
+                                        <img id="showUserHead" src="/img/unperson.jpg" width="110" height="110" />
                                     </div>
                                     <div id="uploader" class="wu-example">
                                         <div class="queueList">
@@ -152,7 +166,8 @@
                             </div>
                         </div>
                         <div>
-                            <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px;" type="submit">
+                            <button class="btn btn-sm btn-primary pull-right m-t-n-xs"
+                                style="width: 94px; height: 42px;" type="submit">
                                 <strong>保存</strong>
                             </button>
                             <div style="clear: both;"></div>
@@ -186,7 +201,7 @@
             onChange(editor) {
                 const html = editor.getHtml()
                 console.log('editor content', html)
-            // 也可以同步到 <textarea>
+                // 也可以同步到 <textarea>
             },
         }
         editorConfig.MENU_CONF['insertVideo'] = {
@@ -229,13 +244,13 @@
             },
 
             customInsert(res, insertFn) {
-               console.log('customInsert', res)
-               const videoInfo = res.data || {}
-               const { url, poster } = videoInfo
-               if (!url) throw new Error(`Video url is empty`)
+                console.log('customInsert', res)
+                const videoInfo = res.data || {}
+                const { url, poster } = videoInfo
+                if (!url) throw new Error(`Video url is empty`)
 
-               console.log('Your video url ', url)
-               insertFn(url, poster)
+                console.log('Your video url ', url)
+                insertFn(url, poster)
             },
 
             // customUpload(file, insertFn) {
@@ -343,23 +358,23 @@
         })
 
         $(document).ready(function () {
-            
+
             $('.contact-box').each(function () {
                 animationHover(this, 'pulse');
             });
 
-            $('#modal-form').on('submit', function(event) {
+            $('#modal-form').on('submit', function (event) {
                 save();
             });
         });
 
-        function add()
-        {
+        function add() {
             $('#personHead').val('/img/unperson.jpg');
-            $('#showUserHead').attr("src",'/img/unperson.jpg');
+            $('#showUserHead').attr("src", '/img/unperson.jpg');
             $('#personName').val('');
             $('#post').val('');
             $('#depent').val('');
+            $('#cellphone').val('');
             editor.select([]);
             editor.deleteFragment();
             E.SlateTransforms.setNodes(editor, { type: 'paragraph' }, { mode: 'highest' });
@@ -367,39 +382,35 @@
             $('#contactId').val('');
             $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
         }
-        function edit()
-        {
+        function edit() {
             var selectedIds = getSelectedIds();
-            if(selectedIds.length!=1)
-            {
+            if (selectedIds.length != 1) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行编辑"
                 });
             }
-            else
-            {
+            else {
                 getDetail(selectedIds[0]);
             }
         }
-        function getDetail(id)
-        {
+        function getDetail(id) {
             $.ajax({
-                url:"/Contact/GetContactById",
+                url: "/Contact/GetContactById",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
-                data:JSON.stringify({
-                    id:id
+                data: JSON.stringify({
+                    id: id
                 }),
-                success:function(result){
-                    if(result.ifSuccess)
-                    {
-                        $('#personHead').val(result.data.personHead?result.data.personHead:'/img/unperson.jpg');
-                        $('#showUserHead').attr("src",result.data.personHead?result.data.personHead:'/img/unperson.jpg');
+                success: function (result) {
+                    if (result.ifSuccess) {
+                        $('#personHead').val(result.data.personHead ? result.data.personHead : '/img/unperson.jpg');
+                        $('#showUserHead').attr("src", result.data.personHead ? result.data.personHead : '/img/unperson.jpg');
                         $('#contactId').val(result.data.id);
                         $('#personName').val(result.data.personName);
                         $('#post').val(result.data.post);
                         $('#depent').val(result.data.depent);
+                        $('#cellphone').val(result.data.cellphone);
                         editor.select([]);
                         editor.deleteFragment();
                         E.SlateTransforms.setNodes(editor, { type: 'paragraph' }, { mode: 'highest' });
@@ -407,19 +418,18 @@
 
                         $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: result.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }
                 }
@@ -427,26 +437,23 @@
         }
         function getSelectedIds() {
             var selectedIds = [];
-            $('.checkchild:checked').each(function() {
+            $('.checkchild:checked').each(function () {
                 selectedIds.push($(this).val()); // 获取 data-id 属性值并添加到数组中
             });
             return selectedIds;
         }
-        function del()
-        {
+        function del() {
             var selectedIds = getSelectedIds();
-            if(!selectedIds.length)
-            {
+            if (!selectedIds.length) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行删除"
                 });
             }
-            else
-            {
-                var delIds=selectedIds;
+            else {
+                var delIds = selectedIds;
                 swal({
-                    title: "您确定要删除这"+delIds.length+"条记录吗",
+                    title: "您确定要删除这" + delIds.length + "条记录吗",
                     text: "删除后将无法恢复，请谨慎操作！",
                     type: "warning",
                     showCancelButton: true,
@@ -458,33 +465,31 @@
                     event.stopPropagation(); // 阻止事件冒泡
                     event.preventDefault();
                     $.ajax({
-                        url:"/Contact/DelContact",
+                        url: "/Contact/DelContact",
                         contentType: "application/json",
                         type: "POST", // 请求类型，通常是 GET 或 POST
-                        data:JSON.stringify({
+                        data: JSON.stringify({
                             ids: selectedIds,
                         }),
-                        success:function(result){
-                            if(result.ifSuccess)
-                            {
-                                selectedIds.forEach(function(id) {
+                        success: function (result) {
+                            if (result.ifSuccess) {
+                                selectedIds.forEach(function (id) {
                                     $('#contact_' + id).remove();
                                 });
                                 swal("删除成功！", "您已经永久删除了这条信息。", "success");
                             }
-                            else
-                            {
+                            else {
                                 swal({
                                     title: "出错了",
                                     text: result.msg
                                 });
                             }
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.error('Error:', error);
                             console.log('Status:', status);
                             console.log('Details:', xhr.responseText);
-                            if(xhr.status == 401) {
+                            if (xhr.status == 401) {
                                 window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                             }
                         }
@@ -492,55 +497,51 @@
                 });
             }
         }
-        function save()
-        {
+        function save() {
             event.stopPropagation(); // 阻止事件冒泡
             event.preventDefault();
             $.ajax({
-                url:"/Contact/SaveContact",
+                url: "/Contact/SaveContact",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
-                data:JSON.stringify({
-                    id: $("#contactId").val()?$("#contactId").val():null,
-                    post:$("#post").val(),
-                    personName:$('#personName').val(),
-                    depent:$('#depent').val(),
-                    personDesc:editor.getHtml(),
-                    personHead:$('#personHead').val(),
+                data: JSON.stringify({
+                    id: $("#contactId").val() ? $("#contactId").val() : null,
+                    post: $("#post").val(),
+                    personName: $('#personName').val(),
+                    depent: $('#depent').val(),
+                    personDesc: editor.getHtml(),
+                    personHead: $('#personHead').val(),
+                    cellphone: $('#cellphone').val()
                 }),
-                success:function(result){
-                    if(result.ifSuccess)
-                    {
+                success: function (result) {
+                    if (result.ifSuccess) {
                         $('#modal-form').modal('hide'); // 显示模态框，并触发 show 事件，从而设置内容。
-                        if($("#contactId").val())
-                        {
-                            $("#contact_"+$("#contactId").val()+" img").attr("src",result.data.personHead);
-                            $("#contact_"+$("#contactId").val()+" .col-sm-4 .font-bold").text(result.data.post);
-                            $("#contact_"+$("#contactId").val()+" .col-sm-8 h3 strong").text(result.data.personName); 
-                            $("#contact_"+$("#contactId").val()+" .col-sm-8 .depent").text(result.data.depent); 
+                        if ($("#contactId").val()) {
+                            $("#contact_" + $("#contactId").val() + " img").attr("src", result.data.personHead);
+                            $("#contact_" + $("#contactId").val() + " .col-sm-4 .font-bold").text(result.data.post);
+                            $("#contact_" + $("#contactId").val() + " .col-sm-8 h3 strong").text(result.data.personName);
+                            $("#contact_" + $("#contactId").val() + " .col-sm-8 .depent").text(result.data.depent);
                         }
-                        else
-                        {
-                            var itemHtml='<div class="col-sm-4" id="contact_'+result.data.id+'"><div class="contact-box"><a href="#" onclick="getDetail('+result.data.id+')"><div class="col-sm-4"><div class="text-center"><img alt="image" width="100" height="100" class="img-circle m-t-xs img-responsive" src="'+result.data.personHead+'"><div class="m-t-xs font-bold">'+result.data.post+'</div></div></div><div class="col-sm-8"><h3><input type="checkbox" name="sel_contact" class="checkchild" value="'+result.data.id+'"/><strong>'+result.data.personName+'</strong></h3><strong class="depent">'+result.data.depent+'</strong><br>最近值班信息<br>Weibo:<a href="">http://weibo.com/xxx</a><br></div><div class="clearfix"></div></a></div></div>';
+                        else {
+                            var itemHtml = '<div class="col-sm-4" id="contact_' + result.data.id + '"><div class="contact-box"><a href="#" onclick="getDetail(' + result.data.id + ')"><div class="col-sm-4"><div class="text-center"><img alt="image" width="100" height="100" class="img-circle m-t-xs img-responsive" src="' + result.data.personHead + '"><div class="m-t-xs font-bold">' + result.data.post + '</div></div></div><div class="col-sm-8"><h3><input type="checkbox" name="sel_contact" class="checkchild" value="' + result.data.id + '"/><strong>' + result.data.personName + '</strong></h3><strong class="depent">' + result.data.depent + '</strong><br>最近值班信息<br>Weibo:<a href="">http://weibo.com/xxx</a><br></div><div class="clearfix"></div></a></div></div>';
                             $("#item_list").append(itemHtml);
-                            $('#contact_'+result.data.id+' .contact-box').each(function () {
+                            $('#contact_' + result.data.id + ' .contact-box').each(function () {
                                 animationHover(this, 'pulse');
                             });
                         }
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: result.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }
                 }

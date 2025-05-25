@@ -63,10 +63,12 @@
                             <input type="hidden" id="roleId" name="roleId" />
                             <div class="form-group">
                                 <label>角色名：</label>
-                                <input type="text" required placeholder="请输入角色名" id="roleName" name="roleName" class="form-control">
+                                <input type="text" required placeholder="请输入角色名" id="roleName" name="roleName"
+                                    class="form-control">
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -5px;" type="submit">
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs"
+                                    style="width: 94px; height: 42px; margin-top: -5px;" type="submit">
                                     <strong>保存</strong>
                                 </button>
                             </div>
@@ -81,10 +83,12 @@
                     <div class="row">
                         <h3 class="m-t-none m-b">分配权限</h3>
                         <form role="form" action="/User/SaveRoleRight" method="post">
-                            <table class="table table-striped table-bordered table-hover dataTables-right-example" style="width: 100%;"></table>
+                            <table class="table table-striped table-bordered table-hover dataTables-right-example"
+                                style="width: 100%;"></table>
                             </table>
                             <div>
-                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -5px;" type="submit">
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs"
+                                    style="width: 94px; height: 42px; margin-top: -5px;" type="submit">
                                     <strong>保存</strong>
                                 </button>
                             </div>
@@ -108,20 +112,20 @@
     <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
     <!-- Page-Level Scripts -->
     <script>
-        var dtRoles=null;
-        var dataTable=null;var tree;
+        var dtRoles = null;
+        var dataTable = null; var tree;
         $(document).ready(function () {
-            dtRoles=$('.dataTables-example').DataTable({
+            dtRoles = $('.dataTables-example').DataTable({
                 processing: true, // 开启处理状态提示（例如加载中）
                 serverSide: true, // 启用服务器端处理
                 ajax: {
                     url: "/User/GetRolesByPage", // 你的服务器端接口地址
                     contentType: "application/json",
                     type: "POST", // 请求类型，通常是 GET 或 POST
-                    data: function(d) {
+                    data: function (d) {
                         // 构建请求对象，包含DataTables参数和自定义参数
                         if (d.order && d.order.length > 0) {
-                            d.order.forEach(function(orderItem) {
+                            d.order.forEach(function (orderItem) {
                                 const columnIndex = orderItem.column;  // 原始列索引
                                 const columnName = d.columns[columnIndex].name; // 通过索引获取列名
                                 orderItem.columnName = columnName;  // 添加列名参数
@@ -136,11 +140,11 @@
                         };
                         return JSON.stringify(request);  // 手动转换为JSON字符串
                     },
-                    dataFilter: function(response) {
+                    dataFilter: function (response) {
                         var json = JSON.parse(response);
                         if (json.ifSuccess !== 1) {
                             console.log(json.msg);
-                            return JSON.stringify({draw: 0,recordsTotal: 0,recordsFiltered: 0,data: []});
+                            return JSON.stringify({ draw: 0, recordsTotal: 0, recordsFiltered: 0, data: [] });
                         }
                         // 转换为DataTables标准格式
                         return JSON.stringify({
@@ -150,102 +154,98 @@
                             data: json.data.data
                         });
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error('Error:', error);
                         console.log('Status:', status);
                         console.log('Details:', xhr.responseText);
-                        if(xhr.status == 401) {
+                        if (xhr.status == 401) {
                             window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                         }
                     }
                 },
                 columns: [{
-                         sClass: "text-center",
-                         data: "id",
-                         render: function (data, type, full, meta) {//这里就是要显示的checkbox多选框了
-                             return '<input type="checkbox" class="checkchild" value="' + data + '" />';
-                         },
-                         bSortable: false
+                    sClass: "text-center",
+                    data: "id",
+                    render: function (data, type, full, meta) {//这里就是要显示的checkbox多选框了
+                        return '<input type="checkbox" class="checkchild" value="' + data + '" />';
                     },
-                    { data: "id",title: "ID",name:"Id",bSortable: false},
-                    { data: "roleName",title: "角色名称",name:"RoleName",bSortable: false},
-                    {
-                        data: "createTime",
-                        title: "创建时间",
-                        name:"CreateTime",
-                        bSortable: false,
-                        render: function(data) {
-                            return new Date(data).toLocaleString();
-                        }
+                    bSortable: false
+                },
+                { data: "id", title: "ID", name: "Id", bSortable: false },
+                { data: "roleName", title: "角色名称", name: "RoleName", bSortable: false },
+                {
+                    data: "createTime",
+                    title: "创建时间",
+                    name: "CreateTime",
+                    bSortable: false,
+                    render: function (data) {
+                        return new Date(data).toLocaleString();
                     }
+                }
                 ]
             });
-                        // 添加行双击事件
-            $('.dataTables-example').on('dblclick', 'tbody tr', function() {
+            // 添加行双击事件
+            $('.dataTables-example').on('dblclick', 'tbody tr', function () {
                 var rowData = dtRoles.row(this).data();
+                $('#role_form').show();
+                $('#rgith_form').hide();
                 getRoleDetail(rowData.id);
             });
 
-            $('#role_form').on('submit', function(event) {
+            $('#role_form').on('submit', function (event) {
                 saveRole();
             });
         });
-        function searchRole()
-        {
+        function searchRole() {
             dtRoles.ajax.reload(); // 保持当前分页和排序状态
         }
-        function addRole()
-        {
+        function addRole() {
             $('#roleName').val('');
             $("#roleId").val('');
             $('#role_form').show();
             $('#rgith_form').hide();
             $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
         }
-        function editRole()
-        {
+        function editRole() {
+            $('#role_form').show();
+            $('#rgith_form').hide();
             var selectedIds = getSelectedIds();
-            if(selectedIds.length!=1)
-            {
+            if (selectedIds.length != 1) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行编辑"
                 });
             }
-            else
-            {
+            else {
                 getRoleDetail(selectedIds[0]);
             }
         }
-        function getRoleDetail(roleId)
-        {
+        function getRoleDetail(roleId) {
             $.ajax({
-                url:"/User/GetRolesById",
+                url: "/User/GetRolesById",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
-                data:JSON.stringify({
-                    id:roleId
+                data: JSON.stringify({
+                    id: roleId
                 }),
-                success:function(result){
-                    if(result.ifSuccess)
-                    {
+                success: function (result) {
+                    if (result.ifSuccess) {
                         $("#roleName").val(result.data.roleName);
                         $("#roleId").val(result.data.id);
                         $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: result.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }
                 }
@@ -253,61 +253,55 @@
         }
         function getSelectedIds() {
             var selectedIds = [];
-            $('.checkchild:checked').each(function() {
+            $('.checkchild:checked').each(function () {
                 selectedIds.push($(this).val()); // 获取 data-id 属性值并添加到数组中
             });
             return selectedIds;
         }
-        function saveRole()
-        {
+        function saveRole() {
             event.preventDefault();
             $.ajax({
-                url:"/User/SaveRole",
+                url: "/User/SaveRole",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
-                data:JSON.stringify({
-                    id: $("#roleId").val()?$("#roleId").val():null,
-                    roleName:$("#roleName").val()
+                data: JSON.stringify({
+                    id: $("#roleId").val() ? $("#roleId").val() : null,
+                    roleName: $("#roleName").val()
                 }),
-                success:function(result){
-                    if(result.ifSuccess)
-                    {
+                success: function (result) {
+                    if (result.ifSuccess) {
                         $('#modal-form').modal('hide'); // 显示模态框，并触发 show 事件，从而设置内容。
                         searchRole();
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: result.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }
                 }
             });
         }
-        function delRole()
-        {
+        function delRole() {
             var selectedIds = getSelectedIds();
-            if(!selectedIds.length)
-            {
+            if (!selectedIds.length) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行删除"
                 });
             }
-            else
-            {
-                var delIds=selectedIds;
+            else {
+                var delIds = selectedIds;
                 swal({
-                    title: "您确定要删除这"+delIds.length+"条记录吗",
+                    title: "您确定要删除这" + delIds.length + "条记录吗",
                     text: "删除后将无法恢复，请谨慎操作！",
                     type: "warning",
                     showCancelButton: true,
@@ -319,31 +313,29 @@
                     event.stopPropagation(); // 阻止事件冒泡
                     event.preventDefault();
                     $.ajax({
-                        url:"/User/DelRole",
+                        url: "/User/DelRole",
                         contentType: "application/json",
                         type: "POST", // 请求类型，通常是 GET 或 POST
-                        data:JSON.stringify({
+                        data: JSON.stringify({
                             ids: selectedIds,
                         }),
-                        success:function(result){
-                            if(result.ifSuccess)
-                            {
+                        success: function (result) {
+                            if (result.ifSuccess) {
                                 searchRole();
                                 swal("删除成功！", "您已经永久删除了这条信息。", "success");
                             }
-                            else
-                            {
+                            else {
                                 swal({
                                     title: "出错了",
                                     text: result.msg
                                 });
                             }
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.error('Error:', error);
                             console.log('Status:', status);
                             console.log('Details:', xhr.responseText);
-                            if(xhr.status == 401) {
+                            if (xhr.status == 401) {
                                 window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                             }
                         }
@@ -351,23 +343,22 @@
                 });
             }
         }
-        function expandAll(){
+        function expandAll() {
             tree.expandAll();
         }
-        function collapseAll(){
+        function collapseAll() {
             tree.collapseAll();
         }
-        function reload(){
+        function reload() {
             dataTable.ajax.reload();
         }
-        function draw(){
+        function draw() {
             dataTable.draw(false);
         }
-        function splitRight(){
-            if(!dataTable)
-            {
-                dataTable=$('.dataTables-right-example').DataTable({
-                    dom:"tr",
+        function splitRight() {
+            if (!dataTable) {
+                dataTable = $('.dataTables-right-example').DataTable({
+                    dom: "tr",
                     ordering: false,
                     processing: true, // 开启处理状态提示（例如加载中）
                     serverSide: true, // 启用服务器端处理
@@ -375,10 +366,10 @@
                         url: "/Right/GetRightsByTree", // 你的服务器端接口地址
                         contentType: "application/json",
                         type: "POST", // 请求类型，通常是 GET 或 POST
-                        data: function(d) {
+                        data: function (d) {
                             // 构建请求对象，包含DataTables参数和自定义参数
                             if (d.order && d.order.length > 0) {
-                                d.order.forEach(function(orderItem) {
+                                d.order.forEach(function (orderItem) {
                                     const columnIndex = orderItem.column;  // 原始列索引
                                     const columnName = d.columns[columnIndex].name; // 通过索引获取列名
                                     orderItem.columnName = columnName;  // 添加列名参数
@@ -393,11 +384,11 @@
                             };
                             return JSON.stringify(request);  // 手动转换为JSON字符串
                         },
-                        dataFilter: function(response) {
+                        dataFilter: function (response) {
                             var json = JSON.parse(response);
                             if (json.ifSuccess !== 1) {
                                 console.log(json.msg);
-                                return JSON.stringify({draw: 0,recordsTotal: 0,recordsFiltered: 0,data: []});
+                                return JSON.stringify({ draw: 0, recordsTotal: 0, recordsFiltered: 0, data: [] });
                             }
                             // 转换为DataTables标准格式
                             return JSON.stringify({
@@ -407,11 +398,11 @@
                                 data: json.data.data
                             });
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.error('Error:', error);
                             console.log('Status:', status);
                             console.log('Details:', xhr.responseText);
-                            if(xhr.status == 401) {
+                            if (xhr.status == 401) {
                                 window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                             }
                         }
@@ -423,7 +414,7 @@
                             return '<input type="checkbox" class="checkchild" value="' + data + '" />';
                         },
                         bSortable: false
-                    },{
+                    }, {
                         className: 'treegrid-control',
                         data: function (item) {
                             if (item.children != null && item.children.length > 0) {
@@ -431,16 +422,16 @@
                             }
                             return '';
                         }
-                    },{ 
-                        data: "id",title: "ID",name:"Id",bSortable: false
-                    },{ 
-                        data: "rightName",title: "权限名称",name:"RightName",bSortable: false
+                    }, {
+                        data: "id", title: "ID", name: "Id", bSortable: false
+                    }, {
+                        data: "rightName", title: "权限名称", name: "RightName", bSortable: false
                     }, {
                         data: "createTime",
                         title: "创建时间",
-                        name:"CreateTime",
+                        name: "CreateTime",
                         bSortable: false,
-                        render: function(data) {
+                        render: function (data) {
                             return new Date(data).toLocaleString();
                         }
                     }],
@@ -458,4 +449,5 @@
         }
     </script>
 </body>
+
 </html>
