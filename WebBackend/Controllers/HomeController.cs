@@ -166,6 +166,7 @@ public class HomeController : Controller
         try
         {
             req.newTypeIds = Common.HtmlHelp.GetShowCommentTypes();
+            req.newTypeIds.Add(0);
             req.fatherCommentId = 0;
             req.ifDeal = 0;
             var res = await bllcomment.GetCommentGroupsByAsync(req);

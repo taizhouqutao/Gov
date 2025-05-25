@@ -234,7 +234,7 @@ namespace DAL
                                     ((req == null || req.ifDeal == null) ? true : QueryComment.IfDeal == req.ifDeal)
                                 select new
                                 {
-                                    NewTypeId = QueryNew_Join.NewTypeId,
+                                    NewTypeId = QueryNew_Join.NewTypeId??0,
                                     NewId = QueryComment.NewId,
                                     NewTypeName = QueryNewType_Join.NewTypeName,
                                     CreateTime = QueryComment.CreateTime
@@ -255,7 +255,7 @@ namespace DAL
                 {
                     count = i.Count,
                     newTypeId = i.NewTypeId,
-                    tabName = i.NewId == 0 ? "意见收集" :HtmlHelp.GetTabName(i.NewTypeId ?? 0),
+                    tabName = i.NewId == 0 ? "意见收集" :HtmlHelp.GetTabName(i.NewTypeId),
                     newTypeName = i.NewId == 0 ? "群众意见收集" : i.NewTypeName.Substring(0, i.NewTypeName.Length - 2),
                     Link = i.NewId == 0 ? "Suggest/Index" : $"New/Comment?NewTypeId={i.NewTypeId}",
                     createTime = i.CreateTime.ToString("yyyy-MM-dd HH:mm")
