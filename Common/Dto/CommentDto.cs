@@ -91,6 +91,8 @@ namespace Common
 
         public required string newTypeName { get; set; }
 
+        public required string tabName{ get; set; }
+
         public required string Link { get; set; }
 
         public int count { get; set; }

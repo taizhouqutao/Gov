@@ -4,6 +4,7 @@ using DAL.Contexts;
 using DAL.Modles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json.Serialization;
 namespace DAL
@@ -254,6 +255,7 @@ namespace DAL
                 {
                     count = i.Count,
                     newTypeId = i.NewTypeId,
+                    tabName = i.NewId == 0 ? "意见收集" :HtmlHelp.GetTabName(i.NewTypeId ?? 0),
                     newTypeName = i.NewId == 0 ? "群众意见收集" : i.NewTypeName.Substring(0, i.NewTypeName.Length - 2),
                     Link = i.NewId == 0 ? "Suggest/Index" : $"New/Comment?NewTypeId={i.NewTypeId}",
                     createTime = i.CreateTime.ToString("yyyy-MM-dd HH:mm")
@@ -261,6 +263,8 @@ namespace DAL
             }
             return res;
         }
+
+
 
         public async Task<List<Comment>> GetCommentsByAsync(CommentReqDto req)
         {

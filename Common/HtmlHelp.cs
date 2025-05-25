@@ -36,7 +36,24 @@ namespace Common
 
         public static List<int> GetShowCommentTypes()
         {
-            return new List<int>(){12,1,11,3};
+            return new List<int>() { 12, 1, 10, 3 };
+        }
+
+        public static string GetTabName(int NewTypeId)
+        {
+            switch (NewTypeId)
+            {
+                case 12:
+                    return "在线反馈";
+                case 1:
+                    return "在线反馈";
+                case 3:
+                    return "信息反馈";
+                case 10:
+                    return "问题反馈";
+                default:
+                    return "";
+            }
         }
     }
 }

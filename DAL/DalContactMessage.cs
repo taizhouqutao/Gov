@@ -32,6 +32,7 @@ namespace DAL
           {
             Link = "Contact/Message",
             newTypeName = "群众留言",
+            tabName = "群众留言管理",
             newTypeId = 0,
             count = Count,
             createTime = createTime.ToString("yyyy-MM-dd HH:mm"),
