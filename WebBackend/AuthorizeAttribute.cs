@@ -26,7 +26,8 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     // 如果需要，可以添加权限检查逻辑
     if (_permissions != null && !HasPermissions(_permissions, httpContext))
     {
-      context.Result = new StatusCodeResult(403); // 禁止访问
+      // 这里可以重定向到自定义的403页面
+      context.Result = new RedirectResult("/Home/Forbidden"); // 假设你有一个403页面路由为/Home/Forbidden
       return;
     }
   }

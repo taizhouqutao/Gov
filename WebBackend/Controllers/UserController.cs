@@ -41,6 +41,8 @@ namespace WebBackend.Controllers
                 Roles = Roles
             });
         }
+
+        [Authorize("001001")]
         public IActionResult Role()
         {
             return View();

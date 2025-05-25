@@ -15,7 +15,7 @@ public class CheckSessionAttribute : ActionFilterAttribute
 
     private readonly string[] _excludePaths = 
     { 
-        "/Home/login"
+        "/Home/login","/Home/Forbidden"
     };
 
     public override void OnActionExecuting(ActionExecutingContext filterContext)

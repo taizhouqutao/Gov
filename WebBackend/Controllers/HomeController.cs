@@ -22,6 +22,11 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    [AllowAnonymous]
+    public IActionResult Forbidden()
+    {
+        return View();
+    }
     public IActionResult Index()
     {
         return View();
