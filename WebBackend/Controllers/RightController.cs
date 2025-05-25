@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebBackend.Controllers
 {
-    public class RightController: Controller
+    public class RightController : Controller
     {
         private BLL.BllRight bllRight = new BLL.BllRight();
 
@@ -17,25 +17,20 @@ namespace WebBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<Response<PageList<RightTreeDto>>> GetRightsByTree([FromBody] PageReq<RightReqDto> req)
+        public async Task<Response<List<RightTreeDto>>> GetRightsByTree([FromBody] PageReq<RightReqDto> req)
         {
             try
             {
                 var res = await bllRight.GetRightTreeAsync(req.Query);
-                return new Response<PageList<RightTreeDto>>
+                return new Response<List<RightTreeDto>>
                 {
                     IfSuccess = 1,
-                    Data = new PageList<RightTreeDto>(){
-                        data=res, 
-                        draw=req.draw,
-                        recordsFiltered=res.Count,
-                        recordsTotal=res.Count
-                    }
+                    Data = res
                 };
             }
             catch (Exception ex)
             {
-                return new Response<PageList<RightTreeDto>>()
+                return new Response<List<RightTreeDto>>()
                 {
                     Msg = ex.Message
                 };
