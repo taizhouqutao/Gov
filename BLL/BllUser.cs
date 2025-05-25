@@ -137,5 +137,10 @@ namespace BLL
         {
             await dal.SaveUserRole(entity, RoleIds);
         }
+
+        public async Task<List<string>> GetRightCodeByUser(int UserId)
+        {
+            return await dal.GetRightCodeByUser(UserId);
+        }
     }
 }

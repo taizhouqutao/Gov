@@ -32,6 +32,30 @@ namespace DAL
             };
         }
 
+        public async Task<List<string>> GetRightCodeByUser(int UserId)
+        {
+            List<string> res = new List<string>();
+            using (var context = new webapplicationContext())
+            {
+                var Query = context.UserRoles.AsQueryable();
+                var QueryRightRoles = context.RightRoles.AsQueryable();
+                var QueryRights = context.Rights.AsQueryable();
+                var userRoles = (await Query.Where(i =>
+                    (i.IfDel == 0) &&
+                    (i.UserId == UserId)
+                ).ToListAsync()).ConvertAll(i => i.RoleId);
+                var RightIds = (await QueryRightRoles.Where(i =>
+                                   (i.IfDel == 0) &&
+                                   (userRoles.Contains(i.RoleId))
+                               ).Select(i => i.RightId).Distinct().ToListAsync()).ConvertAll(i => i);
+                res = await QueryRights.Where(i =>
+                                (i.IfDel == 0) &&
+                                (RightIds.Contains(i.Id))
+                ).Select(i => i.RightCode).Distinct().ToListAsync();
+            }
+            return res;
+        }
+
         public async Task<List<User>> GetUsersByIdAsync(List<int> Ids)
         {
             List<User> res = new List<User>();

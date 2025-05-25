@@ -5,7 +5,7 @@ using Common;
 using Microsoft.AspNetCore.Authorization;
 using BLL;
 using DAL.Modles;
-
+using Newtonsoft.Json;
 namespace WebBackend.Controllers;
 
 public class HomeController : Controller
@@ -69,6 +69,8 @@ public class HomeController : Controller
             var res = await blluser.LoginAsync(req);
             if (res == null) throw new Exception("用户名和密码错误");
             HttpContext.Session.SetInt32("UserId", res.Id);
+            List<string> Right = await blluser.GetRightCodeByUser(res.Id);
+            HttpContext.Session.SetString("RightId", JsonConvert.SerializeObject(Right));
             return new Response<LoginResDto>
             {
                 IfSuccess = 1,
