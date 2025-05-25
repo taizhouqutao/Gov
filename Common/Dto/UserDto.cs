@@ -27,6 +27,8 @@ namespace Common
         public string? userPost { get; set; }
 
         public string? userHead { get; set; }
+
+        public List<int>? roles { get; set; }
     }
 
     [Serializable]
@@ -45,5 +47,7 @@ namespace Common
         public string? UserHead { get; set; }
 
         public required int Enable { get; set; }
+
+        public List<int>? roles { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Common.AdminDto
+@{
     ViewData["Title"] = "用户管理";
     Layout = null;
 }
@@ -22,7 +23,7 @@
     <link href="/css/plugins/iCheck/custom.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
     <link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
-    <link rel="stylesheet" type="text/css" href="/css/backend_admin.css">
+    <link rel="stylesheet" type="text/css" href="/css/backend_admin.css?v=1.0.1">
 </head>
 
 <body class="gray-bg">
@@ -68,37 +69,58 @@
                     <form role="form">
                         <div class="ibox-content">
                             <input type="hidden" id="userId" name="userId" />
-                            <input type="hidden" value="/img/unperson.jpg" id="userHead" name="userHead"/>
+                            <input type="hidden" value="/img/unperson.jpg" id="userHead" name="userHead" />
                             <div class="form-inline">
                                 <div class="form-group">
                                     <label>用户名：</label><label style="color: red;">*</label>
-                                    <input type="text" required placeholder="请输入用户名" id="userName" name="userName" class="form-control">
+                                    <input type="text" required placeholder="请输入用户名" id="userName" name="userName"
+                                        class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>姓名：</label><label style="color: red;">*</label>
-                                    <input type="text" required placeholder="请输入姓名" id="realName" name="realName" class="form-control">
+                                    <input type="text" required placeholder="请输入姓名" id="realName" name="realName"
+                                        class="form-control">
                                 </div>
                             </div>
                             <div class="form-inline">
                                 <div class="form-group">
                                     <label>邮箱：</label><label style="color: red;">*</label>
-                                    <input type="email" required placeholder="请输入邮箱" id="userEmail" name="userEmail" class="form-control">
+                                    <input type="email" required placeholder="请输入邮箱" id="userEmail" name="userEmail"
+                                        class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>职位：</label>
-                                    <input type="text" placeholder="请输入职位" id="userPost" name="userPost" class="form-control">
+                                    <input type="text" placeholder="请输入职位" id="userPost" name="userPost"
+                                        class="form-control">
                                 </div>
                             </div>
                             <div class="form-inline" id="passwordPanl">
                                 <div class="form-group">
                                     <label>密码：</label><label style="color: red;">*</label>
-                                    <input type="password" required placeholder="请输入密码" id="passWord" name="passWord" class="form-control">
+                                    <input type="password" required placeholder="请输入密码" id="passWord" name="passWord"
+                                        class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label>确认密码：</label><label style="color: red;">*</label>
-                                    <input type="password" required placeholder="请确认密码" id="repassWord" name="repassWord" class="form-control">
+                                    <input type="password" required placeholder="请确认密码" id="repassWord"
+                                        name="repassWord" class="form-control">
                                 </div>
                                 <label id="password-error" style="color: red;"></label>
+                            </div>
+                            <div class="form-inline" id="passwordPanl">
+                                <div class="form-group">
+                                    <label>角色：</label>
+                                    @if (Model.Roles != null)
+                                    {
+                                        foreach (var role in Model.Roles)
+                                        {
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" class="role_select" data_id="@role.roleId" name="roles" value="@role.roleId"
+                                                    @(role.ifCheck == 1 ? "checked" : "") />@role.roleName
+                                            </label>
+                                        }
+                                    }
+                                </div>
                             </div>
                         </div>
                         <div class="ibox-content">
@@ -106,7 +128,7 @@
                             <div class="form-inline">
                                 <div class="form-group">
                                     <div class="showuserImg">
-                                        <img id="showUserHead" src="/img/unperson.jpg" width="110" height="110"/>
+                                        <img id="showUserHead" src="/img/unperson.jpg" width="110" height="110" />
                                     </div>
                                     <div id="uploader" class="wu-example">
                                         <div class="queueList">
@@ -131,7 +153,8 @@
                             </div>
                         </div>
                         <div>
-                            <button class="btn btn-sm btn-primary pull-right m-t-n-xs" style="width: 94px; height: 42px; margin-top: -35px;" type="submit">
+                            <button class="btn btn-sm btn-primary pull-right m-t-n-xs"
+                                style="width: 94px; height: 42px; margin-top: -35px;" type="submit">
                                 <strong>保存</strong>
                             </button>
                         </div>
@@ -160,7 +183,7 @@
 
     <script src="/js/backend_admin.js"></script>
     <script>
-        var datatable=null;
+        var datatable = null;
         const password1 = document.getElementById("passWord");
         const password2 = document.getElementById("repassWord");
         const errorElement = document.getElementById("password-error");
@@ -185,7 +208,7 @@
                     url: "/User/GetUsersByPage", // 你的服务器端接口地址
                     contentType: "application/json",
                     type: "POST", // 请求类型，通常是 GET 或 POST
-                    data: function(d) {
+                    data: function (d) {
                         // 构建请求对象，包含DataTables参数和自定义参数
                         var request = {
                             draw: d.draw,
@@ -196,12 +219,12 @@
                         };
                         return JSON.stringify(request);  // 手动转换为JSON字符串
                     },
-                    dataFilter: function(response) {
+                    dataFilter: function (response) {
                         var json = JSON.parse(response);
 
                         if (json.ifSuccess !== 1) {
                             console.log(json.msg);
-                            return JSON.stringify({draw: 0,recordsTotal: 0,recordsFiltered: 0,data: []});
+                            return JSON.stringify({ draw: 0, recordsTotal: 0, recordsFiltered: 0, data: [] });
                         }
 
                         // 转换为DataTables标准格式
@@ -212,67 +235,66 @@
                             data: json.data.data
                         });
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error('Error:', error);
                         console.log('Status:', status);
                         console.log('Details:', xhr.responseText);
-                        if(xhr.status == 401) {
+                        if (xhr.status == 401) {
                             window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                         }
                     }
                 },
                 columns: [{
-                      sClass: "text-center",
-                      data: "id",
-                      render: function (data, type, full, meta) {//这里就是要显示的checkbox多选框了
-                          return '<input type="checkbox" class="checkchild" value="' + data + '" />';
-                      },
-                      bSortable: false
+                    sClass: "text-center",
+                    data: "id",
+                    render: function (data, type, full, meta) {//这里就是要显示的checkbox多选框了
+                        return '<input type="checkbox" class="checkchild" value="' + data + '" />';
                     },
-                    { data: "id",title: "ID",name:"Id",bSortable: false},
-                    { data: "userName",title: "用户名",name:"UserName",bSortable: false},
-                    { data: "realName",title: "姓名",name:"RealName",bSortable: false},
-                    { data: "userEmail",title: "邮箱",name:"UserEmail",bSortable: false},
-                    {
-                        data: "enable",
-                        title: "状态",
-                        name:"Enable",
-                        bSortable: false,
-                        render: function(data) {
-                            return data?"启用":"禁用";
-                        }
-                    },
-                    {
-                        data: "createTime",
-                        name:"CreateTime",
-                        title: "创建时间",
-                        bSortable: false,
-                        render: function(data) {
-                            return new Date(data).toLocaleString();
-                        }
+                    bSortable: false
+                },
+                { data: "id", title: "ID", name: "Id", bSortable: false },
+                { data: "userName", title: "用户名", name: "UserName", bSortable: false },
+                { data: "realName", title: "姓名", name: "RealName", bSortable: false },
+                { data: "userEmail", title: "邮箱", name: "UserEmail", bSortable: false },
+                {
+                    data: "enable",
+                    title: "状态",
+                    name: "Enable",
+                    bSortable: false,
+                    render: function (data) {
+                        return data ? "启用" : "禁用";
                     }
+                },
+                {
+                    data: "createTime",
+                    name: "CreateTime",
+                    title: "创建时间",
+                    bSortable: false,
+                    render: function (data) {
+                        return new Date(data).toLocaleString();
+                    }
+                }
                 ]
             });
-        
-            $('.dataTables-example').on('dblclick', 'tbody tr', function() {
+
+            $('.dataTables-example').on('dblclick', 'tbody tr', function () {
                 var rowData = datatable.row(this).data();
                 getDetail(rowData.id);
             });
 
-            $('#modal-form').on('submit', function(event) {
+            $('#modal-form').on('submit', function (event) {
                 save();
             });
         });
 
-        function add()
-        {
-            $('#userName').prop("readonly",false);
-            $('#passWord').attr("required","required");
-            $('#repassWord').attr("required","required");
+        function add() {
+            $('#userName').prop("readonly", false);
+            $('#passWord').attr("required", "required");
+            $('#repassWord').attr("required", "required");
             $('#passwordPanl').show();
-            
+
             $('#userHead').val('/img/unperson.jpg');
-            $('#showUserHead').attr("src",'/img/unperson.jpg');
+            $('#showUserHead').attr("src", '/img/unperson.jpg');
             $('#userName').val('');
             $('#realName').val('');
             $('#userEmail').val('');
@@ -280,38 +302,33 @@
             $('#passWord').val('');
             $('#repassWord').val('');
             $("#userId").val('');
+            $('.role_select').prop('checked', false);
             $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
         }
-        function edit()
-        {
+        function edit() {
             var selectedIds = getSelectedIds();
-            if(selectedIds.length!=1)
-            {
+            if (selectedIds.length != 1) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行编辑"
                 });
             }
-            else
-            {
+            else {
                 getDetail(selectedIds[0]);
             }
         }
-        function del()
-        {
+        function del() {
             var selectedIds = getSelectedIds();
-            if(!selectedIds.length)
-            {
+            if (!selectedIds.length) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行删除"
                 });
             }
-            else
-            {
-                var delIds=selectedIds;
+            else {
+                var delIds = selectedIds;
                 swal({
-                    title: "您确定要删除这"+delIds.length+"条记录吗",
+                    title: "您确定要删除这" + delIds.length + "条记录吗",
                     text: "删除后将无法恢复，请谨慎操作！",
                     type: "warning",
                     showCancelButton: true,
@@ -323,31 +340,29 @@
                     event.stopPropagation(); // 阻止事件冒泡
                     event.preventDefault();
                     $.ajax({
-                        url:"/User/DelUser",
+                        url: "/User/DelUser",
                         contentType: "application/json",
                         type: "POST", // 请求类型，通常是 GET 或 POST
-                        data:JSON.stringify({
+                        data: JSON.stringify({
                             ids: selectedIds,
                         }),
-                        success:function(result){
-                            if(result.ifSuccess)
-                            {
+                        success: function (result) {
+                            if (result.ifSuccess) {
                                 searchRole();
                                 swal("删除成功！", "您已经永久删除了这条记录。", "success");
                             }
-                            else
-                            {
+                            else {
                                 swal({
                                     title: "出错了",
                                     text: result.msg
                                 });
                             }
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.error('Error:', error);
                             console.log('Status:', status);
                             console.log('Details:', xhr.responseText);
-                            if(xhr.status == 401) {
+                            if (xhr.status == 401) {
                                 window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                             }
                         }
@@ -355,90 +370,80 @@
                 });
             }
         }
-        function enable()
-        {
+        function enable() {
             var selectedIds = getSelectedIds();
-            if(!selectedIds.length)
-            {
+            if (!selectedIds.length) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行启用"
                 });
             }
-            else
-            {
+            else {
                 $.ajax({
-                    url:"/User/SetEnableUser",
+                    url: "/User/SetEnableUser",
                     contentType: "application/json",
                     type: "POST", // 请求类型，通常是 GET 或 POST
-                    data:JSON.stringify({
+                    data: JSON.stringify({
                         ids: selectedIds,
-                        enable:1
+                        enable: 1
                     }),
-                    success:function(result){
-                        if(result.ifSuccess)
-                        {
+                    success: function (result) {
+                        if (result.ifSuccess) {
                             search();
                             swal("启用成功！", "您已经启用了这条记录。", "success");
                         }
-                        else
-                        {
+                        else {
                             swal({
                                 title: "出错了",
                                 text: result.msg
                             });
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error('Error:', error);
                         console.log('Status:', status);
                         console.log('Details:', xhr.responseText);
-                        if(xhr.status == 401) {
+                        if (xhr.status == 401) {
                             window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                         }
                     }
                 });
             }
         }
-        function disable()
-        {
+        function disable() {
             var selectedIds = getSelectedIds();
-            if(!selectedIds.length)
-            {
+            if (!selectedIds.length) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行禁用"
                 });
             }
-            else
-            {
+            else {
                 $.ajax({
-                    url:"/User/SetEnableUser",
+                    url: "/User/SetEnableUser",
                     contentType: "application/json",
                     type: "POST", // 请求类型，通常是 GET 或 POST
-                    data:JSON.stringify({
+                    data: JSON.stringify({
                         ids: selectedIds,
-                        enable:0
+                        enable: 0
                     }),
-                    success:function(result){
-                        if(result.ifSuccess)
-                        {
+                    success: function (result) {
+                        if (result.ifSuccess) {
                             search();
                             swal("禁用成功！", "您已经禁用了这条记录。", "success");
                         }
-                        else
-                        {
+                        else {
                             swal({
                                 title: "出错了",
                                 text: result.msg
                             });
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error('Error:', error);
                         console.log('Status:', status);
                         console.log('Details:', xhr.responseText);
-                        if(xhr.status == 401) {
+                        if (xhr.status == 401) {
                             window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                         }
                     }
@@ -447,66 +452,66 @@
         }
         function getSelectedIds() {
             var selectedIds = [];
-            $('.checkchild:checked').each(function() {
+            $('.checkchild:checked').each(function () {
                 selectedIds.push($(this).val()); // 获取 data-id 属性值并添加到数组中
             });
             return selectedIds;
         }
-        function getDetail(roleId)
-        {
-            $('#userName').attr("readonly","readonly");
+        function getDetail(roleId) {
+            $('#userName').attr("readonly", "readonly");
             $('#passwordPanl').hide();
-            $('#passWord').prop("required",false);
-            $('#repassWord').prop("required",false);
+            $('#passWord').prop("required", false);
+            $('#repassWord').prop("required", false);
             $.ajax({
-                url:"/User/GetUserById",
+                url: "/User/GetUserById",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
-                data:JSON.stringify({
-                    id:roleId
+                data: JSON.stringify({
+                    id: roleId
                 }),
-                success:function(result){
-                    if(result.ifSuccess)
-                    {
+                success: function (result) {
+                    if (result.ifSuccess) {
                         $('#userName').val(result.data.userName);
                         $('#realName').val(result.data.realName);
                         $('#userEmail').val(result.data.userEmail);
                         $('#userPost').val(result.data.userPost);
                         $("#userId").val(result.data.id);
-                        $('#userHead').val(result.data.userHead?result.data.userHead:'/img/unperson.jpg');
-                        $('#showUserHead').attr("src",result.data.userHead?result.data.userHead:'/img/unperson.jpg');
+                        $('.role_select').prop('checked', false);
+                        if (result.data.roles && result.data.roles.length > 0) {
+                            result.data.roles.forEach(function(roleId) {
+                                $('.role_select[value="' + roleId + '"]').prop('checked', true);
+                            });
+                        }
+                        $('#userHead').val(result.data.userHead ? result.data.userHead : '/img/unperson.jpg');
+                        $('#showUserHead').attr("src", result.data.userHead ? result.data.userHead : '/img/unperson.jpg');
                         $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: result.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }
                 }
             });
         }
-        function search()
-        {
+        function search() {
             datatable.ajax.reload(); // 保持当前分页和排序状态
         }
-        function save()
-        {
+        function save() {
             event.stopPropagation(); // 阻止事件冒泡
             event.preventDefault();
             var password = $('#passWord').val();
             var repassWord = $('#repassWord').val();
-            if(password && repassWord && password!=repassWord)
-            { 
+            if (password && repassWord && password != repassWord) {
                 swal({
                     title: "密码不一致！",
                     text: result.msg
@@ -514,37 +519,36 @@
                 return;
             }
             $.ajax({
-                url:"/User/SaveUser",
+                url: "/User/SaveUser",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
-                data:JSON.stringify({
-                    id: $("#userId").val()?$("#userId").val():null,
-                    userName:$("#userName").val(),
-                    realName:$('#realName').val(),
-                    userEmail:$('#userEmail').val(),
-                    userPost:$('#userPost').val(),
-                    passWord:$('#passWord').val(),
-                    userHead:$('#userHead').val(),
+                data: JSON.stringify({
+                    id: $("#userId").val() ? $("#userId").val() : null,
+                    userName: $("#userName").val(),
+                    realName: $('#realName').val(),
+                    userEmail: $('#userEmail').val(),
+                    userPost: $('#userPost').val(),
+                    passWord: $('#passWord').val(),
+                    userHead: $('#userHead').val(),
+                    roles: $('.role_select:checked').map(function () { return $(this).val(); }).get(),
                 }),
-                success:function(result){
-                    if(result.ifSuccess)
-                    {
+                success: function (result) {
+                    if (result.ifSuccess) {
                         $('#modal-form').modal('hide'); // 显示模态框，并触发 show 事件，从而设置内容。
                         search();
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: result.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }
                 }
@@ -552,4 +556,5 @@
         }
     </script>
 </body>
+
 </html>

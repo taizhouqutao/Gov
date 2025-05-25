@@ -8,26 +8,53 @@ namespace DAL
 {
     public class DalRole
     {
-        public async Task<PageList<Role>> GetRolesByPageAsync(PageReq<RoleReqDto> req) {
-            var res=new List<Role>();
-            int total=0,allcount=0;
+        public async Task<List<RoleUserResDto>> GetRolesByUser(RoleReqDto req)
+        {
+            List<RoleUserResDto> res = new List<RoleUserResDto>();
             using (var context = new webapplicationContext())
             {
-                var Query= context.Roles.AsQueryable();
-                var QureyRes = Query.Where(i=>
-                    (i.IfDel==0) &&
-                    ((req.search==null||string.IsNullOrEmpty(req.search.value))?true:i.RoleName.Contains(req.search.value))
-                );
-                QureyRes = QureyRes.OrderByDescending(j =>j.Id);
-                res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
-                total= await QureyRes.CountAsync();
-                allcount=await context.Roles.CountAsync(i=>i.IfDel==0);
+                var Query = context.Roles.AsQueryable();
+                var QueryUserRoles = context.UserRoles.AsQueryable();
+                var QureyRes = await Query.Where(i =>
+                    (i.IfDel == 0)
+                ).ToListAsync();
+                var UserRoles = await QueryUserRoles.Where(i =>
+                    (i.IfDel == 0) &&
+                    (i.UserId == req.userId)
+                ).ToListAsync();
+
+                res = QureyRes.ConvertAll(i => new RoleUserResDto()
+                {
+                    ifCheck = UserRoles.Exists(j => j.RoleId == i.Id) ? 1 : 0,
+                    roleName = i.RoleName,
+                    roleId = i.Id
+                });
             }
-            return new PageList<Role>(){
-                data=res,
-                recordsFiltered=total,
-                draw=req.draw,
-                recordsTotal=allcount
+            return res;
+        }
+
+        public async Task<PageList<Role>> GetRolesByPageAsync(PageReq<RoleReqDto> req)
+        {
+            var res = new List<Role>();
+            int total = 0, allcount = 0;
+            using (var context = new webapplicationContext())
+            {
+                var Query = context.Roles.AsQueryable();
+                var QureyRes = Query.Where(i =>
+                    (i.IfDel == 0) &&
+                    ((req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : i.RoleName.Contains(req.search.value))
+                );
+                QureyRes = QureyRes.OrderByDescending(j => j.Id);
+                res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
+                total = await QureyRes.CountAsync();
+                allcount = await context.Roles.CountAsync(i => i.IfDel == 0);
+            }
+            return new PageList<Role>()
+            {
+                data = res,
+                recordsFiltered = total,
+                draw = req.draw,
+                recordsTotal = allcount
             };
         }
 
@@ -40,7 +67,7 @@ namespace DAL
                 var Query = context.Roles.AsQueryable();
                 res = await Query.FirstOrDefaultAsync(i =>
                     (i.IfDel == 0) &&
-                    (i.Id==Id)
+                    (i.Id == Id)
                 );
             }
             return res;
@@ -71,9 +98,10 @@ namespace DAL
         {
             using (var context = new webapplicationContext())
             {
-                var Roles =await context.Roles.Where(i=>Ids.Contains(i.Id)).ToListAsync();
-                Roles.ForEach(i=>{
-                    i.IfDel=1;
+                var Roles = await context.Roles.Where(i => Ids.Contains(i.Id)).ToListAsync();
+                Roles.ForEach(i =>
+                {
+                    i.IfDel = 1;
                 });
                 context.Roles.UpdateRange(Roles);
                 await context.SaveChangesAsync();

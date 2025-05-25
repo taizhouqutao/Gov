@@ -33,9 +33,13 @@ namespace WebBackend.Controllers
         {
             return View();
         }
-        public IActionResult Admin()
+        public async Task<IActionResult> Admin()
         {
-            return View();
+            var Roles = await bllrole.GetRolesByUser(new RoleReqDto() { userId = 0 });
+            return View(new AdminDto()
+            {
+                Roles = Roles
+            });
         }
         public IActionResult Role()
         {
@@ -110,7 +114,11 @@ namespace WebBackend.Controllers
                         UserHead = string.IsNullOrEmpty(req.userHead) ? "/img/unperson.jpg" : req.userHead,
                         Enable = 1
                     };
-                    await blluser.AddUserAsync(res);
+                    res = await blluser.AddUserAsync(res);
+                }
+                if (req.roles != null)
+                {
+                    await blluser.SaveUserRole(res, req.roles);
                 }
                 return new Response
                 {
@@ -175,6 +183,7 @@ namespace WebBackend.Controllers
             {
                 var res = await blluser.GetUserByIdAsync(Convert.ToInt32(req.id));
                 if (res == null) throw new Exception("编码对应实体不存在");
+                var roles = await bllrole.GetRolesByUser(new RoleReqDto() { userId = req.id });
                 return new Response<UserResDto>
                 {
                     IfSuccess = 1,
@@ -190,7 +199,8 @@ namespace WebBackend.Controllers
                         CreateTime = res.CreateTime,
                         CreateUserId = res.CreateUserId,
                         UpdateTime = res.UpdateTime,
-                        UpdateUserId = res.UpdateUserId
+                        UpdateUserId = res.UpdateUserId,
+                        roles = roles.Where(i => i.ifCheck == 1).ToList().ConvertAll(i => i.roleId)
                     },
                 };
             }

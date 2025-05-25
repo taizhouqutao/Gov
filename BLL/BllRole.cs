@@ -8,6 +8,12 @@ namespace BLL
         private DalRole dal = new DalRole();
         private DalBizLog dalLog = new DalBizLog();
         private DalUser bllUser = new DalUser();
+
+        public async Task<List<RoleUserResDto>> GetRolesByUser(RoleReqDto req)
+        {
+            return await dal.GetRolesByUser(req);
+        }
+
         public async Task<PageList<Role>> GetRolesByPageAsync(PageReq<RoleReqDto> req)
         {
             return await dal.GetRolesByPageAsync(req);

@@ -19,3 +19,7 @@
   height: 110px;
   margin-top: 10px;
 }
+.checkbox-inline input[type=checkbox], input[type=radio]
+{
+  margin-top: 0px;
+}
