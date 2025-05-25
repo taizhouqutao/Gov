@@ -4,6 +4,7 @@ using BLL;
 using Common;
 using DAL.Modles;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace WebBackend.Controllers
 {
@@ -17,11 +18,11 @@ namespace WebBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<Response<List<RightTreeDto>>> GetRightsByTree([FromBody] PageReq<RightReqDto> req)
+        public async Task<Response<List<RightTreeDto>>> GetRightsByTree([FromBody] RightReqDto req)
         {
             try
             {
-                var res = await bllRight.GetRightTreeAsync(req.Query);
+                var res = await bllRight.GetRightTreeAsync(req);
                 return new Response<List<RightTreeDto>>
                 {
                     IfSuccess = 1,
@@ -37,6 +38,25 @@ namespace WebBackend.Controllers
             }
         }
 
-
+        [HttpPost]
+        public async Task<Response> SaveRoleRights([FromBody] RightReqDto req)
+        {
+            try
+            {
+                req.UserId = HttpContext.Session.GetInt32("UserId");
+                await bllRight.SaveRoleRights(req);
+                return new Response
+                {
+                    IfSuccess = 1
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response()
+                {
+                    Msg = ex.Message
+                };
+            }
+        }
     }
 }

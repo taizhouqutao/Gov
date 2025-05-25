@@ -1,7 +1,7 @@
 namespace Common
 {
     [Serializable]
-    public class RightTreeDto:BasicDto
+    public class RightTreeDto : BasicDto
     {
         public int? id { get; set; }
 
@@ -16,12 +16,18 @@ namespace Common
 
         public int? fatherId { get; set; }
 
-        public List<RightTreeDto>? children{ get; set; }
-    } 
+        public int? ifchecked { get; set; }
+
+        public List<RightTreeDto>? children { get; set; }
+    }
 
     [Serializable]
     public class RightReqDto
     {
+        public int roleId { get; set; }
 
+        public int? UserId { get; set; }
+
+        public List<int>? rightIds { get; set; }
     }
 }

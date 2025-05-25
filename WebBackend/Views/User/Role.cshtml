@@ -125,6 +125,7 @@
 
     <!-- 权限分配弹窗 -->
     <div id="right-modal" class="modal fade" aria-hidden="true">
+        <input type="hidden" id="hid_select_role_id">
         <div class="modal-dialog" style="width: 600px;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -385,12 +386,13 @@
                 swal({ title: "提示", text: "请勾选1条记录进行分配权限" });
                 return;
             }
+            $("#hid_select_role_id").val(selectedIds[0]);
             // 请求权限树
             $.ajax({
                 url: "/Right/GetRightsByTree",
                 contentType: "application/json",
                 type: "POST",
-                data: JSON.stringify({ Query: { roleId: selectedIds[0] } }), // 视你的接口参数而定
+                data: JSON.stringify({ roleId: selectedIds[0] }), // 视你的接口参数而定
                 success: function (result) {
                     if (result.ifSuccess) {
                         // 渲染权限树
@@ -419,7 +421,7 @@
                 var html = '<ul class="right-tree-ul">';
                 nodes.forEach(function (node) {
                     html += '<li>';
-                    html += '<label><input type="checkbox" class="right-checkbox" data-id="' + node.id + '">' + node.rightName + '</label>';
+                    html += '<label><input type="checkbox" class="right-checkbox" ' + (node.ifchecked ? 'checked' : '') + ' data-id="' + node.id + '">' + node.rightName + '</label>';
                     if (node.children && node.children.length > 0) {
                         html += buildTree(node.children);
                     }
@@ -457,14 +459,37 @@
 
         // 保存权限（示例，具体实现请根据后端接口调整）
         function saveRights() {
+            event.preventDefault();
             var checkedIds = [];
             $('#right-tree-container .right-checkbox:checked').each(function () {
                 checkedIds.push($(this).data('id'));
             });
             // 这里可以发请求保存权限
-            // $.post('/Right/SaveRights', { roleId: ..., rightIds: checkedIds }, ...)
-            $('#right-modal').modal('hide');
-            swal({ title: "保存成功", text: "权限已分配" });
+            $.ajax({
+                url: "/Right/SaveRoleRights",
+                contentType: "application/json",
+                type: "POST",
+                data: JSON.stringify({
+                    roleId: $("#hid_select_role_id").val(),
+                    rightIds: checkedIds
+                }), // 视你的接口参数而定
+                success: function (result) {
+                    if (result.ifSuccess) {
+                        $('#right-modal').modal('hide');
+                        swal({ title: "保存成功", text: "权限已分配" });
+                    } else {
+                        swal({ title: "出错了", text: result.msg });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    console.log('Status:', status);
+                    console.log('Details:', xhr.responseText);
+                    if (xhr.status == 401) {
+                        window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                }
+            });
         }
     </script>
 </body>
