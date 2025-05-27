@@ -12,6 +12,7 @@ namespace WebBackend.Controllers
         private BLL.BllUser blluser = new BLL.BllUser();
         private BLL.BllBizLog bllbizlog = new BLL.BllBizLog();
 
+        [Authorize("001003")]
         public async Task<IActionResult> AdminEditPwd()
         {
             var UserId = HttpContext.Session.GetInt32("UserId");
@@ -33,6 +34,8 @@ namespace WebBackend.Controllers
         {
             return View();
         }
+
+        [Authorize("001002")]
         public async Task<IActionResult> Admin()
         {
             var Roles = await bllrole.GetRolesByUser(new RoleReqDto() { userId = 0 });
@@ -47,6 +50,8 @@ namespace WebBackend.Controllers
         {
             return View();
         }
+
+        [Authorize("001004")]
         public IActionResult BizLog()
         {
             return View();
@@ -76,6 +81,8 @@ namespace WebBackend.Controllers
                 };
             }
         }
+
+        [Authorize("001002001")]
         [HttpPost]
         public async Task<Response> SaveUser([FromBody] UserReqDto req)
         {
@@ -365,6 +372,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("001002003")]
         [HttpPost]
         public async Task<Response> DelUser([FromBody] RoleReqDto req)
         {
@@ -389,6 +397,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("001002004")]
         [HttpPost]
         public async Task<Response> SetEnableUser([FromBody] UserReqDto req)
         {

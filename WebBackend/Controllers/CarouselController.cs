@@ -10,6 +10,8 @@ namespace WebBackend.Controllers
   public class CarouselController : Controller
   {
     BllCarousel bllCarousel = new BllCarousel();
+
+    [Authorize("002003")]
     public IActionResult Index()
     {
       return View();
@@ -89,6 +91,7 @@ namespace WebBackend.Controllers
       }
     }
 
+    [Authorize("002003001")]
     [HttpPost]
     public async Task<Response<Carousel>> SaveCarousel([FromBody] CarouselReqDto req)
     {
@@ -141,6 +144,7 @@ namespace WebBackend.Controllers
       }
     }
 
+    [Authorize("002003003")]
     [HttpPost]
     public async Task<Response> DelCarousel([FromBody] CarouselReqDto req)
     {
@@ -187,6 +191,7 @@ namespace WebBackend.Controllers
       }
     }
 
+    [Authorize("002003004")]
     [HttpPost]
     public async Task<Response> SetCarouselPublic([FromBody] CarouselReqDto req)
     {

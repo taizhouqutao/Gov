@@ -13,6 +13,8 @@ namespace WebBackend.Controllers
         BllContactMessage bllContactMessage = new BllContactMessage();
         BllUser blluser = new BllUser();
         BllDuty bllDuty = new BllDuty();
+
+        [Authorize("009001")]
         public async Task<IActionResult> Index()
         {
             var Contacts = await bllContact.GetContactsByAsync(new ContactReqDto() { });
@@ -30,11 +32,13 @@ namespace WebBackend.Controllers
             return View(ContactPageDto);
         }
 
+        [Authorize("009003")]
         public async Task<IActionResult> Message()
         {
             return View();
         }
 
+        [Authorize("009002")]
         public IActionResult Duty()
         {
             return View();
@@ -124,6 +128,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("009001003")]
         [HttpPost]
         public async Task<Response> DelContact([FromBody] RoleReqDto req)
         {
@@ -148,6 +153,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("009001001")]
         [HttpPost]
         public async Task<Response<Contact>> SaveContact([FromBody] ContactReqDto req)
         {
@@ -283,6 +289,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("009002001")]
         [HttpPost]
         public async Task<Response> SaveDuty([FromBody] DutyReqDto req)
         {
@@ -415,6 +422,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("009003001")]
         [HttpPost]
         public async Task<Response> DelMessages([FromBody] CommentReqDto req)
         {
@@ -439,6 +447,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("009003002")]
         [HttpPost]
         public async Task<Response> SetMessageShow([FromBody] ContactMessageReqDto req)
         {
@@ -463,6 +472,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("009003003")]
         [HttpPost]
         public async Task<Response<CommentResDealDto>> DealMessage([FromBody] CommentReqDto req)
         {

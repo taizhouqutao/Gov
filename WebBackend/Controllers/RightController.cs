@@ -38,6 +38,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("001001004")]
         [HttpPost]
         public async Task<Response> SaveRoleRights([FromBody] RightReqDto req)
         {
