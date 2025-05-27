@@ -1,4 +1,4 @@
-@model Common.UserDto 
+@model Common.UserDto
 @{
     Layout = null;
 }
@@ -81,8 +81,7 @@
                                     <div class="form-inline">
                                         <div class="form-group">
                                             <div class="showuserImg">
-                                                <img id="showUserHead" src="@Model.userHead" width="110"
-                                                    height="110" />
+                                                <img id="showUserHead" src="@Model.userHead" width="110" height="110" />
                                             </div>
                                             <div id="uploader" class="wu-example">
                                                 <div class="queueList">
@@ -191,6 +190,12 @@
                     if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     }
+                    else if (xhr.status == 403) {
+                        swal({
+                            title: "出错了",
+                            text: "您没有权限操作，请联系管理员"
+                        });
+                    }
                 }
             });
         }
@@ -230,6 +235,12 @@
                     console.log('Details:', xhr.responseText);
                     if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                    else if (xhr.status == 403) {
+                        swal({
+                            title: "出错了",
+                            text: "您没有权限操作，请联系管理员"
+                        });
                     }
                 }
             });

@@ -211,6 +211,12 @@
             if (xhr.status == 401) {
               window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
             }
+            else if (xhr.status == 403) {
+              swal({
+                title: "出错了",
+                text: "您没有权限操作，请联系管理员"
+              });
+            }
           }
         },
         columns: [{
@@ -319,6 +325,12 @@
           if (xhr.status == 401) {
             window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
           }
+          else if (xhr.status == 403) {
+            swal({
+              title: "出错了",
+              text: "您没有权限操作，请联系管理员"
+            });
+          }
         }
       });
     }
@@ -369,6 +381,12 @@
           console.log('Details:', xhr.responseText);
           if (xhr.status == 401) {
             window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+          }
+          else if (xhr.status == 403) {
+            swal({
+              title: "出错了",
+              text: "您没有权限操作，请联系管理员"
+            });
           }
         }
       });
@@ -421,6 +439,12 @@
               if (xhr.status == 401) {
                 window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
               }
+              else if (xhr.status == 403) {
+                swal({
+                  title: "出错了",
+                  text: "您没有权限操作，请联系管理员"
+                });
+              }
             }
           });
         });
@@ -462,6 +486,12 @@
             if (xhr.status == 401) {
               window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
             }
+            else if (xhr.status == 403) {
+              swal({
+                title: "出错了",
+                text: "您没有权限操作，请联系管理员"
+              });
+            }
           }
         });
       }
@@ -501,6 +531,12 @@
             console.log('Details:', xhr.responseText);
             if (xhr.status == 401) {
               window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+            }
+            else if (xhr.status == 403) {
+              swal({
+                title: "出错了",
+                text: "您没有权限操作，请联系管理员"
+              });
             }
           }
         });

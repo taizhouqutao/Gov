@@ -297,6 +297,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("001001001")]
         [HttpPost]
         public async Task<Response<Role>> SaveRole([FromBody] RoleReqDto req)
         {
@@ -339,6 +340,7 @@ namespace WebBackend.Controllers
             }
         }
 
+        [Authorize("001001003")]
         [HttpPost]
         public async Task<Response> DelRole([FromBody] RoleReqDto req)
         {

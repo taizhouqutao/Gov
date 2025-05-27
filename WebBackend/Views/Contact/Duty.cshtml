@@ -9,17 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>值日排班</title>
-    <link rel="shortcut icon" href="favicon.ico"> <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
     <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
 
     <link href="/css/animate.css" rel="stylesheet">
     <link href="/css/style.css?v=4.1.0" rel="stylesheet">
     <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
-    <link href="/css/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">             
+    <link href="/css/plugins/fullcalendar/fullcalendar.css" rel="stylesheet">
 </head>
 
 <body class="gray-bg">
-        <div class="wrapper wrapper-content animated fadeInRight">
+    <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
             <div class="col-sm-12">
                 <div class="ibox float-e-margins">
@@ -64,7 +65,8 @@
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit">
+                                                    <button class="btn btn-sm btn-primary pull-right m-t-n-xs"
+                                                        type="submit">
                                                         <strong>保存</strong>
                                                     </button>
                                                 </div>
@@ -90,15 +92,15 @@
     <script src="/js/plugins/fullcalendar/fullcalendar.min.js"></script>
 
     <script>
-        var formatDate = function(date) {
+        var formatDate = function (date) {
             const year = date.getFullYear();
             const month = date.getMonth() + 1;
             const day = date.getDate();
             const formattedDate = `${year}-${month}-${day}`; // 年-月-日
             return formattedDate;
         };
-                    
-        $(document).ready(function() {
+
+        $(document).ready(function () {
             // 初始化日历
             $('#calendar').fullCalendar({
                 header: {
@@ -114,28 +116,28 @@
                     day: '日'
                 },
                 // 点击日期事件
-                dayClick: function(date) {
+                dayClick: function (date) {
                     // 格式化日期
                     var dateStr = formatDate(date);
                     $("#dutyDate").val(dateStr);
                     $("#selectedDate").text(dateStr);
-                    loadDutyPersons(dateStr,dateStr);
+                    loadDutyPersons(dateStr, dateStr);
                     $('#modal-duty').modal('show');
                 },
                 // 加载值班数据
-                events: function(start, end, callback) {
+                events: function (start, end, callback) {
                     $.ajax({
                         url: '/Contact/GetDutyList',
                         contentType: "application/json",
                         type: 'POST',
-                        data:JSON.stringify({
-                            startDate:start,
-                            endDate:end
+                        data: JSON.stringify({
+                            startDate: start,
+                            endDate: end
                         }),
-                        success: function(res) {
-                            if(res.ifSuccess) {
+                        success: function (res) {
+                            if (res.ifSuccess) {
                                 var events = [];
-                                $(res.data).each(function() {
+                                $(res.data).each(function () {
                                     events.push({
                                         title: this.personName,
                                         start: this.startDate,
@@ -144,64 +146,74 @@
                                 });
                                 callback(events);
                             }
-                            else
-                            {
+                            else {
                                 swal({
                                     title: "出错了",
                                     text: res.msg
                                 });
                             }
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.error('Error:', error);
                             console.log('Status:', status);
                             console.log('Details:', xhr.responseText);
-                            if(xhr.status == 401) {
+                            if (xhr.status == 401) {
                                 window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                            }
+                            else if (xhr.status == 403) {
+                                swal({
+                                    title: "出错了",
+                                    text: "您没有权限操作，请联系管理员"
+                                });
                             }
                         }
                     });
                 }
             });
 
-            $('#modal-duty').on('submit', function(event) {
+            $('#modal-duty').on('submit', function (event) {
                 saveDuty();
             });
         });
 
         // 加载值班人员列表
-        function loadDutyPersons(startDateStr,endDateStr) {
+        function loadDutyPersons(startDateStr, endDateStr) {
             $("#dutyPerson").html('');
             $.ajax({
                 url: '/Contact/GetContactWithDutyList',
                 contentType: "application/json",
                 type: 'POST',
                 data: JSON.stringify({
-                    startDateStr:startDateStr,
-                    endDateStr:endDateStr
+                    startDateStr: startDateStr,
+                    endDateStr: endDateStr
                 }),
-                success: function(res) {
-                    if(res.ifSuccess) {
+                success: function (res) {
+                    if (res.ifSuccess) {
                         var html = '';
-                        $(res.data).each(function() {
-                            html += '<label class="checkbox-inline"><input '+(this.ifDuty?"checked":"")+' type="checkbox" style="margin-top: 2px;" class="ck_dutyperson" value="' + this.id + '" id="inlineCheckbox'+this.id+'"/>' + this.personName + ' '+this.post+'</label>';
+                        $(res.data).each(function () {
+                            html += '<label class="checkbox-inline"><input ' + (this.ifDuty ? "checked" : "") + ' type="checkbox" style="margin-top: 2px;" class="ck_dutyperson" value="' + this.id + '" id="inlineCheckbox' + this.id + '"/>' + this.personName + ' ' + this.post + '</label>';
                         });
                         $("#dutyPerson").html(html);
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: res.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                    else if (xhr.status == 403) {
+                        swal({
+                            title: "出错了",
+                            text: "您没有权限操作，请联系管理员"
+                        });
                     }
                 }
             });
@@ -212,7 +224,7 @@
             event.stopPropagation(); // 阻止事件冒泡
             event.preventDefault();
             var selectedIds = [];
-            $('.ck_dutyperson:checked').each(function() {
+            $('.ck_dutyperson:checked').each(function () {
                 selectedIds.push($(this).val());
             });
             $.ajax({
@@ -220,13 +232,13 @@
                 type: "POST", // 请求类型，通常是 GET 或 POST
                 contentType: "application/json",
                 data: JSON.stringify({
-                    startDateStr:$("#dutyDate").val(),
+                    startDateStr: $("#dutyDate").val(),
                     endDateStr: $("#dutyDate").val(),
                     contactIds: selectedIds,
-                    allDay:true
+                    allDay: true
                 }),
-                success: function(res) {
-                    if(res.ifSuccess) {
+                success: function (res) {
+                    if (res.ifSuccess) {
                         $('#modal-duty').modal('hide');
                         $('#calendar').fullCalendar('refetchEvents');
                         swal({
@@ -240,19 +252,24 @@
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                    else if (xhr.status == 403) {
+                        swal({
+                            title: "出错了",
+                            text: "您没有权限操作，请联系管理员"
+                        });
                     }
                 }
             });
         }
 
-        function add()
-        {
+        function add() {
             var dateStr = formatDate(new Date());
             $("#dutyDate").val(dateStr);
             $("#selectedDate").text(dateStr);

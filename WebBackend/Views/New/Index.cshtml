@@ -1,4 +1,4 @@
-@model Common.NewPage 
+@model Common.NewPage
 @{
     Layout = null;
 }
@@ -17,18 +17,21 @@
     <link href="/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <link href="/css/animate.css" rel="stylesheet">
     <link href="/css/style.css?v=4.1.0" rel="stylesheet">
-    <link href="/css/plugins/wangeditor/style.css" rel="stylesheet"/>
+    <link href="/css/plugins/wangeditor/style.css" rel="stylesheet" />
     <style>
-    #editor—wrapper {
-        border: 1px solid #ccc;
-        z-index: 100; /* 按需定义 */
-    }
-    #toolbar-container {
-        border-bottom: 1px solid #ccc;
-    }
-    #editor-container {
-        height: 500px;
-    }
+        #editor—wrapper {
+            border: 1px solid #ccc;
+            z-index: 100;
+            /* 按需定义 */
+        }
+
+        #toolbar-container {
+            border-bottom: 1px solid #ccc;
+        }
+
+        #editor-container {
+            height: 500px;
+        }
     </style>
 </head>
 
@@ -72,13 +75,14 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="row">
-                        <h3 class="m-t-none m-b">@("新增"+Model.Title)
+                        <h3 class="m-t-none m-b">@("新增" + Model.Title)
                         </h3>
                         <form role="form">
                             <input type="hidden" id="newId" name="newId" />
                             <div class="form-group">
                                 <label>标题：</label>
-                                <input type="text" required placeholder="请输入标题" id="newTitle" name="newTitle" class="form-control">
+                                <input type="text" required placeholder="请输入标题" id="newTitle" name="newTitle"
+                                    class="form-control">
                             </div>
                             <div class="ibox-content no-padding" id="eg">
                                 <div id="editor—wrapper">
@@ -87,7 +91,8 @@
                                 </div>
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs"  style="width: 94px; height: 42px; margin-top: 10px;" type="submit">
+                                <button class="btn btn-sm btn-primary pull-right m-t-n-xs"
+                                    style="width: 94px; height: 42px; margin-top: 10px;" type="submit">
                                     <strong>保存</strong>
                                 </button>
                             </div>
@@ -119,7 +124,7 @@
             onChange(editor) {
                 const html = editor.getHtml()
                 console.log('editor content', html)
-            // 也可以同步到 <textarea>
+                // 也可以同步到 <textarea>
             },
         }
         editorConfig.MENU_CONF['insertVideo'] = {
@@ -162,13 +167,13 @@
             },
 
             customInsert(res, insertFn) {
-               console.log('customInsert', res)
-               const videoInfo = res.data || {}
-               const { url, poster } = videoInfo
-               if (!url) throw new Error(`Video url is empty`)
+                console.log('customInsert', res)
+                const videoInfo = res.data || {}
+                const { url, poster } = videoInfo
+                if (!url) throw new Error(`Video url is empty`)
 
-               console.log('Your video url ', url)
-               insertFn(url, poster)
+                console.log('Your video url ', url)
+                insertFn(url, poster)
             },
 
             // customUpload(file, insertFn) {
@@ -275,19 +280,19 @@
             mode: 'default', // or 'simple'
         })
 
-        var datatable=null;
+        var datatable = null;
         $(document).ready(function () {
-            datatable=$('.dataTables-example').DataTable({
+            datatable = $('.dataTables-example').DataTable({
                 processing: true, // 开启处理状态提示（例如加载中）
                 serverSide: true, // 启用服务器端处理
                 ajax: {
                     url: "/New/GetNewsByPage", // 你的服务器端接口地址
                     contentType: "application/json",
                     type: "POST", // 请求类型，通常是 GET 或 POST
-                    data: function(d) {
+                    data: function (d) {
                         // 构建请求对象，包含DataTables参数和自定义参数
                         if (d.order && d.order.length > 0) {
-                            d.order.forEach(function(orderItem) {
+                            d.order.forEach(function (orderItem) {
                                 const columnIndex = orderItem.column;  // 原始列索引
                                 const columnName = d.columns[columnIndex].name; // 通过索引获取列名
                                 orderItem.columnName = columnName;  // 添加列名参数
@@ -299,17 +304,17 @@
                             length: d.length,
                             search: d.search,
                             order: d.order,
-                            Query:{
+                            Query: {
                                 newTypeId:@Model.NewTypeId
                             }
                         };
                         return JSON.stringify(request);  // 手动转换为JSON字符串
                     },
-                    dataFilter: function(response) {
+                    dataFilter: function (response) {
                         var json = JSON.parse(response);
                         if (json.ifSuccess !== 1) {
                             console.log(json.msg);
-                            return JSON.stringify({draw: 0,recordsTotal: 0,recordsFiltered: 0,data: []});
+                            return JSON.stringify({ draw: 0, recordsTotal: 0, recordsFiltered: 0, data: [] });
                         }
                         // 转换为DataTables标准格式
                         return JSON.stringify({
@@ -319,60 +324,66 @@
                             data: json.data.data
                         });
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error('Error:', error);
                         console.log('Status:', status);
                         console.log('Details:', xhr.responseText);
-                        if(xhr.status == 401) {
+                        if (xhr.status == 401) {
                             window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                        else if (xhr.status == 403) {
+                            swal({
+                                title: "出错了",
+                                text: "您没有权限操作，请联系管理员"
+                            });
                         }
                     }
                 },
                 columns: [{
-                      sClass: "text-center",
-                      data: "id",
-                      render: function (data, type, full, meta) {//这里就是要显示的checkbox多选框了
-                          return '<input type="checkbox" class="checkchild" value="' + data + '" />';
-                      },
-                      bSortable: false
+                    sClass: "text-center",
+                    data: "id",
+                    render: function (data, type, full, meta) {//这里就是要显示的checkbox多选框了
+                        return '<input type="checkbox" class="checkchild" value="' + data + '" />';
+                    },
+                    bSortable: false
                 },
-                { data: "id",title: "ID",name:"Id",bSortable: false},
-                { data: "newTitle",title: "标题",name:"NewTitle",bSortable: false},
+                { data: "id", title: "ID", name: "Id", bSortable: false },
+                { data: "newTitle", title: "标题", name: "NewTitle", bSortable: false },
                 {
                     data: "isPublic",
                     title: "是否发布",
-                    name:"IsPublic",
+                    name: "IsPublic",
                     bSortable: false,
-                    render: function(data) {
-                        return data?"已发布":"未发布";
+                    render: function (data) {
+                        return data ? "已发布" : "未发布";
                     }
                 },
                 {
                     data: "publicTime",
                     title: "发布时间",
-                    name:"PublicTime",
+                    name: "PublicTime",
                     bSortable: false,
-                    render: function(data) {
-                        return data? new Date(data).toLocaleString():"--";
+                    render: function (data) {
+                        return data ? new Date(data).toLocaleString() : "--";
                     }
                 },
                 {
                     data: "createTime",
                     title: "创建时间",
-                    name:"CreateTime",
+                    name: "CreateTime",
                     bSortable: false,
-                    render: function(data) {
+                    render: function (data) {
                         return new Date(data).toLocaleString();
                     }
                 }]
             });
-                        // 添加行双击事件
-            $('.dataTables-example').on('dblclick', 'tbody tr', function() {
+            // 添加行双击事件
+            $('.dataTables-example').on('dblclick', 'tbody tr', function () {
                 var rowData = datatable.row(this).data();
                 getDetail(rowData.id);
             });
 
-            $('#modal-form').on('submit', function(event) {
+            $('#modal-form').on('submit', function (event) {
                 save();
             });
         });
@@ -386,36 +397,38 @@
                 url: '/New/FileUpload', // 后端处理上传的 URL
                 contentType: false, // 告诉jQuery不要去设置Content-Type请求头
                 processData: false, // 告诉jQuery不要去处理发送的数据
-                success: function(data) {
-                    if(data.success)
-                    {
+                success: function (data) {
+                    if (data.success) {
                         //$('#newContent').summernote('insertImage', data.url); // url是返回的图片地址
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: data.message
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                    else if (xhr.status == 403) {
+                        swal({
+                            title: "出错了",
+                            text: "您没有权限操作，请联系管理员"
+                        });
                     }
                 }
             });
         }
 
-        function search()
-        {
+        function search() {
             datatable.ajax.reload(); // 保持当前分页和排序状态
         }
-        function add()
-        {
+        function add() {
             $('#newTitle').val('');
             $("#roleId").val('');
 
@@ -425,33 +438,28 @@
             editor.dangerouslyInsertHtml('');
             $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
         }
-        function edit()
-        {
+        function edit() {
             var selectedIds = getSelectedIds();
-            if(selectedIds.length!=1)
-            {
+            if (selectedIds.length != 1) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行编辑"
                 });
             }
-            else
-            {
+            else {
                 getDetail(selectedIds[0]);
             }
         }
-        function getDetail(roleId)
-        {
+        function getDetail(roleId) {
             $.ajax({
-                url:"/New/GetNewById",
+                url: "/New/GetNewById",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
-                data:JSON.stringify({
-                    id:roleId
+                data: JSON.stringify({
+                    id: roleId
                 }),
-                success:function(result){
-                    if(result.ifSuccess)
-                    {
+                success: function (result) {
+                    if (result.ifSuccess) {
                         $("#newTitle").val(result.data.newTitle);
                         $("#newId").val(result.data.id);
 
@@ -461,84 +469,89 @@
                         editor.dangerouslyInsertHtml(result.data.newContent);
                         $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: result.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                    else if (xhr.status == 403) {
+                        swal({
+                            title: "出错了",
+                            text: "您没有权限操作，请联系管理员"
+                        });
                     }
                 }
             });
         }
         function getSelectedIds() {
             var selectedIds = [];
-            $('.checkchild:checked').each(function() {
+            $('.checkchild:checked').each(function () {
                 selectedIds.push($(this).val()); // 获取 data-id 属性值并添加到数组中
             });
             return selectedIds;
         }
-        function save()
-        {
+        function save() {
             event.stopPropagation(); // 阻止事件冒泡
             event.preventDefault();
             $.ajax({
-                url:"/New/SaveNew",
+                url: "/New/SaveNew",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
-                data:JSON.stringify({
-                    id: $("#newId").val()?$("#newId").val():null,
-                    newTitle:$("#newTitle").val(),
+                data: JSON.stringify({
+                    id: $("#newId").val() ? $("#newId").val() : null,
+                    newTitle: $("#newTitle").val(),
                     newContent: editor.getHtml(),
                     newTypeId:@Model.NewTypeId
                 }),
-                success:function(result){
-                    if(result.ifSuccess)
-                    {
+                success: function (result) {
+                    if (result.ifSuccess) {
                         $('#modal-form').modal('hide'); // 显示模态框，并触发 show 事件，从而设置内容。
                         search();
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: result.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                    else if (xhr.status == 403) {
+                        swal({
+                            title: "出错了",
+                            text: "您没有权限操作，请联系管理员"
+                        });
                     }
                 }
             });
         }
-        function del()
-        {
+        function del() {
             var selectedIds = getSelectedIds();
-            if(!selectedIds.length)
-            {
+            if (!selectedIds.length) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行删除"
                 });
             }
-            else
-            {
-                var delIds=selectedIds;
+            else {
+                var delIds = selectedIds;
                 swal({
-                    title: "您确定要删除这"+delIds.length+"条记录吗",
+                    title: "您确定要删除这" + delIds.length + "条记录吗",
                     text: "删除后将无法恢复，请谨慎操作！",
                     type: "warning",
                     showCancelButton: true,
@@ -550,123 +563,129 @@
                     event.stopPropagation(); // 阻止事件冒泡
                     event.preventDefault();
                     $.ajax({
-                        url:"/New/DelNew",
+                        url: "/New/DelNew",
                         contentType: "application/json",
                         type: "POST", // 请求类型，通常是 GET 或 POST
-                        data:JSON.stringify({
+                        data: JSON.stringify({
                             ids: selectedIds,
                         }),
-                        success:function(result){
-                            if(result.ifSuccess)
-                            {
+                        success: function (result) {
+                            if (result.ifSuccess) {
                                 search();
                                 swal("删除成功！", "您已经永久删除了这条信息。", "success");
                             }
-                            else
-                            {
+                            else {
                                 swal({
                                     title: "出错了",
                                     text: result.msg
                                 });
                             }
                         },
-                        error: function(xhr, status, error) {
+                        error: function (xhr, status, error) {
                             console.error('Error:', error);
                             console.log('Status:', status);
                             console.log('Details:', xhr.responseText);
-                            if(xhr.status == 401) {
+                            if (xhr.status == 401) {
                                 window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                            }
+                            else if (xhr.status == 403) {
+                                swal({
+                                    title: "出错了",
+                                    text: "您没有权限操作，请联系管理员"
+                                });
                             }
                         }
                     });
                 });
             }
         }
-        function online()
-        {
+        function online() {
             var selectedIds = getSelectedIds();
-            if(!selectedIds.length)
-            {
+            if (!selectedIds.length) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行发布"
                 });
             }
-            else
-            {
+            else {
                 $.ajax({
-                    url:"/New/SetNewPublic",
+                    url: "/New/SetNewPublic",
                     contentType: "application/json",
                     type: "POST", // 请求类型，通常是 GET 或 POST
-                    data:JSON.stringify({
+                    data: JSON.stringify({
                         ids: selectedIds,
-                        isPublic:1
+                        isPublic: 1
                     }),
-                    success:function(result){
-                        if(result.ifSuccess)
-                        {
+                    success: function (result) {
+                        if (result.ifSuccess) {
                             search();
                             swal("发布成功！", "您已经发布了这条信息。", "success");
                         }
-                        else
-                        {
+                        else {
                             swal({
                                 title: "出错了",
                                 text: result.msg
                             });
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error('Error:', error);
                         console.log('Status:', status);
                         console.log('Details:', xhr.responseText);
-                        if(xhr.status == 401) {
+                        if (xhr.status == 401) {
                             window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                        else if (xhr.status == 403) {
+                            swal({
+                                title: "出错了",
+                                text: "您没有权限操作，请联系管理员"
+                            });
                         }
                     }
                 });
             }
         }
-        function offline()
-        {
+        function offline() {
             var selectedIds = getSelectedIds();
-            if(!selectedIds.length)
-            {
+            if (!selectedIds.length) {
                 swal({
                     title: "提示",
                     text: "请勾选1条记录进行撤下"
                 });
             }
-            else
-            {
+            else {
                 $.ajax({
-                    url:"/New/SetNewPublic",
+                    url: "/New/SetNewPublic",
                     contentType: "application/json",
                     type: "POST", // 请求类型，通常是 GET 或 POST
-                    data:JSON.stringify({
+                    data: JSON.stringify({
                         ids: selectedIds,
-                        isPublic:0
+                        isPublic: 0
                     }),
-                    success:function(result){
-                        if(result.ifSuccess)
-                        {
+                    success: function (result) {
+                        if (result.ifSuccess) {
                             search();
                             swal("撤下成功！", "您已经撤下了这条信息。", "success");
                         }
-                        else
-                        {
+                        else {
                             swal({
                                 title: "出错了",
                                 text: result.msg
                             });
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error('Error:', error);
                         console.log('Status:', status);
                         console.log('Details:', xhr.responseText);
-                        if(xhr.status == 401) {
+                        if (xhr.status == 401) {
                             window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                        else if (xhr.status == 403) {
+                            swal({
+                                title: "出错了",
+                                text: "您没有权限操作，请联系管理员"
+                            });
                         }
                     }
                 });
@@ -674,4 +693,5 @@
         }
     </script>
 </body>
+
 </html>

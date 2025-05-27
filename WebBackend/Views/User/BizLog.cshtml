@@ -70,7 +70,7 @@
             </div>
         </div>
     </div> *@
-    
+
     <!-- 全局js -->
     <script src="/js/jquery.min.js?v=2.1.4"></script>
     <script src="/js/bootstrap.min.js?v=3.3.7"></script>
@@ -83,19 +83,19 @@
     <script src="/js/plugins/sweetalert/sweetalert.min.js"></script>
     <!-- Page-Level Scripts -->
     <script>
-        var dtRoles=null;
+        var dtRoles = null;
         $(document).ready(function () {
-            dtRoles=$('.dataTables-example').DataTable({
+            dtRoles = $('.dataTables-example').DataTable({
                 processing: true, // 开启处理状态提示（例如加载中）
                 serverSide: true, // 启用服务器端处理
                 ajax: {
                     url: "/User/GetBizLogsByPage", // 你的服务器端接口地址
                     contentType: "application/json",
                     type: "POST", // 请求类型，通常是 GET 或 POST
-                    data: function(d) {
+                    data: function (d) {
                         // 构建请求对象，包含DataTables参数和自定义参数
                         if (d.order && d.order.length > 0) {
-                            d.order.forEach(function(orderItem) {
+                            d.order.forEach(function (orderItem) {
                                 const columnIndex = orderItem.column;  // 原始列索引
                                 const columnName = d.columns[columnIndex].name; // 通过索引获取列名
                                 orderItem.columnName = columnName;  // 添加列名参数
@@ -110,11 +110,11 @@
                         };
                         return JSON.stringify(request);  // 手动转换为JSON字符串
                     },
-                    dataFilter: function(response) {
+                    dataFilter: function (response) {
                         var json = JSON.parse(response);
                         if (json.ifSuccess !== 1) {
                             console.log(json.msg);
-                            return JSON.stringify({draw: 0,recordsTotal: 0,recordsFiltered: 0,data: []});
+                            return JSON.stringify({ draw: 0, recordsTotal: 0, recordsFiltered: 0, data: [] });
                         }
                         // 转换为DataTables标准格式
                         return JSON.stringify({
@@ -124,73 +124,83 @@
                             data: json.data.data
                         });
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error('Error:', error);
                         console.log('Status:', status);
                         console.log('Details:', xhr.responseText);
-                        if(xhr.status == 401) {
+                        if (xhr.status == 401) {
                             window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                        }
+                        else if (xhr.status == 403) {
+                            swal({
+                                title: "出错了",
+                                text: "您没有权限操作，请联系管理员"
+                            });
                         }
                     }
                 },
                 columns: [
-                    { data: "id",title: "ID",name:"Id",bSortable: false},
-                    { data: "modelTitle",title: "模块名称",name:"ModelTitle",bSortable: false},
-                    { data: "actionType",title: "菜单名称",name:"ActionType",bSortable: false},
-                    { data: "actionDesc",title: "动作",name:"ActionDesc",bSortable: false},
-                    { data: "actionRemark",title: "操作内容",name:"ActionRemark",bSortable: false},
+                    { data: "id", title: "ID", name: "Id", bSortable: false },
+                    { data: "modelTitle", title: "模块名称", name: "ModelTitle", bSortable: false },
+                    { data: "actionType", title: "菜单名称", name: "ActionType", bSortable: false },
+                    { data: "actionDesc", title: "动作", name: "ActionDesc", bSortable: false },
+                    { data: "actionRemark", title: "操作内容", name: "ActionRemark", bSortable: false },
                     {
                         data: "createTime",
                         title: "操作时间",
-                        name:"CreateTime",
+                        name: "CreateTime",
                         bSortable: false,
-                        render: function(data) {
+                        render: function (data) {
                             return new Date(data).toLocaleString();
                         }
                     },
-                    { data: "optUserName",title: "操作人",name:"OptUserName",bSortable: false},
+                    { data: "optUserName", title: "操作人", name: "OptUserName", bSortable: false },
                 ]
             });
-                        // 添加行双击事件
+            // 添加行双击事件
             @* $('.dataTables-example').on('dblclick', 'tbody tr', function() {
                 var rowData = dtRoles.row(this).data();
                 getLogDetail(rowData.id);
             }); *@
         });
-        function getLogDetail(logId)
-        {
+        function getLogDetail(logId) {
             $.ajax({
-                url:"/User/GetBizLogById",
+                url: "/User/GetBizLogById",
                 contentType: "application/json",
                 type: "POST", // 请求类型，通常是 GET 或 POST
-                data:JSON.stringify({
-                    id:logId
+                data: JSON.stringify({
+                    id: logId
                 }),
-                success:function(result){
-                    if(result.ifSuccess)
-                    {
+                success: function (result) {
+                    if (result.ifSuccess) {
                         $("#roleName").val(result.data.roleName);
                         $("#roleId").val(result.data.id);
                         $('#modal-form').modal('show'); // 显示模态框，并触发 show 事件，从而设置内容。
                     }
-                    else
-                    {
+                    else {
                         swal({
                             title: "出错了",
                             text: result.msg
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error:', error);
                     console.log('Status:', status);
                     console.log('Details:', xhr.responseText);
-                    if(xhr.status == 401) {
+                    if (xhr.status == 401) {
                         window.top.location.href = '/Home/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    }
+                    else if (xhr.status == 403) {
+                        swal({
+                            title: "出错了",
+                            text: "您没有权限操作，请联系管理员"
+                        });
                     }
                 }
             });
         }
     </script>
 </body>
+
 </html>
