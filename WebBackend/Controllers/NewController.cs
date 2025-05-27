@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BLL;
@@ -16,6 +17,11 @@ namespace WebBackend.Controllers
 
         public async Task<IActionResult> Index(int NewTypeId)
         {
+            var NewTypeRight = GetNewTypeRight(NewTypeId);
+            if (NewTypeRight != null && !string.IsNullOrEmpty(NewTypeRight.ShowCode) && !CheckRightType(NewTypeRight.ShowCode))
+            {
+                return Redirect("/Home/Forbidden");
+            }
             var NewType = await bllNewType.GetNewTypeByIdAsync(NewTypeId);
             var NewPage = new NewPage()
             {
@@ -27,6 +33,11 @@ namespace WebBackend.Controllers
 
         public async Task<IActionResult> Comment(int NewTypeId)
         {
+            var NewTypeRight = GetNewTypeRight(NewTypeId);
+            if (NewTypeRight != null && !string.IsNullOrEmpty(NewTypeRight.ShowComment) && !CheckRightType(NewTypeRight.ShowComment))
+            {
+                return Redirect("/Home/Forbidden");
+            }
             NewPage? res = null;
             if (NewTypeId > 0)
             {
@@ -132,6 +143,13 @@ namespace WebBackend.Controllers
         [HttpPost]
         public async Task<Response<New>> SaveNew([FromBody] NewReqDto req)
         {
+            var NewTypeRight = GetNewTypeRight(req.newTypeId ?? 0);
+            if (NewTypeRight != null && !string.IsNullOrEmpty(NewTypeRight.SaveCode) && !CheckRightType(NewTypeRight.SaveCode))
+            {
+                Response.StatusCode = 403;
+                Response.ContentType = "application/json";
+                return new Response<New>() { IfSuccess = 0 };
+            }
             try
             {
                 var UserId = HttpContext.Session.GetInt32("UserId");
@@ -180,6 +198,13 @@ namespace WebBackend.Controllers
         [HttpPost]
         public async Task<Response> DelNew([FromBody] NewReqDto req)
         {
+            var NewTypeRight = GetNewTypeRight(req.newTypeId ?? 0);
+            if (NewTypeRight != null && !string.IsNullOrEmpty(NewTypeRight.DelCode) && !CheckRightType(NewTypeRight.DelCode))
+            {
+                Response.StatusCode = 403;
+                Response.ContentType = "application/json";
+                return new Response() { IfSuccess = 0 };
+            }
             try
             {
                 var UserId = HttpContext.Session.GetInt32("UserId");
@@ -204,6 +229,13 @@ namespace WebBackend.Controllers
         [HttpPost]
         public async Task<Response> SetNewPublic([FromBody] NewReqDto req)
         {
+            var NewTypeRight = GetNewTypeRight(req.newTypeId ?? 0);
+            if (NewTypeRight != null && !string.IsNullOrEmpty(NewTypeRight.OnDownCode) && !CheckRightType(NewTypeRight.OnDownCode))
+            {
+                Response.StatusCode = 403;
+                Response.ContentType = "application/json";
+                return new Response() { IfSuccess = 0 };
+            }
             try
             {
                 var UserId = HttpContext.Session.GetInt32("UserId");
@@ -236,6 +268,13 @@ namespace WebBackend.Controllers
         [HttpPost]
         public async Task<Response> DelComments([FromBody] CommentReqDto req)
         {
+            var NewTypeRight = GetNewTypeRight(req.newTypeId ?? 0);
+            if (NewTypeRight != null && !string.IsNullOrEmpty(NewTypeRight.DelComment) && !CheckRightType(NewTypeRight.DelComment))
+            {
+                Response.StatusCode = 403;
+                Response.ContentType = "application/json";
+                return new Response() { IfSuccess = 0 };
+            }
             try
             {
                 var UserId = HttpContext.Session.GetInt32("UserId");
@@ -260,6 +299,13 @@ namespace WebBackend.Controllers
         [HttpPost]
         public async Task<Response> SetCommentShow([FromBody] CommentReqDto req)
         {
+            var NewTypeRight = GetNewTypeRight(req.newTypeId ?? 0);
+            if (NewTypeRight != null && !string.IsNullOrEmpty(NewTypeRight.OnDownComment) && !CheckRightType(NewTypeRight.OnDownComment))
+            {
+                Response.StatusCode = 403;
+                Response.ContentType = "application/json";
+                return new Response() { IfSuccess = 0 };
+            }
             try
             {
                 var UserId = HttpContext.Session.GetInt32("UserId");
@@ -340,6 +386,13 @@ namespace WebBackend.Controllers
         [HttpPost]
         public async Task<Response<CommentResDealDto>> DealComment([FromBody] CommentReqDto req)
         {
+            var NewTypeRight = GetNewTypeRight(req.newTypeId ?? 0);
+            if (NewTypeRight != null && !string.IsNullOrEmpty(NewTypeRight.DalComment) && !CheckRightType(NewTypeRight.DalComment))
+            {
+                Response.StatusCode = 403;
+                Response.ContentType = "application/json";
+                return new Response<CommentResDealDto>() { IfSuccess = 0 };
+            }
             try
             {
                 var Comment = await bllcomment.GetCommentByIdAsync(Convert.ToInt32(req.id));
@@ -449,6 +502,172 @@ namespace WebBackend.Controllers
             {
                 return Json(new { errno = true, message = "上传失败: " + ex.Message });
             }
+        }
+
+        public NewTypeRight? GetNewTypeRight(int NewTypeId)
+        {
+            List<NewTypeRight> rights = new List<NewTypeRight>();
+            rights = new List<NewTypeRight>(){ new NewTypeRight()
+            {
+                NewTitye = "政策咨询管理",
+                NewType = 1,
+                ShowCode="003001",
+                SaveCode="003001001",
+                DelCode="003001003",
+                OnDownCode="003001004",
+                ShowComment="003002",
+                DelComment="003002001",
+                OnDownComment="003002002",
+                DalComment="003002005"
+            }, new NewTypeRight()
+            {
+                NewTitye = "公益讲座管理",
+                NewType = 2,
+                ShowCode="004001",
+                SaveCode="004001001",
+                DelCode="004001003",
+                OnDownCode="004001004",
+                ShowRep="004002"
+            }, new NewTypeRight()
+            {
+                NewTitye = "法律援助管理",
+                NewType = 3,
+                ShowCode="005001",
+                SaveCode="005001001",
+                DelCode="005001003",
+                OnDownCode="005001004",
+                ShowComment="005002",
+                DelComment="005002001",
+                OnDownComment="005002002",
+                DalComment="005002005"
+            }, new NewTypeRight()
+            {
+                NewTitye = "禁毒宣传管理",
+                NewType = 4,
+                ShowCode="006001",
+                SaveCode="006001001",
+                DelCode="006001003",
+                OnDownCode="006001004"
+            }, new NewTypeRight()
+            {
+                NewTitye = "反诈宣传管理",
+                NewType = 5,
+                ShowCode="007001",
+                SaveCode="007001001",
+                DelCode="007001003",
+                OnDownCode="007001004"
+            }, new NewTypeRight()
+            {
+                NewTitye = "安全宣传管理",
+                NewType = 6,
+                ShowCode="008001",
+                SaveCode="008001001",
+                DelCode="008001003",
+                OnDownCode="008001004"
+            }, new NewTypeRight()
+            {
+                NewTitye = "政务办理导航管理",
+                NewType = 7,
+                ShowCode="010001",
+                SaveCode="010001001",
+                DelCode="010001003",
+                OnDownCode="010001004",
+                ShowRep="010002"
+            }, new NewTypeRight()
+            {
+                NewTitye = "党建之窗管理",
+                NewType = 8,
+                ShowCode="011001",
+                SaveCode="011001001",
+                DelCode="011001003",
+                OnDownCode="011001004"
+            }, new NewTypeRight()
+            {
+                NewTitye = "廉政建设管理",
+                NewType = 9,
+                ShowCode="012001",
+                SaveCode="012001001",
+                DelCode="012001003",
+                OnDownCode="012001004"
+            }, new NewTypeRight()
+            {
+                NewTitye = "党务公开管理",
+                NewType = 10,
+                ShowCode="014001",
+                SaveCode="014001001",
+                DelCode="014001003",
+                OnDownCode="014001004",
+                ShowComment="014002",
+                DelComment="014002001",
+                OnDownComment="014002002"
+            }, new NewTypeRight()
+            {
+                NewTitye = "党务要闻管理",
+                NewType = 11,
+                ShowCode="015001",
+                SaveCode="015001001",
+                DelCode="015001003",
+                OnDownCode="015001004"
+            }, new NewTypeRight()
+            {
+                NewTitye = "公告公示管理",
+                NewType = 12,
+                ShowCode="002001",
+                SaveCode="002001001",
+                DelCode="002001003",
+                OnDownCode="002001004",
+                ShowComment="002002",
+                DelComment="002002003",
+                OnDownComment="002002001"
+            },new NewTypeRight()
+            {
+                NewTitye = "群众意见收集管理",
+                NewType = 0,
+                ShowComment="013001",
+                DelComment="013001001",
+                OnDownComment="013001002",
+                DalComment="013001005"
+            } };
+            return rights.FirstOrDefault(i => i.NewType == NewTypeId);
+        }
+
+        public bool CheckRightType(string CkeckCode)
+        {
+            var httpContext = HttpContext;
+            var rightIdStr = httpContext.Session?.GetString("RightId");
+            List<string> rightIds = new List<string>();
+            if (!string.IsNullOrEmpty(rightIdStr))
+            {
+                rightIds = System.Text.Json.JsonSerializer.Deserialize<List<string>>(rightIdStr) ?? new List<string>();
+            }
+            if (!rightIds.Exists(c => c == CkeckCode))
+            {
+                return false;
+            }
+            return true;
+        }
+        public class NewTypeRight
+        {
+            public required string NewTitye { get; set; }
+            public required int NewType { get; set; }
+
+            public string? ShowCode { get; set; }
+
+            public string? SaveCode { get; set; }
+
+            public string? DelCode { get; set; }
+
+            public string? OnDownCode { get; set; }
+
+            public string? ShowComment { get; set; }
+
+            public string? DelComment { get; set; }
+
+            public string? OnDownComment { get; set; }
+
+            public string? DalComment { get; set; }
+
+            public string? ShowRep { get; set; }
         }
     }
 }

@@ -568,6 +568,7 @@
                         type: "POST", // 请求类型，通常是 GET 或 POST
                         data: JSON.stringify({
                             ids: selectedIds,
+                            newTypeId:@Model.NewTypeId
                         }),
                         success: function (result) {
                             if (result.ifSuccess) {
@@ -614,7 +615,8 @@
                     type: "POST", // 请求类型，通常是 GET 或 POST
                     data: JSON.stringify({
                         ids: selectedIds,
-                        isPublic: 1
+                        isPublic: 1,
+                        newTypeId:@Model.NewTypeId
                     }),
                     success: function (result) {
                         if (result.ifSuccess) {
@@ -660,7 +662,8 @@
                     type: "POST", // 请求类型，通常是 GET 或 POST
                     data: JSON.stringify({
                         ids: selectedIds,
-                        isPublic: 0
+                        isPublic: 0,
+                        newTypeId:@Model.NewTypeId
                     }),
                     success: function (result) {
                         if (result.ifSuccess) {

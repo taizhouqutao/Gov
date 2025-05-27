@@ -50,6 +50,11 @@ public class HomeController : Controller
 
     public async Task<IActionResult> newReport(int NewTypeId)
     {
+        var NewTypeRight = GetNewReport(NewTypeId);
+        if (NewTypeRight != null && !string.IsNullOrEmpty(NewTypeRight.ShowCode) && !CheckRightType(NewTypeRight.ShowCode))
+        {
+            return Redirect("/Home/Forbidden");
+        }
         var NewType = await bllNewType.GetNewTypeByIdAsync(NewTypeId);
         var NewPage = new NewPage()
         {
@@ -197,5 +202,47 @@ public class HomeController : Controller
                 Msg = ex.Message
             };
         }
+    }
+
+    public class NewReport
+    {
+        public required string NewTitye { get; set; }
+        public required int NewType { get; set; }
+
+        public string? ShowCode { get; set; }
+
+    }
+
+    public NewReport? GetNewReport(int NewTypeId)
+    {
+        List<NewReport> rights = new List<NewReport>();
+        rights = new List<NewReport>(){new NewReport()
+            {
+                NewTitye = "公益讲座管理",
+                NewType = 2,
+                ShowCode="004002",
+            }, new NewReport()
+            {
+                NewTitye = "政务办理导航管理",
+                NewType = 7,
+                ShowCode="010002"
+            }};
+        return rights.FirstOrDefault(i => i.NewType == NewTypeId);
+    }
+
+    public bool CheckRightType(string CkeckCode)
+    {
+        var httpContext = HttpContext;
+        var rightIdStr = httpContext.Session?.GetString("RightId");
+        List<string> rightIds = new List<string>();
+        if (!string.IsNullOrEmpty(rightIdStr))
+        {
+            rightIds = System.Text.Json.JsonSerializer.Deserialize<List<string>>(rightIdStr) ?? new List<string>();
+        }
+        if (!rightIds.Exists(c => c == CkeckCode))
+        {
+            return false;
+        }
+        return true;
     }
 }

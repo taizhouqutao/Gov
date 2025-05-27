@@ -7,13 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebBackend.Controllers
 {
-    public class SuggestController: Controller
+    public class SuggestController : Controller
     {
+        [Authorize("013001")]
         public IActionResult Index()
         {
-            var res=new NewPage(){
-                NewTypeId=0,
-                Title="意见收集"
+            var res = new NewPage()
+            {
+                NewTypeId = 0,
+                Title = "意见收集"
             };
             return View(res);
         }
