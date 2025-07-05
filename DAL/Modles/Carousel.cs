@@ -29,5 +29,8 @@ namespace DAL.Modles
 
     [Column("PublicUserId")]
     public int? PublicUserId { get; set; }=null;
+
+    [Column("CityId")]
+    public int? CityId { get; set; } = null;
   }
 }

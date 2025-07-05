@@ -29,5 +29,8 @@ namespace DAL.Modles
 
     [Column("Desc")]
     public string? Desc { get; set; }
+
+    [Column("CityId")]
+    public int? CityId { get; set; } = null;
   }
 }

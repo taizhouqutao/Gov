@@ -44,6 +44,8 @@ namespace DAL.Contexts
 
         public DbSet<ViewLog>? ViewLogs { get; set; }
 
+        public DbSet<City>? Cities { get; set; }
+
         public IConfiguration configuration;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

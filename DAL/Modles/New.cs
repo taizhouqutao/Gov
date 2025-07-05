@@ -35,5 +35,8 @@ namespace DAL.Modles
 
     [Column("CommentCount")]
     public int CommentCount { get; set; } = 0;
+
+    [Column("CityId")]
+    public int? CityId { get; set; } = null;
   }
 }

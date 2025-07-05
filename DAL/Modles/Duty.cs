@@ -23,5 +23,8 @@ namespace DAL.Modles
 
     [Column("ContactId")]
     public required int ContactId{ get; set; }
+
+    [Column("CityId")]
+    public int? CityId { get; set; } = null;
   }
 }
