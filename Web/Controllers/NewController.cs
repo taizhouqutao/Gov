@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Common;
-
+using Web.Lib;
 namespace Web.Controllers
 {
     public class NewController : Controller
@@ -10,16 +10,20 @@ namespace Web.Controllers
         private BLL.BllComment bllComment = new BLL.BllComment();
         private BLL.BllNew bll = new BLL.BllNew();
 
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         private readonly ILogger<NewController> _logger;
-        public NewController(ILogger<NewController> logger)
+        public NewController(ILogger<NewController> logger, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
             configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
         }
 
         public async Task<IActionResult> Index(int NewTypeId)
         {
             var NewType = await bllNewType.GetNewTypeByIdAsync(NewTypeId);
+            var CityId = WebHelp.GetCityId(_httpContextAccessor);
             var res = await bll.GetNewsByPageAsync(new PageReq<NewReqDto>()
             {
                 start = 0,
@@ -27,7 +31,8 @@ namespace Web.Controllers
                 Query = new NewReqDto()
                 {
                     isPublic = 1,
-                    newTypeId = NewTypeId
+                    newTypeId = NewTypeId,
+                    cityIds=new List<int>(){ CityId}
                 }
             });
             var newPage = new NewPage()

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Common;
 using BLL;
 using DAL.Modles;
+using Web.Lib;
 namespace Web.Controllers
 {
   public class ContactController : Controller
@@ -9,13 +10,20 @@ namespace Web.Controllers
     public IConfiguration configuration;
     BllContact bllContact = new BllContact();
     BllContactMessage bllContactMessage = new BllContactMessage();
-    public ContactController()
+
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public ContactController(IHttpContextAccessor httpContextAccessor)
     {
+      _httpContextAccessor = httpContextAccessor;
       configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
     }
     public async Task<IActionResult> Index()
     {
-      var res = await bllContact.GetContactsByAsync(new ContactReqDto() { });
+      var CityId = WebHelp.GetCityId(_httpContextAccessor);
+      var res = await bllContact.GetContactsByAsync(new ContactReqDto()
+      {
+        cityIds = new List<int>() { CityId }
+      });
       string Url = configuration["BackEndPoint:Url"];
       var contact = new ContactPageDto()
       {

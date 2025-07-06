@@ -1,14 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
 using Common;
-
+using Web.Lib;
 namespace Web.Controllers
 {
   public class SuggestController : Controller
   {
     private BLL.BllNewType bllNewType = new BLL.BllNewType();
     private BLL.BllComment bllComment = new BLL.BllComment();
+    private readonly ILogger<SuggestController> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public SuggestController(ILogger<SuggestController> logger, IHttpContextAccessor httpContextAccessor)
+    {
+      _logger = logger;
+      _httpContextAccessor = httpContextAccessor;
+    }
     public async Task<IActionResult> Index()
     {
+      var CityId = WebHelp.GetCityId(_httpContextAccessor);
       var CommentInfo = await bllComment.GetCommentsByPageAsync(new PageReq<CommentReqDto>()
       {
         start = 0,
@@ -18,7 +27,8 @@ namespace Web.Controllers
           fatherCommentId = 0,
           newId = 0,
           isShow = 1,
-          newTypeId=0
+          newTypeId = 0,
+          cityIds = new List<int>() { CityId }
         }
       });
       var newDetailPage = new NewDetailPage()
@@ -36,6 +46,7 @@ namespace Web.Controllers
     {
       try
       {
+        var CityId = WebHelp.GetCityId(_httpContextAccessor);
         var res = await bllComment.GetContactMessagesByPageAsync(new PageReq<ContactMessageReqDto>()
         {
           start = req.start,
@@ -45,6 +56,7 @@ namespace Web.Controllers
             contactId = req.Query.contactId,
             fatherContactMessageId = 0,
             isShow = 1,
+            cityIds = new List<int>() { CityId }
           }
         });
         var replys = await bllComment.GetContactMessagesByAsync(new ContactMessageReqDto()
@@ -89,6 +101,7 @@ namespace Web.Controllers
       try
       {
         ContactMessageDto res = null;
+        var CityId = WebHelp.GetCityId(_httpContextAccessor);
         var result = await bllComment.AddCommentAsync(new DAL.Modles.Comment()
         {
           NewId = req.contactId,
@@ -100,6 +113,7 @@ namespace Web.Controllers
           PersonCellphone = req.personCellphone,
           PersonName = req.personName,
           RoleType = 0,
+          CityId = CityId,
           IfDel = 0,
           IsShow = 0
         });
