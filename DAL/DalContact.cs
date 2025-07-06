@@ -8,18 +8,38 @@ namespace DAL
 {
     public class DalContact
     {
-        public async Task<List<Contact>> GetContactsByAsync(ContactReqDto req)
+        public async Task<List<ContactPlusDto>> GetContactsByAsync(ContactReqDto req)
         {
-            List<Contact> res = new List<Contact>();
+            List<ContactPlusDto> res = new List<ContactPlusDto>();
             using (var context = new webapplicationContext())
             {
-                var Query = context.Contacts.AsQueryable();
-                res = await Query.Where(i =>
-                    (i.IfDel == 0) &&
-                    ((req.cityIds == null || req.cityIds.Count == 0) ? true : ((i.CityId ?? 0) == 0 || req.cityIds.Contains(i.CityId ?? 0))) &&
-                    (req.id == null ? true : req.id == i.Id) &&
-                    (req.ids == null ? true : req.ids.Contains(i.Id))
-                ).ToListAsync();
+                var QueryContacts = context.Contacts.AsQueryable();
+                var QueryCities = context.Cities.AsQueryable();
+                res = await (from QueryContact in QueryContacts
+                             join QueryCity in QueryCities on QueryContact.CityId equals QueryCity.Id into p_QueryCity
+                             from QueryCity_Join in p_QueryCity.DefaultIfEmpty()
+                             where
+                                 (QueryContact.IfDel == 0) &&
+                                 ((req.cityIds == null || req.cityIds.Count == 0) ? true : ((QueryContact.CityId ?? 0) == 0 || req.cityIds.Contains(QueryContact.CityId ?? 0))) &&
+                                 (req.id == null ? true : req.id == QueryContact.Id) &&
+                                 (req.ids == null ? true : req.ids.Contains(QueryContact.Id))
+                             select new ContactPlusDto()
+                             {
+                                 Cellphone = QueryContact.Cellphone,
+                                 CreateTime = QueryContact.CreateTime,
+                                 CreateUserId = QueryContact.CreateUserId,
+                                 IfDel = QueryContact.IfDel,
+                                 PersonName = QueryContact.PersonName,
+                                 Post = QueryContact.Post,
+                                 CityId = QueryContact.CityId,
+                                 Depent = QueryContact.Depent,
+                                 PersonHead = QueryContact.PersonHead,
+                                 Id = QueryContact.Id,
+                                 UpdateTime = QueryContact.UpdateTime,
+                                 Desc = QueryContact.Desc,
+                                 UpdateUserId = QueryContact.UpdateUserId,
+                                 CityName = ((QueryContact.CityId ?? 0) == 0) ? "全部" : QueryCity_Join.CityName ?? "",
+                             }).ToListAsync();
             }
             return res;
         }

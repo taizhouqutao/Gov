@@ -47,6 +47,8 @@ namespace Common
 
         public int? IsShow { get; set; }
 
+        public string? CityName{ get; set; }
+
         public int? IfDeal { get; set; }
 
         public DateTime CreateTime { get; set; }

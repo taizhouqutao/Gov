@@ -20,6 +20,8 @@ namespace Common
         public string? cellphone { get; set; }
 
         public List<int>? cityIds { get; set; }
+
+        public int cityId{ get; set; }
     }
 
     [Serializable]
@@ -40,6 +42,8 @@ namespace Common
         public string? depent { get; set; }
 
         public string? personHead { get; set; }
+
+        public string? cityName{ get; set; }
     }
 
     [Serializable]
@@ -134,5 +138,29 @@ namespace Common
         public required int RoleType { get; set; }
 
         public int? UserId { get; set; }
+    }
+
+    [Serializable]
+    public class ContactPlusDto : BasicDto
+    {
+        public int Id { get; set; }
+
+        public required string PersonName { get; set; }
+
+        public required string Post { get; set; }
+
+        public string? Cellphone { get; set; }
+
+        public string? Depent { get; set; }
+
+        public string? PersonHead { get; set; }
+
+        public string? Desc { get; set; }
+
+        public int? CityId { get; set; } = null;
+        
+        public required int IfDel { get; set; }
+        
+        public string? CityName { get; set; } = null;
     }
 }

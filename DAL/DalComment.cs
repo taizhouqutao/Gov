@@ -115,7 +115,10 @@ namespace DAL
                 using (var context = new webapplicationContext())
                 {
                     var QuerComments = context.Comments.AsQueryable();
+                    var QueryCitys = context.Cities.AsQueryable();
                     var QureyRes = (from QuerComment in QuerComments
+                                    join QueryCity in QueryCitys on QuerComment.CityId equals QueryCity.Id into p_QueryCity
+                                    from QueryCity_Join in p_QueryCity.DefaultIfEmpty()
                                     where
                                         (QuerComment.IfDel == 0) &&
                                         (QuerComment.NewId == 0) &&
@@ -136,6 +139,7 @@ namespace DAL
                                         FatherCommentId = QuerComment.FatherCommentId,
                                         IfDeal = QuerComment.IfDeal,
                                         IsShow = QuerComment.IsShow,
+                                        CityName = ((QuerComment.CityId ?? 0) == 0) ? "全部" : QueryCity_Join.CityName??"",
                                         NewId = QuerComment.NewId,
                                         PersonCellphone = QuerComment.PersonCellphone,
                                         PersonName = QuerComment.PersonName,
@@ -159,9 +163,12 @@ namespace DAL
                 {
                     var QuerComments = context.Comments.AsQueryable();
                     var QueryNews = context.News.AsQueryable();
+                    var QueryCitys = context.Cities.AsQueryable();
                     var QureyRes = (from QuerComment in QuerComments
                                     join QueryNew in QueryNews on QuerComment.NewId equals QueryNew.Id into p_QueryNew
                                     from QueryNew_Join in p_QueryNew.DefaultIfEmpty()
+                                    join QueryCity in QueryCitys on QueryNew_Join.CityId equals QueryCity.Id into p_QueryCity
+                                    from QueryCity_Join in p_QueryCity.DefaultIfEmpty()
                                     where
                                         (QuerComment.IfDel == 0) &&
                                         ((req == null || req.Query == null || req.Query.newTypeId == null) ? true : QueryNew_Join.NewTypeId == req.Query.newTypeId) &&
@@ -184,6 +191,7 @@ namespace DAL
                                         IfDeal = QuerComment.IfDeal,
                                         IsShow = QuerComment.IsShow,
                                         NewId = QuerComment.NewId,
+                                        CityName = ((QueryNew_Join.CityId ?? 0) == 0) ? "全部" : QueryCity_Join.CityName??"",
                                         NewTitle = QueryNew_Join.NewTitle,
                                         PersonCellphone = QuerComment.PersonCellphone,
                                         PersonName = QuerComment.PersonName,

@@ -12,6 +12,7 @@ namespace WebBackend.Controllers
     {
         BllContact bllContact = new BllContact();
         BllContactMessage bllContactMessage = new BllContactMessage();
+        BllCity bllcity = new BllCity();
         BllUser blluser = new BllUser();
         BllDuty bllDuty = new BllDuty();
 
@@ -30,6 +31,7 @@ namespace WebBackend.Controllers
                 {
                     depent = i.Depent,
                     personName = i.PersonName,
+                    cityName = i.CityName,
                     post = i.Post,
                     id = i.Id,
                     personHead = (string.IsNullOrEmpty(i.PersonHead)) ? "/img/unperson.jpg" : i.PersonHead
@@ -161,18 +163,20 @@ namespace WebBackend.Controllers
 
         [Authorize("009001001")]
         [HttpPost]
-        public async Task<Response<Contact>> SaveContact([FromBody] ContactReqDto req)
+        public async Task<Response<ContactPlusDto>> SaveContact([FromBody] ContactReqDto req)
         {
             try
             {
                 var UserId = HttpContext.Session.GetInt32("UserId");
                 Contact? res = null;
+                string CityName = "全部";
                 if (req.id != null)
                 {
                     res = await bllContact.GetContactByIdAsync(Convert.ToInt32(req.id));
                     if (res == null) throw new Exception("编码对应实体不存在");
                     res.PersonName = req.personName ?? "";
                     res.Post = req.post ?? "";
+                    res.CityId = req.cityId;
                     res.Depent = req.depent;
                     res.Desc = req.personDesc;
                     res.PersonHead = req.personHead;
@@ -188,6 +192,7 @@ namespace WebBackend.Controllers
                         IfDel = 0,
                         CreateTime = DateTime.Now,
                         CreateUserId = UserId ?? 0,
+                        CityId = req.cityId,
                         PersonName = req.personName ?? "",
                         Post = req.post ?? "",
                         Depent = req.depent,
@@ -197,15 +202,39 @@ namespace WebBackend.Controllers
                     };
                     await bllContact.AddContactAsync(res);
                 }
-                return new Response<Contact>
+                if ((res.CityId ?? 0) > 0)
+                {
+                    var City = await bllcity.GetCityByIdAsync(res.CityId ?? 0);
+                    if (City != null)
+                    {
+                        CityName = City.CityName ?? "";
+                    }
+                }
+                return new Response<ContactPlusDto>
                 {
                     IfSuccess = 1,
-                    Data = res,
+                    Data = new ContactPlusDto()
+                    {
+                        Cellphone = res.Cellphone,
+                        CreateTime = res.CreateTime,
+                        CreateUserId = res.CreateUserId,
+                        IfDel = res.IfDel,
+                        PersonName = res.PersonName,
+                        Post = res.Post,
+                        CityId = res.CityId,
+                        Depent = res.Depent,
+                        Desc = res.Desc,
+                        Id = res.Id,
+                        CityName = CityName,
+                        PersonHead = res.PersonHead,
+                        UpdateTime = res.UpdateTime,
+                        UpdateUserId = res.UpdateUserId
+                    },
                 };
             }
             catch (Exception ex)
             {
-                return new Response<Contact>()
+                return new Response<ContactPlusDto>()
                 {
                     Msg = ex.Message
                 };
@@ -239,13 +268,13 @@ namespace WebBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<Response<List<Contact>>> GetContactList([FromBody] ContactReqDto req)
+        public async Task<Response<List<ContactPlusDto>>> GetContactList([FromBody] ContactReqDto req)
         {
             try
             {
                 var res = await bllContact.GetContactsByAsync(req);
                 if (res == null) throw new Exception("编码对应实体不存在");
-                return new Response<List<Contact>>
+                return new Response<List<ContactPlusDto>>
                 {
                     IfSuccess = 1,
                     Data = res,
@@ -253,7 +282,7 @@ namespace WebBackend.Controllers
             }
             catch (Exception ex)
             {
-                return new Response<List<Contact>>()
+                return new Response<List<ContactPlusDto>>()
                 {
                     Msg = ex.Message
                 };

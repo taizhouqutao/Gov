@@ -80,6 +80,7 @@
                                                 <h3><input type="checkbox" name="sel_contact" class="checkchild"
                                                         value="@contact.id" /><strong>@contact.personName</strong></h3>
                                                 <strong class="depent">@contact.depent</strong><br>
+                                                展示区域：@contact.cityName<br>
                                                 最近值班信息<br>
                                                 周一、周二<br>
                                             </div>
@@ -535,7 +536,7 @@
                             $("#contact_" + $("#contactId").val() + " .col-sm-8 .depent").text(result.data.depent);
                         }
                         else {
-                            var itemHtml = '<div class="col-sm-4" id="contact_' + result.data.id + '"><div class="contact-box"><a href="#" onclick="getDetail(' + result.data.id + ')"><div class="col-sm-4"><div class="text-center"><img alt="image" width="100" height="100" class="img-circle m-t-xs img-responsive" src="' + result.data.personHead + '"><div class="m-t-xs font-bold">' + result.data.post + '</div></div></div><div class="col-sm-8"><h3><input type="checkbox" name="sel_contact" class="checkchild" value="' + result.data.id + '"/><strong>' + result.data.personName + '</strong></h3><strong class="depent">' + result.data.depent + '</strong><br>最近值班信息<br>Weibo:<a href="">http://weibo.com/xxx</a><br></div><div class="clearfix"></div></a></div></div>';
+                            var itemHtml = '<div class="col-sm-4" id="contact_' + result.data.id + '"><div class="contact-box"><a href="#" onclick="getDetail(' + result.data.id + ')"><div class="col-sm-4"><div class="text-center"><img alt="image" width="100" height="100" class="img-circle m-t-xs img-responsive" src="' + result.data.personHead + '"><div class="m-t-xs font-bold">' + result.data.post + '</div></div></div><div class="col-sm-8"><h3><input type="checkbox" name="sel_contact" class="checkchild" value="' + result.data.id + '"/><strong>' + result.data.personName + '</strong></h3><strong class="depent">' + result.data.depent + '</strong><br>展示区域：'+result.data.cityName+'<br>最近值班信息<br>周一、周二<br></div><div class="clearfix"></div></a></div></div>';
                             $("#item_list").append(itemHtml);
                             $('#contact_' + result.data.id + ' .contact-box').each(function () {
                                 animationHover(this, 'pulse');
