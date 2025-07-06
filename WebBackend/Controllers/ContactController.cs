@@ -4,6 +4,7 @@ using BLL;
 using Common;
 using DAL.Modles;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace WebBackend.Controllers
 {
@@ -17,7 +18,12 @@ namespace WebBackend.Controllers
         [Authorize("009001")]
         public async Task<IActionResult> Index()
         {
-            var Contacts = await bllContact.GetContactsByAsync(new ContactReqDto() { });
+            List<int> cityIds = new List<int>();
+            if (HttpContext.Session.GetString("CityIds") != null)
+            {
+                cityIds = JsonConvert.DeserializeObject<List<int>>(HttpContext.Session.GetString("CityIds") ?? "[]");
+            }
+            var Contacts = await bllContact.GetContactsByAsync(new ContactReqDto() { cityIds = cityIds });
             var ContactPageDto = new ContactPageDto()
             {
                 contactList = Contacts.ConvertAll(i => new ContactPageItemDto()
@@ -211,6 +217,11 @@ namespace WebBackend.Controllers
         {
             try
             {
+                if (HttpContext.Session.GetString("CityIds") != null)
+                {
+                    var cityIds = JsonConvert.DeserializeObject<List<int>>(HttpContext.Session.GetString("CityIds") ?? "[]");
+                    req.cityIds = cityIds;
+                }
                 var res = await bllDuty.GetDutyDetailsByAsync(req);
                 return new Response<List<DutyDetailDto>>
                 {
@@ -254,14 +265,20 @@ namespace WebBackend.Controllers
         {
             try
             {
-                var res = await bllContact.GetContactsByAsync(new ContactReqDto());
+                List<int> cityIds = new List<int>();
+                if (HttpContext.Session.GetString("CityIds") != null)
+                {
+                    cityIds = JsonConvert.DeserializeObject<List<int>>(HttpContext.Session.GetString("CityIds") ?? "[]");
+                }
+                var res = await bllContact.GetContactsByAsync(new ContactReqDto() { cityIds = cityIds });
                 List<DutyDetailDto> DutyDetails = new List<DutyDetailDto>();
                 if (req != null && !string.IsNullOrEmpty(req.startDateStr))
                 {
                     DutyDetails = await bllDuty.GetDutyDetailsByAsync(new DutyReqDto()
                     {
                         startDateStr = req.startDateStr,
-                        endDateStr = req.startDateStr
+                        endDateStr = req.startDateStr,
+                        cityIds = cityIds
                     });
                 }
                 return new Response<List<DutyContactDto>>

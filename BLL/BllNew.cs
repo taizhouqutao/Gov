@@ -10,7 +10,7 @@ namespace BLL
         private DalUser bllUser = new DalUser();
         private DalNewType bllNewType = new DalNewType();
         private DalViewLog dalViewLog = new DalViewLog();
-        public async Task<PageList<New>> GetNewsByPageAsync(PageReq<NewReqDto> req)
+        public async Task<PageList<NewPlusDto>> GetNewsByPageAsync(PageReq<NewReqDto> req)
         {
             return await dal.GetNewsByPageAsync(req);
         }

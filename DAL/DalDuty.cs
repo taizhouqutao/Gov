@@ -34,7 +34,8 @@ namespace DAL
                     (QueryDuty.IfDel==0) &&
                     ((req==null||req.startDate==null)?true: req.startDate<=QueryDuty.StartDate) &&
                     ((req==null||req.endDate==null)?true: req.endDate>=QueryDuty.EndDate) &&
-                    ((StartDate==null)?true: StartDate<=QueryDuty.StartDate) &&
+                    ((req==null||req.cityIds==null)?true: (QuerContact_Join.CityId??0)==0 || req.cityIds.Contains(QuerContact_Join.CityId??0)) &&
+                    ((StartDate == null) ? true : StartDate <= QueryDuty.StartDate) &&
                     ((EndDate==null)?true: EndDate>=QueryDuty.EndDate) 
                 select new DutyDetailDto{
                     allDay=QueryDuty.AllDay,

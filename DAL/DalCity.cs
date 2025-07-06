@@ -33,6 +33,21 @@ namespace DAL
       };
     }
 
+    public async Task<List<CityResDto>> GetCitysByIdAsync(List<int> Ids)
+    {
+      List<CityResDto> res = new List<CityResDto>();
+      using (var context = new webapplicationContext())
+      {
+        var Citys = await context.Cities.Where(i => Ids.Contains(i.Id)).ToListAsync();
+        res = Citys.ConvertAll(i => new CityResDto()
+        {
+          cityid = i.Id,
+          cityName = i.CityName,
+          ifCheck = 0
+        });
+      }
+      return res;
+    }
     public async Task<List<City>> GetCitysAsync(CityReqDto req)
     {
       using (var context = new webapplicationContext())

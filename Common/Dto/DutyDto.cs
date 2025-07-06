@@ -1,20 +1,22 @@
 namespace Common
 {
-    [Serializable]
-    public class DutyReqDto
-    {
-      public DateTime? startDate { get; set; }
+  [Serializable]
+  public class DutyReqDto
+  {
+    public DateTime? startDate { get; set; }
 
-      public DateTime? endDate { get; set; }
+    public DateTime? endDate { get; set; }
 
-      public string? startDateStr { get; set; }
+    public string? startDateStr { get; set; }
 
-      public string? endDateStr { get; set; }
+    public string? endDateStr { get; set; }
 
-      public bool? allDay{ get; set; }
+    public bool? allDay { get; set; }
 
-      public List<int>? contactIds{ get; set; }
-    }
+    public List<int>? contactIds { get; set; }
+
+    public List<int>? cityIds { get; set; }
+  }
 
     [Serializable]
     public class DutyDetailDto

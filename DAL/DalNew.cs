@@ -8,25 +8,59 @@ namespace DAL
 {
     public class DalNew
     {
-       public async Task<PageList<New>> GetNewsByPageAsync(PageReq<NewReqDto> req) {
-            var res=new List<New>();
+       public async Task<PageList<NewPlusDto>> GetNewsByPageAsync(PageReq<NewReqDto> req) {
+            var res=new List<NewPlusDto>();
             int total=0,allcount=0;
             using (var context = new webapplicationContext())
             {
-                var Query= context.News.AsQueryable();
-                var QureyRes = Query.Where(i =>
-                    (i.IfDel == 0) &&
-                    ((req.Query == null || req.Query.newTypeId == null) ? true : req.Query.newTypeId == i.NewTypeId) &&
-                    ((req.Query == null || req.Query.isPublic == null) ? true : req.Query.isPublic == i.IsPublic) &&
-                    ((req.Query == null || req.Query.cityIds == null) ? true : ((i.CityId ?? 0) == 0 || req.Query.cityIds.Contains(i.CityId ?? 0))) &&
-                    ((req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : i.NewTitle.Contains(req.search.value))
+                var QueryNews= context.News.AsQueryable();
+                var QueryCitys= context.Cities.AsQueryable();
+                var QureyRes = (from QueryNew in QueryNews
+                join QueryCity in QueryCitys on QueryNew.CityId equals QueryCity.Id into p_QueryCity
+                from QueryCity_Join in p_QueryCity.DefaultIfEmpty()
+                where
+                    (QueryNew.IfDel == 0) &&
+                    ((req.Query == null || req.Query.newTypeId == null) ? true : req.Query.newTypeId == QueryNew.NewTypeId) &&
+                    ((req.Query == null || req.Query.isPublic == null) ? true : req.Query.isPublic == QueryNew.IsPublic) &&
+                    ((req.Query == null || req.Query.cityIds == null) ? true : ((QueryNew.CityId ?? 0) == 0 || req.Query.cityIds.Contains(QueryNew.CityId ?? 0))) &&
+                    ((req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : QueryNew.NewTitle.Contains(req.search.value))
+                    orderby QueryNew.Id descending
+                    select new NewPlusDto
+                    {
+                        Id = QueryNew.Id,
+                        NewTitle = QueryNew.NewTitle,
+                        NewContent = QueryNew.NewContent,
+                        IsPublic = QueryNew.IsPublic,
+                        PublicTime = QueryNew.PublicTime,
+                        CityName = QueryCity_Join.CityName,
+                        CityId = QueryNew.CityId,
+                        CreateTime = QueryNew.CreateTime,
+                        CreateUserId = QueryNew.CreateUserId,
+                        UpdateTime = QueryNew.UpdateTime,
+                        UpdateUserId = QueryNew.UpdateUserId,
+                        IfDel = QueryNew.IfDel,
+                        ViewCount = QueryNew.ViewCount,
+                        CommentCount = QueryNew.CommentCount,
+                        NewTypeId = QueryNew.NewTypeId,
+                        PublicUserId = QueryNew.PublicUserId,
+                    }
                 );
-                QureyRes = QureyRes.OrderByDescending(j =>j.Id);
                 res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
-                total= await QureyRes.CountAsync();
-                allcount=await context.News.CountAsync(i=>i.IfDel==0 && ((req.Query==null||req.Query.newTypeId==null)?true: req.Query.newTypeId==i.NewTypeId));
+                total= await QueryCitys.CountAsync();
+                var QureyAll = (from QueryNew in QueryNews
+                                join QueryCity in QueryCitys on QueryNew.CityId equals QueryCity.Id into p_QueryCity
+                                from QueryCity_Join in p_QueryCity.DefaultIfEmpty()
+                                where
+                                    (QueryNew.IfDel == 0) &&
+                                    ((req.Query == null || req.Query.newTypeId == null) ? true : req.Query.newTypeId == QueryNew.NewTypeId) &&
+                                    ((req.Query == null || req.Query.cityIds == null) ? true : ((QueryNew.CityId ?? 0) == 0 || req.Query.cityIds.Contains(QueryNew.CityId ?? 0)))
+                                select new
+                                {
+                                    id = QueryNew.Id
+                                });
+                allcount=await QureyAll.CountAsync();
             }
-            return new PageList<New>(){
+            return new PageList<NewPlusDto>(){
                 data=res,
                 recordsFiltered=total,
                 draw=req.draw,

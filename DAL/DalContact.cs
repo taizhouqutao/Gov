@@ -16,6 +16,7 @@ namespace DAL
                 var Query = context.Contacts.AsQueryable();
                 res = await Query.Where(i =>
                     (i.IfDel == 0) &&
+                    ((req.cityIds == null || req.cityIds.Count == 0) ? true : ((i.CityId ?? 0) == 0 || req.cityIds.Contains(i.CityId ?? 0))) &&
                     (req.id == null ? true : req.id == i.Id) &&
                     (req.ids == null ? true : req.ids.Contains(i.Id))
                 ).ToListAsync();

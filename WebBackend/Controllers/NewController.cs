@@ -11,6 +11,7 @@ namespace WebBackend.Controllers
 {
     public class NewController : Controller
     {
+        private BLL.BllCity bllcity = new BLL.BllCity();
         private BLL.BllNew bll = new BLL.BllNew();
         private BLL.BllComment bllcomment = new BLL.BllComment();
         private BLL.BllUser blluser = new BLL.BllUser();
@@ -18,6 +19,12 @@ namespace WebBackend.Controllers
 
         public async Task<IActionResult> Index(int NewTypeId)
         {
+            List<CityResDto> citys = new List<CityResDto>();
+            if (HttpContext.Session.GetString("CityIds") != null)
+            {
+                var cityIds = JsonConvert.DeserializeObject<List<int>>(HttpContext.Session.GetString("CityIds") ?? "[]");
+                citys = await bllcity.GetCitysByIdAsync(cityIds);
+            }
             var NewTypeRight = GetNewTypeRight(NewTypeId);
             if (NewTypeRight != null && !string.IsNullOrEmpty(NewTypeRight.ShowCode) && !CheckRightType(NewTypeRight.ShowCode))
             {
@@ -27,7 +34,8 @@ namespace WebBackend.Controllers
             var NewPage = new NewPage()
             {
                 NewTypeId = NewType.Id,
-                Title = NewType.NewTypeName
+                Title = NewType.NewTypeName,
+                Citys = citys
             };
             return View(NewPage);
         }
@@ -118,6 +126,7 @@ namespace WebBackend.Controllers
                             CreateTime = j.CreateTime,
                             CreateUserId = j.CreateUserId,
                             Id = j.Id,
+                            CityName = j.CityName,
                             IsPublic = j.IsPublic,
                             NewTitle = j.NewTitle,
                             PublicTime = j.PublicTime,
@@ -179,6 +188,7 @@ namespace WebBackend.Controllers
                     if (res == null) throw new Exception("编码对应实体不存在");
                     res.NewTitle = req.newTitle ?? "";
                     res.NewContent = req.newContent ?? "";
+                    res.CityId = req.cityId;
                     res.UpdateTime = DateTime.Now;
                     res.UpdateUserId = UserId ?? 0;
                     await bll.UpdateNewAsync(res);
@@ -193,6 +203,7 @@ namespace WebBackend.Controllers
                         IfDel = 0,
                         CreateTime = DateTime.Now,
                         CreateUserId = UserId ?? 0,
+                        CityId = req.cityId,
                         NewTypeId = req.newTypeId,
                         CommentCount = 0,
                         ViewCount = 0

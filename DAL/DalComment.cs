@@ -232,6 +232,7 @@ namespace DAL
                                     (QueryComment.IfDel == 0) &&
                                     ((req == null || req.fatherCommentId == null) ? true : QueryComment.FatherCommentId == req.fatherCommentId) &&
                                     ((req == null || req.newTypeId == null) ? true : QueryNew_Join.NewTypeId == req.newTypeId) &&
+                                    ((req == null || req.cityIds == null) ? true : ((QueryNew_Join.CityId ?? 0) == 0 || req.cityIds.Contains(QueryNew_Join.CityId ?? 0))) &&
                                     ((req == null || req.newTypeIds == null) ? true : req.newTypeIds.Contains(QueryNew_Join.NewTypeId ?? 0)) &&
                                     ((req == null || req.ifDeal == null) ? true : QueryComment.IfDeal == req.ifDeal)
                                 select new

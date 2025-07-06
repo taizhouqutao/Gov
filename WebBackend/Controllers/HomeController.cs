@@ -183,6 +183,11 @@ public class HomeController : Controller
     {
         try
         {
+            if (HttpContext.Session.GetString("CityIds") != null)
+            {
+                var cityIds = JsonConvert.DeserializeObject<List<int>>(HttpContext.Session.GetString("CityIds") ?? "[]");
+                req.cityIds = cityIds;
+            }
             req.newTypeIds = Common.HtmlHelp.GetShowCommentTypes();
             req.newTypeIds.Add(0);
             req.fatherCommentId = 0;

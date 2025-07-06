@@ -83,6 +83,14 @@
                                 <label>标题：</label>
                                 <input type="text" required placeholder="请输入标题" id="newTitle" name="newTitle"
                                     class="form-control">
+                                <label>展示区域：</label>
+                                <select class="form-control" id="cityIds" name="cityIds">
+                                    <option value="0">全部</option>
+                                    @foreach (var item in Model.Citys)
+                                    {
+                                        <option value="@item.cityid">@item.cityName</option>
+                                    }
+                                </select>
                             </div>
                             <div class="ibox-content no-padding" id="eg">
                                 <div id="editor—wrapper">
@@ -349,6 +357,7 @@
                 },
                 { data: "id", title: "ID", name: "Id", bSortable: false },
                 { data: "newTitle", title: "标题", name: "NewTitle", bSortable: false },
+                { data:"cityName",title:"展示区域",name:"cityName", bSortable: false },
                 {
                     data: "isPublic",
                     title: "是否发布",
@@ -431,6 +440,7 @@
         function add() {
             $('#newTitle').val('');
             $("#newId").val('');
+            $("#cityIds").val('0');
             editor.select([]);
             editor.deleteFragment();
             E.SlateTransforms.setNodes(editor, { type: 'paragraph' }, { mode: 'highest' });
@@ -461,7 +471,7 @@
                     if (result.ifSuccess) {
                         $("#newTitle").val(result.data.newTitle);
                         $("#newId").val(result.data.id);
-
+                        $("#cityIds").val(result.data.cityId);
                         editor.select([]);
                         editor.deleteFragment();
                         E.SlateTransforms.setNodes(editor, { type: 'paragraph' }, { mode: 'highest' });
@@ -507,6 +517,7 @@
                 type: "POST", // 请求类型，通常是 GET 或 POST
                 data: JSON.stringify({
                     id: $("#newId").val() ? $("#newId").val() : null,
+                    cityId: $("#cityIds").val(),
                     newTitle: $("#newTitle").val(),
                     newContent: editor.getHtml(),
                     newTypeId:@Model.NewTypeId
