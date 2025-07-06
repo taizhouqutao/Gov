@@ -32,7 +32,7 @@ namespace DAL
                                     NewContent = QueryNew.NewContent,
                                     IsPublic = QueryNew.IsPublic,
                                     PublicTime = QueryNew.PublicTime,
-                                    CityName = ((QueryNew.CityId ?? 0) == 0) ? "全部" : QueryCity_Join.CityName,
+                                    CityName = ((QueryNew.CityId ?? 0) == 0) ? "全部" : QueryCity_Join.CityName??"",
                                     CityId = QueryNew.CityId,
                                     CreateTime = QueryNew.CreateTime,
                                     CreateUserId = QueryNew.CreateUserId,
@@ -46,7 +46,7 @@ namespace DAL
                                 }
                 );
                 res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
-                total= await QueryCitys.CountAsync();
+                total= await QureyRes.CountAsync();
                 var QureyAll = (from QueryNew in QueryNews
                                 join QueryCity in QueryCitys on QueryNew.CityId equals QueryCity.Id into p_QueryCity
                                 from QueryCity_Join in p_QueryCity.DefaultIfEmpty()

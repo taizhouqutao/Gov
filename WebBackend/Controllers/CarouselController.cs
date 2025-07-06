@@ -29,7 +29,7 @@ namespace WebBackend.Controllers
       return View(CarouselPage);
     }
     [HttpPost]
-    public async Task<Response<PageList<Carousel>>> GetCarouselsByPage([FromBody] PageReq<CarouselReqDto> req)
+    public async Task<Response<PageList<CarouselPlusDto>>> GetCarouselsByPage([FromBody] PageReq<CarouselReqDto> req)
     {
       try
       {
@@ -43,7 +43,7 @@ namespace WebBackend.Controllers
           req.Query.cityIds = cityIds;
         }
         var res = await bllCarousel.GetCarouselsByPageAsync(req);
-        return new Response<PageList<Carousel>>
+        return new Response<PageList<CarouselPlusDto>>
         {
           IfSuccess = 1,
           Data = res
@@ -51,7 +51,7 @@ namespace WebBackend.Controllers
       }
       catch (Exception ex)
       {
-        return new Response<PageList<Carousel>>()
+        return new Response<PageList<CarouselPlusDto>>()
         {
           Msg = ex.Message
         };

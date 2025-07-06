@@ -8,25 +8,48 @@ namespace DAL
 {
   public class DalCarousel
   {
-    public async Task<PageList<Carousel>> GetCarouselsByPageAsync(PageReq<CarouselReqDto> req)
+    public async Task<PageList<CarouselPlusDto>> GetCarouselsByPageAsync(PageReq<CarouselReqDto> req)
     {
-      var res = new List<Carousel>();
+      var res = new List<CarouselPlusDto>();
       int total = 0, allcount = 0;
       using (var context = new webapplicationContext())
       {
-        var Query = context.Carousels.AsQueryable();
-        var QureyRes = Query.Where(i =>
-            (i.IfDel == 0) &&
-            ((req.Query == null || req.Query.isPublic == null) ? true : req.Query.isPublic == i.IsPublic) &&
-            ((req.Query == null || req.Query.cityIds == null) ? true : ((i.CityId ?? 0) == 0 || req.Query.cityIds.Contains(i.CityId ?? 0))) &&
-            ((req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : i.Title.Contains(req.search.value))
-        );
-        QureyRes = QureyRes.OrderByDescending(j => j.Id);
+        var QueryCarousels = context.Carousels.AsQueryable();
+        var QueryCitys = context.Cities.AsQueryable();
+        var QureyRes = (from QueryCarousel in QueryCarousels
+                        join QueryCity in QueryCitys on QueryCarousel.CityId equals QueryCity.Id into p_QueryCity
+                        from QueryCity_Join in p_QueryCity.DefaultIfEmpty()
+                        where
+                          (QueryCarousel.IfDel == 0) &&
+                          ((req.Query == null || req.Query.isPublic == null) ? true : req.Query.isPublic == QueryCarousel.IsPublic) &&
+                          ((req.Query == null || req.Query.cityIds == null) ? true : ((QueryCarousel.CityId ?? 0) == 0 || req.Query.cityIds.Contains(QueryCarousel.CityId ?? 0))) &&
+                          ((req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : QueryCarousel.Title.Contains(req.search.value))
+                        orderby QueryCarousel.Id descending
+                        select new CarouselPlusDto()
+                        {
+                          CreateTime = QueryCarousel.CreateTime,
+                          CreateUserId = QueryCarousel.CreateUserId,
+                          IfDel = QueryCarousel.IfDel,
+                          ImageUrl = QueryCarousel.ImageUrl,
+                          CityId = QueryCarousel.CityId,
+                          IsPublic = QueryCarousel.IsPublic,
+                          Title = QueryCarousel.Title,
+                          Id = QueryCarousel.Id,
+                          LinkUrl = QueryCarousel.LinkUrl,
+                          PublicTime = QueryCarousel.PublicTime,
+                          PublicUserId = QueryCarousel.PublicUserId,
+                          UpdateTime = QueryCarousel.UpdateTime,
+                          UpdateUserId = QueryCarousel.CreateUserId,
+                          CityName = ((QueryCarousel.CityId ?? 0) == 0) ? "全部" : QueryCity_Join.CityName ?? "",
+                        });
         res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
         total = await QureyRes.CountAsync();
-        allcount = await context.Carousels.CountAsync(i => i.IfDel == 0);
+        allcount = await context.Carousels.CountAsync(i =>
+          (i.IfDel == 0) &&
+          ((req.Query == null || req.Query.cityIds == null) ? true : ((i.CityId ?? 0) == 0 || req.Query.cityIds.Contains(i.CityId ?? 0)))
+        );
       }
-      return new PageList<Carousel>()
+      return new PageList<CarouselPlusDto>()
       {
         data = res,
         recordsFiltered = total,

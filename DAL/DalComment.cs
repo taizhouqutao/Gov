@@ -148,7 +148,8 @@ namespace DAL
                     total = await QureyRes.CountAsync();
                     allcount = await context.Comments.CountAsync(i => i.IfDel == 0 &&
                     i.NewId == 0 &&
-                    ((req == null || req.Query == null || req.Query.fatherCommentId == null) ? true : i.FatherCommentId == req.Query.fatherCommentId)
+                    ((req == null || req.Query == null || req.Query.fatherCommentId == null) ? true : i.FatherCommentId == req.Query.fatherCommentId) &&
+                    ((req == null || req.Query == null || req.Query.cityIds == null) ? true : ((i.CityId ?? 0) == 0 || req.Query.cityIds.Contains(i.CityId ?? 0))) 
                     );
                 }
             }
@@ -200,7 +201,8 @@ namespace DAL
                                               where
                                                (QuerComment.IfDel == 0) &&
                                                ((req == null || req.Query == null || req.Query.newTypeId == null) ? true : QueryNew_Join.NewTypeId == req.Query.newTypeId) &&
-                                               ((req == null || req.Query == null || req.Query.fatherCommentId == null) ? true : QuerComment.FatherCommentId == req.Query.fatherCommentId)
+                                               ((req == null || req.Query == null || req.Query.fatherCommentId == null) ? true : QuerComment.FatherCommentId == req.Query.fatherCommentId) &&
+                                               ((req == null || req.Query == null || req.Query.cityIds == null) ? true : ((QueryNew_Join.CityId ?? 0) == 0 || req.Query.cityIds.Contains(QueryNew_Join.CityId ?? 0)))
                                               select new CommentResDto { Id = QuerComment.Id }
                                             ).CountAsync());
                     allcount = AllQureyRes;
