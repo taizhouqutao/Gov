@@ -18,4 +18,9 @@ namespace Common
     public string cityName { get; set; }
     public int ifCheck { get; set; }
   }
+
+  public class SetCityDto
+  {
+    public int cityId { get; set; }
+  }
 }

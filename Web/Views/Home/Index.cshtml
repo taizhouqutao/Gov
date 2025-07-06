@@ -106,5 +106,19 @@
                 slideInterval = setInterval(nextSlide, 5000);
             });
         });
+
+        $(document).ready(function () {
+            // 如果cookie中没有cityId，则跳转到设置城市页面
+            function getCookie(name) {
+                var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+                if (arr != null) return decodeURIComponent(arr[2]);
+                return null;
+            }
+
+            var cityId = getCookie("cityId");
+            if (!cityId) {
+                window.location.href = "/Home/SetCity";
+            }
+        });
     </script>
 }

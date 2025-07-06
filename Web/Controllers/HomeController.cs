@@ -11,7 +11,7 @@ public class HomeController : Controller
     BllWeather bll = new BllWeather();
     private BLL.BllNew bllNew = new BLL.BllNew();
     private BLL.BllNewType bllNewType = new BLL.BllNewType();
-    
+
     private BLL.BllCity bllCity = new BLL.BllCity();
 
     private readonly ILogger<HomeController> _logger;
@@ -79,6 +79,17 @@ public class HomeController : Controller
         });
     }
 
+
+    [HttpPost]
+    public async Task<Response> SetCityId([FromBody] SetCityDto req)
+    {
+        // 将cityId写入cookies，永不过期
+        Response.Cookies.Append("cityId", req.cityId.ToString(), new CookieOptions
+        {
+            Expires = DateTimeOffset.MaxValue
+        });
+        return new Response() { IfSuccess = 1, Msg = "设置成功" };
+    }
     public IActionResult Privacy()
     {
         return View();

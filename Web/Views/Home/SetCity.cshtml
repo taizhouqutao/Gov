@@ -1,0 +1,86 @@
+@model Common.SetCityPageDto
+@{
+  ViewData["Title"] = "Set City";
+}
+@section Styles {
+  <link href="/css/detail.css?v=0.0.5" rel="stylesheet" />
+}
+<h2>设置区域</h2>
+<div class="newdetailpart">
+  <div class="news-content">
+    <div class="news-body">
+      <div class="message-form">
+        <form id="messageForm">
+          <div class="form-group">
+            <div class="input-group" style="max-width: 350px;">
+              <select class="form-control" id="cityIds" name="cityIds" required
+                style="border-radius: 0 4px 4px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.04); border-color: #e4e7ea;">
+                <option value="0" style="color: #888;">全部</option>
+                @foreach (var item in Model.Citys)
+                {
+                  <option value="@item.cityid">@item.cityName</option>
+                }
+              </select>
+            </div>
+          </div>
+          <button type="submit">保存设置</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+@section Scripts {
+  <script>
+    $(document).ready(function () {
+      // 提交留言
+      $('#messageForm').submit(function (e) {
+        e.preventDefault();
+        submitMessage();
+      });
+
+      // 从cookie中获取cityId，并设置下拉框选中
+      function getCookie(name) {
+        var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+        if (arr != null) return decodeURIComponent(arr[2]);
+        return null;
+      }
+
+      var cityId = getCookie("cityId");
+      if (cityId) {
+        $('#cityIds').val(cityId);
+      }
+    });
+
+    function submitMessage() {
+      const message = {
+        cityId: $('#cityIds').val(),
+      };
+
+      $.ajax({
+        url: "/Home/SetCityId",
+        contentType: "application/json",
+        type: "POST", // 请求类型，通常是 GET 或 POST
+        data: JSON.stringify(message),
+        success: function (result) {
+          if (result.ifSuccess) {
+            swal({
+              title: "设置成功",
+              text: "显示将调整为对应区域"
+            });
+          }
+          else {
+            swal({
+              title: "出错了",
+              text: result.msg
+            });
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error('Error:', error);
+          console.log('Status:', status);
+          console.log('Details:', xhr.responseText);
+        }
+      });
+    }
+  </script>
+}
