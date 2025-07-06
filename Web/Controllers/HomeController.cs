@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using BLL;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Web.Models;
 using Common;
+using Web.Lib;
 namespace Web.Controllers;
 
 public class HomeController : Controller
@@ -15,10 +17,12 @@ public class HomeController : Controller
     private BLL.BllCity bllCity = new BLL.BllCity();
 
     private readonly ILogger<HomeController> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     BllCarousel bllCarousel = new BllCarousel();
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IHttpContextAccessor httpContextAccessor)
     {
         _logger = logger;
+        _httpContextAccessor = httpContextAccessor;
         configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
     }
 
@@ -26,6 +30,7 @@ public class HomeController : Controller
     {
         var NewType = await bllNewType.GetNewTypeByIdAsync(12);
         string Url = configuration["BackEndPoint:Url"];
+        var CityId = WebHelp.GetCityId(_httpContextAccessor);
         var res = await bllNew.GetNewsByPageAsync(new PageReq<NewReqDto>()
         {
             start = 0,
@@ -33,7 +38,8 @@ public class HomeController : Controller
             Query = new NewReqDto()
             {
                 isPublic = 1,
-                newTypeId = 12
+                newTypeId = 12,
+                cityIds=new List<int>() { CityId },
             }
         });
         var Carousels = await bllCarousel.GetCarouselsByPageAsync(new PageReq<CarouselReqDto>()
@@ -42,7 +48,8 @@ public class HomeController : Controller
             length = int.MaxValue,
             Query = new CarouselReqDto()
             {
-                isPublic = 1
+                isPublic = 1,
+                cityIds=new List<int>() { CityId },
             }
         });
         var homePageDto = new HomePageDto()
