@@ -560,6 +560,24 @@
             datatable.ajax.reload(); // 保持当前分页和排序状态
         }
         function save() {
+            var rolessel = $('.role_select:checked').map(function () { return $(this).val(); }).get();
+            var cityIdsel= $('.city_select:checked').map(function () { return $(this).val(); }).get();
+            if(!rolessel)
+            {
+                swal({
+                    title: "出错了",
+                    text: "角色不能为空"
+                });
+                return;
+            }
+            if(!cityIdsel)
+            {
+                swal({
+                    title: "出错了",
+                    text: "负责区域不能为空"
+                });
+                return;
+            }
             event.stopPropagation(); // 阻止事件冒泡
             event.preventDefault();
             var password = $('#passWord').val();
