@@ -15,5 +15,13 @@ namespace Common
     public string? title { get; set; }
 
     public List<int>? cityIds { get; set; }
+
+    public int? cityId{ get; set; }
+  }
+
+  [Serializable]
+  public class CarouselPage
+  {
+    public List<CityResDto>? Citys { get; set; }
   }
 }

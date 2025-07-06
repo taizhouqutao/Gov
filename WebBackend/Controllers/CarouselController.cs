@@ -11,11 +11,22 @@ namespace WebBackend.Controllers
   public class CarouselController : Controller
   {
     BllCarousel bllCarousel = new BllCarousel();
+    private BLL.BllCity bllcity = new BLL.BllCity();
 
     [Authorize("002003")]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-      return View();
+      List<CityResDto> citys = new List<CityResDto>();
+      if (HttpContext.Session.GetString("CityIds") != null)
+      {
+        var cityIds = JsonConvert.DeserializeObject<List<int>>(HttpContext.Session.GetString("CityIds") ?? "[]");
+        citys = await bllcity.GetCitysByIdAsync(cityIds);
+      }
+      var CarouselPage = new CarouselPage()
+      {
+        Citys = citys
+      };
+      return View(CarouselPage);
     }
     [HttpPost]
     public async Task<Response<PageList<Carousel>>> GetCarouselsByPage([FromBody] PageReq<CarouselReqDto> req)
@@ -121,6 +132,7 @@ namespace WebBackend.Controllers
           res.PublicUserId = Convert.ToInt32(req.isPublic) == 1 ? UserId : null;
           res.UpdateUserId = UserId ?? 0;
           res.UpdateTime = DateTime.Now;
+          res.CityId= Convert.ToInt32(req.cityId);
           await bllCarousel.UpdateCarouselAsync(res);
         }
         else
@@ -134,6 +146,7 @@ namespace WebBackend.Controllers
             IsPublic = Convert.ToInt32(req.isPublic),
             LinkUrl = req.linkUrl,
             Title = req.title ?? "",
+            CityId= Convert.ToInt32(req.cityId),
             PublicTime = Convert.ToInt32(req.isPublic) == 1 ? DateTime.Now : null,
             PublicUserId = Convert.ToInt32(req.isPublic) == 1 ? UserId : null,
           };

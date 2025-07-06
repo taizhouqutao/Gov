@@ -1,3 +1,4 @@
+@model Common.CarouselPage
 @{
   Layout = null;
 }
@@ -89,6 +90,16 @@
                 <div class="form-group">
                   <label>跳转链接：</label>
                   <input type="text" required placeholder="请输入跳转链接" id="linkUrl" name="linkUrl" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label>展示区域：</label>
+                  <select class="form-control" id="cityIds" name="cityIds">
+                      <option value="0">全部</option>
+                      @foreach (var item in Model.Citys)
+                      {
+                          <option value="@item.cityid">@item.cityName</option>
+                      }
+                  </select>
                 </div>
                 <div class="form-inline">
                   <label>是否发布</label>
@@ -274,6 +285,7 @@
     function add() {
       $('#carouselTitle').val('');
       $('#carouselId').val('');
+      $('#cityIds').val('0');
       $("#linkUrl").val('');
       $('#imageUrl').val('/img/webuploader.png');
       $('#showImageUrl').attr("src", '/img/webuploader.png');
@@ -304,6 +316,7 @@
           if (result.ifSuccess) {
             $('#carouselTitle').val(result.data.title);
             $('#carouselId').val(result.data.id);
+            $('#cityIds').val(result.data.cityId);
             $("#linkUrl").val(result.data.linkUrl);
             $('#imageUrl').val(result.data.imageUrl);
             $('#showImageUrl').attr("src", result.data.imageUrl);
@@ -361,6 +374,7 @@
           linkUrl: $("#linkUrl").val(),
           imageUrl: $('#imageUrl').val(),
           title: $("#carouselTitle").val(),
+          cityId:$("#cityIds").val(),
           isPublic: $("input[name='isPublic']:checked").val()
         }),
         success: function (result) {

@@ -16,34 +16,34 @@ namespace DAL
                 var QueryNews= context.News.AsQueryable();
                 var QueryCitys= context.Cities.AsQueryable();
                 var QureyRes = (from QueryNew in QueryNews
-                join QueryCity in QueryCitys on QueryNew.CityId equals QueryCity.Id into p_QueryCity
-                from QueryCity_Join in p_QueryCity.DefaultIfEmpty()
-                where
-                    (QueryNew.IfDel == 0) &&
-                    ((req.Query == null || req.Query.newTypeId == null) ? true : req.Query.newTypeId == QueryNew.NewTypeId) &&
-                    ((req.Query == null || req.Query.isPublic == null) ? true : req.Query.isPublic == QueryNew.IsPublic) &&
-                    ((req.Query == null || req.Query.cityIds == null) ? true : ((QueryNew.CityId ?? 0) == 0 || req.Query.cityIds.Contains(QueryNew.CityId ?? 0))) &&
-                    ((req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : QueryNew.NewTitle.Contains(req.search.value))
-                    orderby QueryNew.Id descending
-                    select new NewPlusDto
-                    {
-                        Id = QueryNew.Id,
-                        NewTitle = QueryNew.NewTitle,
-                        NewContent = QueryNew.NewContent,
-                        IsPublic = QueryNew.IsPublic,
-                        PublicTime = QueryNew.PublicTime,
-                        CityName = QueryCity_Join.CityName,
-                        CityId = QueryNew.CityId,
-                        CreateTime = QueryNew.CreateTime,
-                        CreateUserId = QueryNew.CreateUserId,
-                        UpdateTime = QueryNew.UpdateTime,
-                        UpdateUserId = QueryNew.UpdateUserId,
-                        IfDel = QueryNew.IfDel,
-                        ViewCount = QueryNew.ViewCount,
-                        CommentCount = QueryNew.CommentCount,
-                        NewTypeId = QueryNew.NewTypeId,
-                        PublicUserId = QueryNew.PublicUserId,
-                    }
+                                join QueryCity in QueryCitys on QueryNew.CityId equals QueryCity.Id into p_QueryCity
+                                from QueryCity_Join in p_QueryCity.DefaultIfEmpty()
+                                where
+                                    (QueryNew.IfDel == 0) &&
+                                    ((req.Query == null || req.Query.newTypeId == null) ? true : req.Query.newTypeId == QueryNew.NewTypeId) &&
+                                    ((req.Query == null || req.Query.isPublic == null) ? true : req.Query.isPublic == QueryNew.IsPublic) &&
+                                    ((req.Query == null || req.Query.cityIds == null) ? true : ((QueryNew.CityId ?? 0) == 0 || req.Query.cityIds.Contains(QueryNew.CityId ?? 0))) &&
+                                    ((req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : QueryNew.NewTitle.Contains(req.search.value))
+                                orderby QueryNew.Id descending
+                                select new NewPlusDto
+                                {
+                                    Id = QueryNew.Id,
+                                    NewTitle = QueryNew.NewTitle,
+                                    NewContent = QueryNew.NewContent,
+                                    IsPublic = QueryNew.IsPublic,
+                                    PublicTime = QueryNew.PublicTime,
+                                    CityName = ((QueryNew.CityId ?? 0) == 0) ? "全部" : QueryCity_Join.CityName,
+                                    CityId = QueryNew.CityId,
+                                    CreateTime = QueryNew.CreateTime,
+                                    CreateUserId = QueryNew.CreateUserId,
+                                    UpdateTime = QueryNew.UpdateTime,
+                                    UpdateUserId = QueryNew.UpdateUserId,
+                                    IfDel = QueryNew.IfDel,
+                                    ViewCount = QueryNew.ViewCount,
+                                    CommentCount = QueryNew.CommentCount,
+                                    NewTypeId = QueryNew.NewTypeId,
+                                    PublicUserId = QueryNew.PublicUserId,
+                                }
                 );
                 res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
                 total= await QueryCitys.CountAsync();
