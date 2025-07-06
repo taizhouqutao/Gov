@@ -28,6 +28,8 @@ namespace Common
     public class ContactPageDto
     {
         public required List<ContactPageItemDto> contactList { get; set; }
+
+        public List<CityResDto>? Citys { get; set; }
     }
 
     [Serializable]

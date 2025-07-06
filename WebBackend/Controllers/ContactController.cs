@@ -19,10 +19,12 @@ namespace WebBackend.Controllers
         [Authorize("009001")]
         public async Task<IActionResult> Index()
         {
+            List<CityResDto> citys = new List<CityResDto>();
             List<int> cityIds = new List<int>();
             if (HttpContext.Session.GetString("CityIds") != null)
             {
                 cityIds = JsonConvert.DeserializeObject<List<int>>(HttpContext.Session.GetString("CityIds") ?? "[]");
+                citys = await bllcity.GetCitysByIdAsync(cityIds);
             }
             var Contacts = await bllContact.GetContactsByAsync(new ContactReqDto() { cityIds = cityIds });
             var ContactPageDto = new ContactPageDto()
@@ -35,7 +37,8 @@ namespace WebBackend.Controllers
                     post = i.Post,
                     id = i.Id,
                     personHead = (string.IsNullOrEmpty(i.PersonHead)) ? "/img/unperson.jpg" : i.PersonHead
-                })
+                }),
+                Citys = citys
             };
             return View(ContactPageDto);
         }
