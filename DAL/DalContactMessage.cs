@@ -42,28 +42,67 @@ namespace DAL
       return res;
     }
 
-    public async Task<PageList<ContactMessage>> GetContactMessagesByPageAsync(PageReq<ContactMessageReqDto> req)
+    public async Task<PageList<ContactMessageResDto>> GetContactMessagesByPageAsync(PageReq<ContactMessageReqDto> req)
     {
-      var res = new List<ContactMessage>();
+      var res = new List<ContactMessageResDto>();
       int total = 0, allcount = 0;
       using (var context = new webapplicationContext())
       {
-        var Query = context.ContactMessages.AsQueryable();
-        var QureyRes = Query.Where(i =>
-            (i.IfDel == 0) &&
-            ((req.Query == null || req.Query.contactId == null) ? true : req.Query.contactId == i.ContactId) &&
-            ((req.Query == null || req.Query.fatherContactMessageId == null) ? true : req.Query.fatherContactMessageId == i.FatherContactMessageId) &&
-            ((req.Query == null || req.Query.isShow == null) ? true : req.Query.isShow == i.IsShow)
-        );
-        QureyRes = QureyRes.OrderBy(j=>j.IfDeal).ThenByDescending(j => j.Id);
+        var QueryContactMessages = context.ContactMessages.AsQueryable();
+        var QueryCitys = context.Cities.AsQueryable();
+        var QueryContacts = context.Contacts.AsQueryable();
+        var QureyRes = (from QueryContactMessage in QueryContactMessages
+                        join QueryContact in QueryContacts on QueryContactMessage.ContactId equals QueryContact.Id into p_QueryContact
+                        from QueryContact_Join in p_QueryContact.DefaultIfEmpty()
+                        join QueryCity in QueryCitys on QueryContact_Join.CityId equals QueryCity.Id into p_QueryCity
+                        from QueryCity_Join in p_QueryCity.DefaultIfEmpty()
+                        orderby QueryContactMessage.IfDeal ascending, QueryContactMessage.Id descending
+                        where
+                           (QueryContactMessage.IfDel == 0) &&
+                            ((req.Query == null || req.Query.contactId == null) ? true : req.Query.contactId == QueryContactMessage.ContactId) &&
+                            ((req.Query == null || req.Query.cityIds == null) ? true : ((QueryContact_Join.CityId ?? 0) == 0 || req.Query.cityIds.Contains(QueryContact_Join.CityId ?? 0))) &&
+                            ((req.Query == null || req.Query.fatherContactMessageId == null) ? true : req.Query.fatherContactMessageId == QueryContactMessage.FatherContactMessageId) &&
+                            ((req.Query == null || req.Query.isShow == null) ? true : req.Query.isShow == QueryContactMessage.IsShow)
+                        select new ContactMessageResDto()
+                        {
+                          ContactId = QueryContactMessage.ContactId,
+                          ContactName = QueryContact_Join.PersonName ?? "",
+                          Content = QueryContactMessage.Content,
+                          CreateTime = QueryContactMessage.CreateTime,
+                          CityName = ((QueryContact_Join.CityId ?? 0) == 0) ? "全部" : QueryCity_Join.CityName ?? "",
+                          CreateUserId = QueryContactMessage.CreateUserId,
+                          FatherContactMessageId = QueryContactMessage.FatherContactMessageId,
+                          IfDeal = QueryContactMessage.IfDeal,
+                          PersonName = QueryContactMessage.PersonName,
+                          RoleType = QueryContactMessage.RoleType,
+                          Id = QueryContactMessage.Id,
+                          IsShow = QueryContactMessage.IsShow,
+                          PersonCellphone = QueryContactMessage.PersonCellphone,
+                          UpdateTime = QueryContactMessage.UpdateTime,
+                          UpdateUserId = QueryContactMessage.UpdateUserId,
+                          UserId = QueryContactMessage.UserId
+                        });
         res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();
         total = await QureyRes.CountAsync();
-        allcount = await context.ContactMessages.CountAsync(i => i.IfDel == 0 &&
-         ((req.Query == null || req.Query.contactId == null) ? true : req.Query.contactId == i.ContactId) &&
-         ((req.Query == null || req.Query.fatherContactMessageId == null) ? true : req.Query.fatherContactMessageId == i.FatherContactMessageId)
-         );
+        var QureyAll = (from QueryContactMessage in QueryContactMessages
+                        join QueryContact in QueryContacts on QueryContactMessage.ContactId equals QueryContact.Id into p_QueryContact
+                        from QueryContact_Join in p_QueryContact.DefaultIfEmpty()
+                        join QueryCity in QueryCitys on QueryContact_Join.CityId equals QueryCity.Id into p_QueryCity
+                        from QueryCity_Join in p_QueryCity.DefaultIfEmpty()
+                        orderby QueryContactMessage.IfDeal ascending, QueryContactMessage.Id descending
+                        where
+                           (QueryContactMessage.IfDel == 0 &&
+                          ((req.Query == null || req.Query.contactId == null) ? true : req.Query.contactId == QueryContactMessage.ContactId) &&
+                          ((req.Query == null || req.Query.cityIds == null) ? true : ((QueryContact_Join.CityId ?? 0) == 0 || req.Query.cityIds.Contains(QueryContact_Join.CityId ?? 0))) &&
+                          ((req.Query == null || req.Query.fatherContactMessageId == null) ? true : req.Query.fatherContactMessageId == QueryContactMessage.FatherContactMessageId)
+                          )
+                        select new
+                        {
+                          Id = QueryContactMessage.Id,
+                        });
+        allcount = await QureyAll.CountAsync();
       }
-      return new PageList<ContactMessage>()
+      return new PageList<ContactMessageResDto>()
       {
         data = res,
         recordsFiltered = total,

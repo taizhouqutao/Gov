@@ -14,7 +14,7 @@ namespace BLL
       return await dal.GetContactMessageGroupsByAsync(req);
     }
 
-    public async Task<PageList<ContactMessage>> GetContactMessagesByPageAsync(PageReq<ContactMessageReqDto> req)
+    public async Task<PageList<ContactMessageResDto>> GetContactMessagesByPageAsync(PageReq<ContactMessageReqDto> req)
     {
       return await dal.GetContactMessagesByPageAsync(req);
     }

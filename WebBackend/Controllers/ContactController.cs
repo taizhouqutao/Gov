@@ -401,6 +401,7 @@ namespace WebBackend.Controllers
                                 PersonName = i.PersonName,
                                 RoleType = i.RoleType,
                                 Id = i.Id,
+                                CityName = i.CityName,
                                 IsShow = i.IsShow,
                                 PersonCellphone = i.PersonCellphone,
                                 UpdateTime = i.UpdateTime,

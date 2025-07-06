@@ -114,6 +114,8 @@ namespace Common
         public int? fatherContactMessageId { get; set; }
 
         public List<int>? fatherContactMessageIds { get; set; }
+
+        public List<int>? cityIds { get; set; } = null;
     }
 
     [Serializable]
@@ -140,6 +142,8 @@ namespace Common
         public required int RoleType { get; set; }
 
         public int? UserId { get; set; }
+
+        public string? CityName{ get; set; }
     }
 
     [Serializable]
