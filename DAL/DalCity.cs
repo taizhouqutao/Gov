@@ -33,6 +33,14 @@ namespace DAL
       };
     }
 
+    public async Task<List<City>> GetCitysAsync(CityReqDto req)
+    {
+      using (var context = new webapplicationContext())
+      {
+        return await context.Cities.Where(i => i.IfDel == 0).ToListAsync();
+      }
+    }
+
     public async Task<City?> GetCityByIdAsync(int Id)
     {
       using (var context = new webapplicationContext())

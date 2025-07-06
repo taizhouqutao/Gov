@@ -4,6 +4,7 @@ using BLL;
 using Common;
 using DAL.Modles;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace WebBackend.Controllers
 {
@@ -21,6 +22,15 @@ namespace WebBackend.Controllers
     {
       try
       {
+        if (HttpContext.Session.GetString("CityIds") != null)
+        {
+          var cityIds = JsonConvert.DeserializeObject<List<int>>(HttpContext.Session.GetString("CityIds") ?? "[]");
+          if (req.Query == null)
+          {
+            req.Query = new CarouselReqDto();
+          }
+          req.Query.cityIds = cityIds;
+        }
         var res = await bllCarousel.GetCarouselsByPageAsync(req);
         return new Response<PageList<Carousel>>
         {

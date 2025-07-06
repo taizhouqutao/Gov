@@ -37,6 +37,9 @@ namespace DAL.Modles
     [Column("FatherComment")]
     public required int FatherCommentId{get;set;}
 
+    [Column("CityId")]
+    public int? CityId { get; set; } = null;
+
     [Column("IsShow")]
     public required int IsShow{get;set;}
 

@@ -22,15 +22,18 @@ namespace DAL.Modles
         public required string RealName { get; set; }
 
         [Column("UserEmail")]
-        public required string UserEmail{ get; set; }
+        public required string UserEmail { get; set; }
 
         [Column("UserPost")]
-        public string? UserPost{ get; set; }
+        public string? UserPost { get; set; }
 
         [Column("UserHead")]
-        public string? UserHead{ get; set; }
+        public string? UserHead { get; set; }
 
         [Column("Enable")]
-        public required int Enable{get;set;}=1;
+        public required int Enable { get; set; } = 1;
+
+        [Column("CityIds")]
+        public string? CityIds { get; set; }
     }
 }

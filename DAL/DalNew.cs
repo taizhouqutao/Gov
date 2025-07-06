@@ -14,11 +14,12 @@ namespace DAL
             using (var context = new webapplicationContext())
             {
                 var Query= context.News.AsQueryable();
-                var QureyRes = Query.Where(i=>
-                    (i.IfDel==0) &&
-                    ((req.Query==null||req.Query.newTypeId==null)?true: req.Query.newTypeId==i.NewTypeId) &&
-                    ((req.Query==null||req.Query.isPublic==null)?true: req.Query.isPublic==i.IsPublic) &&
-                    ((req.search==null||string.IsNullOrEmpty(req.search.value))?true:i.NewTitle.Contains(req.search.value))
+                var QureyRes = Query.Where(i =>
+                    (i.IfDel == 0) &&
+                    ((req.Query == null || req.Query.newTypeId == null) ? true : req.Query.newTypeId == i.NewTypeId) &&
+                    ((req.Query == null || req.Query.isPublic == null) ? true : req.Query.isPublic == i.IsPublic) &&
+                    ((req.Query == null || req.Query.cityIds == null) ? true : ((i.CityId ?? 0) == 0 || req.Query.cityIds.Contains(i.CityId ?? 0))) &&
+                    ((req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : i.NewTitle.Contains(req.search.value))
                 );
                 QureyRes = QureyRes.OrderByDescending(j =>j.Id);
                 res = await QureyRes.Skip(req.start).Take(req.length).ToListAsync();

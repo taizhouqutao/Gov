@@ -14,6 +14,8 @@ namespace Common
         public int? isPublic{ get; set; } = null;
 
         public int? newTypeId { get; set; } = null;
+
+        public List<int>? cityIds { get; set; } = null;
     } 
 
     [Serializable]

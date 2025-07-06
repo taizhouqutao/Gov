@@ -13,5 +13,7 @@ namespace Common
     public string? imageUrl { get; set; }
 
     public string? title { get; set; }
+
+    public List<int>? cityIds { get; set; }
   }
 }

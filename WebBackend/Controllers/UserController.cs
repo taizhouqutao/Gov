@@ -3,6 +3,7 @@ using BLL;
 using Common;
 using DAL.Modles;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace WebBackend.Controllers
 {
@@ -10,6 +11,8 @@ namespace WebBackend.Controllers
     {
         private BLL.BllRole bllrole = new BLL.BllRole();
         private BLL.BllUser blluser = new BLL.BllUser();
+
+        private BLL.BllCity bllcity = new BLL.BllCity();
         private BLL.BllBizLog bllbizlog = new BLL.BllBizLog();
 
         [Authorize("001003")]
@@ -39,9 +42,11 @@ namespace WebBackend.Controllers
         public async Task<IActionResult> Admin()
         {
             var Roles = await bllrole.GetRolesByUser(new RoleReqDto() { userId = 0 });
+            var Citys = await bllcity.GetCitysAsync(new CityReqDto() { });
             return View(new AdminDto()
             {
-                Roles = Roles
+                Roles = Roles,
+                Citys = Citys.ConvertAll(i => new CityResDto() { cityid = i.Id, cityName = i.CityName, ifCheck = 0 })
             });
         }
 
@@ -104,6 +109,7 @@ namespace WebBackend.Controllers
                     res.UserHead = string.IsNullOrEmpty(req.userHead) ? "/img/unperson.jpg" : req.userHead;
                     res.UpdateTime = DateTime.Now;
                     res.UpdateUserId = UserId ?? 0;
+                    res.CityIds = string.Join(",", req.cityIds ?? new List<int>());
                     await blluser.UpdateUserAsync(res);
                 }
                 else
@@ -121,7 +127,8 @@ namespace WebBackend.Controllers
                         UserEmail = req.userEmail ?? "",
                         UserPost = req.userPost,
                         UserHead = string.IsNullOrEmpty(req.userHead) ? "/img/unperson.jpg" : req.userHead,
-                        Enable = 1
+                        Enable = 1,
+                        CityIds = string.Join(",", req.cityIds ?? new List<int>())
                     };
                     res = await blluser.AddUserAsync(res);
                 }
@@ -209,7 +216,8 @@ namespace WebBackend.Controllers
                         CreateUserId = res.CreateUserId,
                         UpdateTime = res.UpdateTime,
                         UpdateUserId = res.UpdateUserId,
-                        roles = roles.Where(i => i.ifCheck == 1).ToList().ConvertAll(i => i.roleId)
+                        roles = roles.Where(i => i.ifCheck == 1).ToList().ConvertAll(i => i.roleId),
+                        cityIds = res.CityIds?.Split(',').Select(int.Parse).ToList() ?? new List<int>()
                     },
                 };
             }
@@ -227,6 +235,7 @@ namespace WebBackend.Controllers
             try
             {
                 var res = await blluser.GetUsersByPageAsync(req);
+                var citys = await bllcity.GetCitysAsync(new CityReqDto() { });
                 return new Response<PageList<UserResDto>>
                 {
                     IfSuccess = 1,
@@ -235,19 +244,24 @@ namespace WebBackend.Controllers
                         recordsFiltered = res.recordsFiltered,
                         recordsTotal = res.recordsTotal,
                         draw = res.draw,
-                        data = res.data.ConvertAll(i => new UserResDto()
-                        {
-                            Id = i.Id,
-                            RealName = i.RealName,
-                            UserName = i.UserName,
-                            UserEmail = i.UserEmail,
-                            UserHead = i.UserHead,
-                            UserPost = i.UserPost,
-                            Enable = i.Enable,
-                            CreateTime = i.CreateTime,
-                            CreateUserId = i.CreateUserId,
-                            UpdateTime = i.UpdateTime,
-                            UpdateUserId = i.UpdateUserId
+                        data = res.data.ConvertAll(i => {
+                            var cityIds = i.CityIds?.Split(',').Select(int.Parse).ToList() ?? new List<int>();
+                            var cityNames = string.Join(",", citys.Where(j => cityIds.Contains(j.Id)).Select(j => j.CityName).ToList());
+                            return new UserResDto()
+                            {
+                                Id = i.Id,
+                                RealName = i.RealName,
+                                UserName = i.UserName,
+                                UserEmail = i.UserEmail,
+                                UserHead = i.UserHead,
+                                UserPost = i.UserPost,
+                                Enable = i.Enable,
+                                CreateTime = i.CreateTime,
+                                CreateUserId = i.CreateUserId,
+                                UpdateTime = i.UpdateTime,
+                                UpdateUserId = i.UpdateUserId,
+                                CityNames = cityNames
+                            };
                         })
                     },
                 };

@@ -81,6 +81,12 @@ public class HomeController : Controller
             HttpContext.Session.SetInt32("UserId", res.Id);
             List<string> Right = await blluser.GetRightCodeByUser(res.Id);
             HttpContext.Session.SetString("RightId", JsonConvert.SerializeObject(Right));
+            List<int> cityIds = new List<int>();
+            if (!string.IsNullOrEmpty(res.CityIds))
+            {
+                cityIds = res.CityIds.Split(',').Select(int.Parse).ToList();
+            }
+            HttpContext.Session.SetString("CityIds", JsonConvert.SerializeObject(cityIds));
             return new Response<LoginResDto>
             {
                 IfSuccess = 1,

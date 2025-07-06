@@ -18,6 +18,7 @@ namespace DAL
         var QureyRes = Query.Where(i =>
             (i.IfDel == 0) &&
             ((req.Query == null || req.Query.isPublic == null) ? true : req.Query.isPublic == i.IsPublic) &&
+            ((req.Query == null || req.Query.cityIds == null) ? true : ((i.CityId ?? 0) == 0 || req.Query.cityIds.Contains(i.CityId ?? 0))) &&
             ((req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : i.Title.Contains(req.search.value))
         );
         QureyRes = QureyRes.OrderByDescending(j => j.Id);

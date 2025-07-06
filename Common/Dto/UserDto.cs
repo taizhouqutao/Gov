@@ -29,6 +29,8 @@ namespace Common
         public string? userHead { get; set; }
 
         public List<int>? roles { get; set; }
+
+        public List<int>? cityIds { get; set; }
     }
 
     [Serializable]
@@ -49,5 +51,9 @@ namespace Common
         public required int Enable { get; set; }
 
         public List<int>? roles { get; set; }
+
+        public List<int>? cityIds { get; set; }
+
+        public string? CityNames { get; set; }
     }
 }

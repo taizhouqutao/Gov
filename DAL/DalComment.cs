@@ -120,6 +120,7 @@ namespace DAL
                                         (QuerComment.IfDel == 0) &&
                                         (QuerComment.NewId == 0) &&
                                         ((req == null || req.Query == null || req.Query.fatherCommentId == null) ? true : QuerComment.FatherCommentId == req.Query.fatherCommentId) &&
+                                        ((req == null || req.Query == null || req.Query.cityIds == null) ? true : ((QuerComment.CityId ?? 0) == 0 || req.Query.cityIds.Contains(QuerComment.CityId ?? 0))) &&
                                         ((req == null || req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : (
                                             QuerComment.Content.Contains(req.search.value) ||
                                             (!string.IsNullOrEmpty(QuerComment.PersonCellphone) && QuerComment.PersonCellphone.Contains(req.search.value)) ||
@@ -164,6 +165,7 @@ namespace DAL
                                         (QuerComment.IfDel == 0) &&
                                         ((req == null || req.Query == null || req.Query.newTypeId == null) ? true : QueryNew_Join.NewTypeId == req.Query.newTypeId) &&
                                         ((req == null || req.Query == null || req.Query.fatherCommentId == null) ? true : QuerComment.FatherCommentId == req.Query.fatherCommentId) &&
+                                        ((req == null || req.Query == null || req.Query.cityIds == null) ? true : ((QueryNew_Join.CityId ?? 0) == 0 || req.Query.cityIds.Contains(QueryNew_Join.CityId ?? 0))) &&
                                         ((req == null || req.search == null || string.IsNullOrEmpty(req.search.value)) ? true : (
                                             QuerComment.Content.Contains(req.search.value) ||
                                             (!string.IsNullOrEmpty(QuerComment.PersonCellphone) && QuerComment.PersonCellphone.Contains(req.search.value)) ||

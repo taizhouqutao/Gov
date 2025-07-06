@@ -5,6 +5,7 @@ using BLL;
 using Common;
 using DAL.Modles;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace WebBackend.Controllers
 {
@@ -64,6 +65,15 @@ namespace WebBackend.Controllers
         {
             try
             {
+                if (HttpContext.Session.GetString("CityIds") != null)
+                {
+                    var cityIds = JsonConvert.DeserializeObject<List<int>>(HttpContext.Session.GetString("CityIds") ?? "[]");
+                    if (req.Query == null)
+                    {
+                        req.Query = new CommentReqDto();
+                    }
+                    req.Query.cityIds = cityIds;
+                }
                 var res = await bllcomment.GetCommentsByPageAsync(req);
                 return new Response<PageList<CommentResDto>>
                 {
@@ -85,6 +95,15 @@ namespace WebBackend.Controllers
         {
             try
             {
+                if (HttpContext.Session.GetString("CityIds") != null)
+                {
+                    var cityIds = JsonConvert.DeserializeObject<List<int>>(HttpContext.Session.GetString("CityIds") ?? "[]");
+                    if (req.Query == null)
+                    {
+                        req.Query = new NewReqDto();
+                    }
+                    req.Query.cityIds = cityIds;
+                }
                 var res = await bll.GetNewsByPageAsync(req);
                 return new Response<PageList<NewListDto>>
                 {

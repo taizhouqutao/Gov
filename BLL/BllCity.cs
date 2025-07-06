@@ -13,6 +13,11 @@ namespace BLL
       return await dal.GetCitysByPageAsync(req);
     }
 
+    public async Task<List<City>> GetCitysAsync(CityReqDto req)
+    {
+      return await dal.GetCitysAsync(req);
+    }
+
     public async Task<City?> GetCityByIdAsync(int Id)
     {
       return await dal.GetCityByIdAsync(Id);

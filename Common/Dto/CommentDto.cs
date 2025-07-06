@@ -20,6 +20,8 @@ namespace Common
         public string? content { get; set; }
 
         public int? ifDeal { get; set; }
+
+        public List<int>? cityIds { get; set; }
     }
 
     [Serializable]

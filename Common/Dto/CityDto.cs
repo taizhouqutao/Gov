@@ -11,4 +11,11 @@ namespace Common
 
     public List<int>? Ids { get; set; }
   }
+
+  public class CityResDto
+  {
+    public int cityid { get; set; }
+    public string cityName { get; set; }
+    public int ifCheck { get; set; }
+  }
 }
