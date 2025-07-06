@@ -131,8 +131,8 @@
                             </div>
                             <div class="form-inline">
                                 <div class="form-group">
-                                    <label>展示区域：</label>
-                                    <select class="form-control" id="cityIds" name="cityIds">
+                                    <label>展示区域：</label><label style="color: red;">*</label>
+                                    <select class="form-control" id="cityIds" name="cityIds" required>
                                         <option value="0">全部</option>
                                         @foreach (var item in Model.Citys)
                                         {

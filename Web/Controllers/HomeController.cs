@@ -11,6 +11,9 @@ public class HomeController : Controller
     BllWeather bll = new BllWeather();
     private BLL.BllNew bllNew = new BLL.BllNew();
     private BLL.BllNewType bllNewType = new BLL.BllNewType();
+    
+    private BLL.BllCity bllCity = new BLL.BllCity();
+
     private readonly ILogger<HomeController> _logger;
     BllCarousel bllCarousel = new BllCarousel();
     public HomeController(ILogger<HomeController> logger)
@@ -60,6 +63,20 @@ public class HomeController : Controller
             })
         };
         return View(homePageDto);
+    }
+
+    public async Task<IActionResult> SetCity()
+    {
+        var Citys = await bllCity.GetCitysAsync(new CityReqDto() { });
+        return View(new SetCityPageDto()
+        {
+            Citys = Citys.ConvertAll(i => new CityResDto
+            {
+                cityid = i.Id,
+                cityName = i.CityName,
+                ifCheck = 0
+            })
+        });
     }
 
     public IActionResult Privacy()

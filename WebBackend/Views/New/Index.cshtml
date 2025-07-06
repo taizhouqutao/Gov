@@ -84,7 +84,7 @@
                                 <input type="text" required placeholder="请输入标题" id="newTitle" name="newTitle"
                                     class="form-control">
                                 <label>展示区域：</label>
-                                <select class="form-control" id="cityIds" name="cityIds">
+                                <select class="form-control" id="cityIds" name="cityIds" required>
                                     <option value="0">全部</option>
                                     @foreach (var item in Model.Citys)
                                     {

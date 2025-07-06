@@ -29,4 +29,10 @@ namespace Common
 
     public required string Title { get; set; }
   }
+
+  [Serializable]
+  public class SetCityPageDto
+  {
+    public required List<CityResDto> Citys{ get; set; }
+  }
 }
