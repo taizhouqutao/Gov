@@ -28,7 +28,7 @@ namespace Web.Controllers
           newId = 0,
           isShow = 1,
           newTypeId = 0,
-          cityIds = new List<int>() { CityId }
+          cityIds = CityId == 0 ? null : new List<int>() { CityId }
         }
       });
       var newDetailPage = new NewDetailPage()
@@ -56,7 +56,7 @@ namespace Web.Controllers
             contactId = req.Query.contactId,
             fatherContactMessageId = 0,
             isShow = 1,
-            cityIds = new List<int>() { CityId }
+            cityIds = CityId == 0 ? null : new List<int>() { CityId }
           }
         });
         var replys = await bllComment.GetContactMessagesByAsync(new ContactMessageReqDto()

@@ -32,7 +32,7 @@ namespace Web.Controllers
                 {
                     isPublic = 1,
                     newTypeId = NewTypeId,
-                    cityIds=new List<int>(){ CityId}
+                    cityIds = CityId == 0 ? null : new List<int>() { CityId }
                 }
             });
             var newPage = new NewPage()

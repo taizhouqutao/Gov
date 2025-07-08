@@ -39,7 +39,7 @@ public class HomeController : Controller
             {
                 isPublic = 1,
                 newTypeId = 12,
-                cityIds=new List<int>() { CityId },
+                cityIds = CityId == 0 ? null : new List<int>() { CityId },
             }
         });
         var Carousels = await bllCarousel.GetCarouselsByPageAsync(new PageReq<CarouselReqDto>()
@@ -49,7 +49,7 @@ public class HomeController : Controller
             Query = new CarouselReqDto()
             {
                 isPublic = 1,
-                cityIds=new List<int>() { CityId },
+                cityIds = CityId == 0 ? null : new List<int>() { CityId },
             }
         });
         var homePageDto = new HomePageDto()

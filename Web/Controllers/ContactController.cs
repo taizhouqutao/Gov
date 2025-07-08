@@ -22,7 +22,7 @@ namespace Web.Controllers
       var CityId = WebHelp.GetCityId(_httpContextAccessor);
       var res = await bllContact.GetContactsByAsync(new ContactReqDto()
       {
-        cityIds = new List<int>() { CityId }
+        cityIds = CityId == 0 ? null : new List<int>() { CityId }
       });
       string Url = configuration["BackEndPoint:Url"];
       var contact = new ContactPageDto()
