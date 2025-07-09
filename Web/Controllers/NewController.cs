@@ -49,6 +49,7 @@ namespace Web.Controllers
         {
             try
             {
+                var CityId = WebHelp.GetCityId(_httpContextAccessor);
                 var res = await bll.GetNewsByPageAsync(new PageReq<NewReqDto>()
                 {
                     start = req.start,
@@ -56,7 +57,8 @@ namespace Web.Controllers
                     Query = new NewReqDto()
                     {
                         isPublic = 1,
-                        newTypeId = req.Query?.newTypeId
+                        newTypeId = req.Query?.newTypeId,
+                        cityIds = CityId == 0 ? null : new List<int>() { CityId }
                     }
                 });
                 return new Response<PageList<NewListDto>>
